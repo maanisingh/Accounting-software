@@ -21,6 +21,7 @@ const InvoiceTab = ({
   handleSaveDraft,
   handleSaveNext,
   handleNext,
+  saving,
   showAdd,
   showEdit,
   newItem,
@@ -456,10 +457,19 @@ const InvoiceTab = ({
 
         {/* Navigation */}
         <div className="d-flex justify-content-between mt-4 border-top pt-3">
-          <Button variant="secondary" onClick={handleSkip}>Skip</Button>
-          <Button variant="warning" onClick={handleSaveDraft}>Save</Button>
-          <Button variant="primary" onClick={handleSaveNext}>Save & Next</Button>
-          <Button variant="success" onClick={handleNext}>Next</Button>
+          <Button variant="secondary" onClick={handleSkip} disabled={saving}>Skip</Button>
+          <Button variant="warning" onClick={handleSaveDraft} disabled={saving}>Save</Button>
+          <Button variant="primary" onClick={handleSaveNext} disabled={saving}>
+            {saving ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Saving...
+              </>
+            ) : (
+              'Save & Next'
+            )}
+          </Button>
+          <Button variant="success" onClick={handleNext} disabled={saving}>Next</Button>
         </div>
       </Form>
 

@@ -14,6 +14,18 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Demo credentials
+  const demoCredentials = {
+    superadmin: { email: "superadmin@test.com", password: "Test@123456" },
+    company: { email: "admin@test.com", password: "Test@123456" }
+  };
+
+  const fillDemoCredentials = (type) => {
+    setEmail(demoCredentials[type].email);
+    setPassword(demoCredentials[type].password);
+    toast.info(`Demo ${type} credentials filled!`);
+  };
+
   const handleLogin = async () => {
     if (!email || !password) {
       toast.error("Please enter email and password");
@@ -29,11 +41,11 @@ const Login = () => {
 
       // ✅ Fixed response destructuring to match actual API response
       const { message, data } = response.data;
-      const { user, token } = data;
+      const { user, accessToken } = data; // API returns 'accessToken', not 'token'
 
-      if (token && user && user.id) {
+      if (accessToken && user && user.id) {
         // Save auth data
-        localStorage.setItem("authToken", token);
+        localStorage.setItem("authToken", accessToken);
         localStorage.setItem("CompanyId", user.id.toString()); // Ensure it's a string
         localStorage.setItem("role", user.role);
 
@@ -81,6 +93,40 @@ const Login = () => {
               </h6>
 
               <div className="border-b border-gray-300 mb-4"></div>
+
+              {/* Demo Credentials Display */}
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="text-xs font-semibold text-blue-800 mb-2 flex items-center">
+                  <i className="fas fa-info-circle mr-2"></i>
+                  Demo Credentials
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-700">Super Admin</div>
+                      <div className="text-gray-600">superadmin@test.com / Test@123456</div>
+                    </div>
+                    <button
+                      onClick={() => fillDemoCredentials('superadmin')}
+                      className="ml-2 px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition"
+                    >
+                      Use
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-700">Company Admin</div>
+                      <div className="text-gray-600">admin@test.com / Test@123456</div>
+                    </div>
+                    <button
+                      onClick={() => fillDemoCredentials('company')}
+                      className="ml-2 px-3 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 transition"
+                    >
+                      Use
+                    </button>
+                  </div>
+                </div>
+              </div>
 
               <div className="space-y-4">
                 <input

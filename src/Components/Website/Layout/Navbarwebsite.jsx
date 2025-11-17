@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Container, Nav, Button } from "react-bootstrap";
 import "./Navbar.css";
-import logo from "../../../assets/zirak.jpeg";
+import logo from "../../../assets/Zirak.jpeg";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

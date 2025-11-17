@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import ProfileModal from "./ProfileModal";
 import newlogo from "../assets/newlogozirakbookk.png";
 import "./Sidebar.css";
-import "./header.css";
+import "./Header.css";
 
 const Header = ({ onToggleSidebar }) => {
   const [showProfileModal, setShowProfileModal] = useState(false);

@@ -16,6 +16,8 @@ const PaymentTab = ({
   handleSkip,
   handleSaveDraft,
   handleFinalSubmit,
+  handleSaveNext,
+  saving,
   showAdd,
   showEdit,
   newItem,
@@ -433,9 +435,18 @@ const PaymentTab = ({
       </Row>
 
       <div className="d-flex justify-content-between mt-4 border-top pt-3">
-        <Button variant="secondary" onClick={handleSkip}>Skip</Button>
-        <Button variant="warning" onClick={handleSaveDraft}>Save</Button>
-        <Button variant="primary" onClick={handleFinalSubmit}>Submit</Button>
+        <Button variant="secondary" onClick={handleSkip} disabled={saving}>Skip</Button>
+        <Button variant="warning" onClick={handleSaveDraft} disabled={saving}>Save</Button>
+        <Button variant="primary" onClick={handleSaveNext} disabled={saving}>
+          {saving ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Saving...
+            </>
+          ) : (
+            'Submit'
+          )}
+        </Button>
       </div>
     </Form>
   );

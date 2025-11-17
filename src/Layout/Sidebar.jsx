@@ -149,10 +149,10 @@ const Sidebar = ({ isMobile, onLinkClick }) => {
             icon: "fas fa-key",
             label: "Manage Passwords",
           },
-        ]), 
+        ]),
       ],
 
-      COMPANY: [
+      COMPANY_ADMIN: [
         renderFlatSection("Admin Dashboard", [
           {
             to: "/company/dashboard",

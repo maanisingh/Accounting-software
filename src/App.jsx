@@ -47,7 +47,7 @@ import ContraVoucher from "./Components/Company-Dashboard/Reports/ContraVoucher"
 import PaymnetSupplier from "./Components/Company-Dashboard/Reports/PaymnetSupplier";
 import ReceivedCustomer from "./Components/Company-Dashboard/Reports/ReceivedCustomer";
 import AssetDetails from "./Components/Company-Dashboard/Reports/AssetDetails";
-import Liabilitydetails from "./Components/Company-Dashboard/Reports/liabilitydetails";
+import Liabilitydetails from "./Components/Company-Dashboard/Reports/Liabilitydetails";
 import Salesreport from "./Components/Company-Dashboard/Reports/Salesreport";
 import Purchasereport from "./Components/Company-Dashboard/Reports/Purchasereport";
 

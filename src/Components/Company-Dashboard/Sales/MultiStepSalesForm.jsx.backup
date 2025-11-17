@@ -34,23 +34,6 @@ import InvoiceTab from "./MultiStepSalesForm/InvoiceTab";
 import PaymentTab from "./MultiStepSalesForm/PaymentTab";
 import GetCompanyId from "../../../Api/GetCompanyId";
 import axiosInstance from "../../../Api/axiosInstance";
-import { toast } from "react-toastify";
-import {
-  createSalesOrder,
-  createDeliveryChallan,
-  createSalesReturn,
-  formatSalesDataForAPI
-} from "../../../Api/salesApi";
-import {
-  saveSalesOrder,
-  saveDeliveryChallan,
-  saveInvoice,
-  savePayment,
-  validateSalesOrder,
-  validateDeliveryChallan,
-  validateInvoice,
-  validatePayment
-} from "../../../Api/salesIntegration";
 
 const MultiStepSalesForm = ({ onSubmit, initialData, initialStep }) => {
   const companyId = GetCompanyId();
@@ -156,17 +139,6 @@ const MultiStepSalesForm = ({ onSubmit, initialData, initialStep }) => {
     setShowServiceModal(false);
   };
   const [key, setKey] = useState(initialStep || "quotation");
-
-  // API integration state
-  const [saving, setSaving] = useState(false);
-  const [documentIds, setDocumentIds] = useState({
-    quotationId: null,
-    salesOrderId: null,
-    challanId: null,
-    invoiceId: null,
-    paymentId: null
-  });
-
   const tabsWithItems = [
     "quotation",
     "salesOrder",
@@ -1039,77 +1011,47 @@ const MultiStepSalesForm = ({ onSubmit, initialData, initialStep }) => {
 
   const handleSaveDraft = () => onSubmit(formData, key);
 
-  const handleSaveNext = async () => {
-    // Prevent multiple saves
-    if (saving) return;
+  const handleSaveNext = () => {
+    handleSaveDraft();
 
-    try {
-      setSaving(true);
-
-      // Call onSubmit for backwards compatibility (localStorage)
-      if (onSubmit) {
-        onSubmit(formData, key);
-      }
-
-      // Handle based on current tab
-      if (key === "quotation") {
-        // Quotation already has backend integration in QuotationTab
-        // Just proceed to next tab
-        setKey((prev) => {
-          setFormData((prevData) => ({
-            ...prevData,
-            salesOrder: {
-              ...prevData.salesOrder,
-              quotationNo: prevData.quotation.quotationNo,
-              orderDate: prevData.quotation.quotationDate,
-              customerName: prevData.quotation.billToName,
-              customerAddress: prevData.quotation.billToAddress,
-              customerEmail: prevData.quotation.billToEmail,
-              customerPhone: prevData.quotation.billToPhone,
-              companyName: prevData.quotation.companyName,
-              companyAddress: prevData.quotation.companyAddress,
-              companyEmail: prevData.quotation.companyEmail,
-              companyPhone: prevData.quotation.companyPhone,
-              companyLogo: prevData.quotation.companyLogo,
-              companyDarkLogo: prevData.quotation.companyDarkLogo,
-              companyIcon: prevData.quotation.companyIcon,
-              companyFavicon: prevData.quotation.companyFavicon,
-              items: prevData.quotation.items.map((item) => ({
-                name: item.name,
-                qty: item.qty,
-                rate: item.rate,
-                warehouse: item.warehouse || "",
-                warehouses: item.warehouses || [],
-              })),
-            },
-          }));
-          return "salesOrder";
-        });
-      }
-
-      else if (key === "salesOrder") {
-        // Validate
-        const errors = validateSalesOrder(formData);
-        if (errors.length > 0) {
-          toast.error(errors.join(', '));
-          return;
-        }
-
-        // Save to backend
-        const savedOrder = await saveSalesOrder(formData, documentIds, setDocumentIds);
-
-        // Update form data with response
+    setKey((prev) => {
+      if (prev === "quotation") {
         setFormData((prevData) => ({
           ...prevData,
           salesOrder: {
             ...prevData.salesOrder,
-            id: savedOrder.id,
-            orderNo: savedOrder.orderNumber
+            quotationNo: prevData.quotation.quotationNo,
+            orderDate: prevData.quotation.quotationDate,
+            customerName: prevData.quotation.billToName,
+            customerAddress: prevData.quotation.billToAddress,
+            customerEmail: prevData.quotation.billToEmail,
+            customerPhone: prevData.quotation.billToPhone,
+            companyName: prevData.quotation.companyName,
+            companyAddress: prevData.quotation.companyAddress,
+            companyEmail: prevData.quotation.companyEmail,
+            companyPhone: prevData.quotation.companyPhone,
+            companyLogo: prevData.quotation.companyLogo,
+            companyDarkLogo: prevData.quotation.companyDarkLogo,
+            companyIcon: prevData.quotation.companyIcon,
+            companyFavicon: prevData.quotation.companyFavicon,
+            items: prevData.quotation.items.map((item) => ({
+              name: item.name,
+              qty: item.qty,
+              rate: item.rate,
+              warehouse: item.warehouse || "",
+              warehouses: item.warehouses || [], // Preserve warehouses
+            })),
           },
+        }));
+        return "salesOrder";
+      }
+
+      if (prev === "salesOrder") {
+        setFormData((prevData) => ({
+          ...prevData,
           deliveryChallan: {
             ...prevData.deliveryChallan,
-            salesOrderNo: savedOrder.orderNumber,
-            salesOrderId: savedOrder.id,
+            salesOrderNo: prevData.salesOrder.orderNo,
             challanDate: new Date().toISOString().split("T")[0],
             companyName: prevData.salesOrder.companyName,
             companyAddress: prevData.salesOrder.companyAddress,
@@ -1133,33 +1075,16 @@ const MultiStepSalesForm = ({ onSubmit, initialData, initialStep }) => {
               deliveredQty: item.qty,
               rate: item.rate,
               warehouse: item.warehouse || "",
-              warehouses: item.warehouses || [],
+              warehouses: item.warehouses || [], // Preserve warehouses
             })),
           },
         }));
-
-        setKey("deliveryChallan");
+        return "deliveryChallan";
       }
 
-      else if (key === "deliveryChallan") {
-        // Validate
-        const errors = validateDeliveryChallan(formData);
-        if (errors.length > 0) {
-          toast.error(errors.join(', '));
-          return;
-        }
-
-        // Save to backend
-        const savedChallan = await saveDeliveryChallan(formData, documentIds, setDocumentIds);
-
-        // Update form data
+      if (prev === "deliveryChallan") {
         setFormData((prevData) => ({
           ...prevData,
-          deliveryChallan: {
-            ...prevData.deliveryChallan,
-            id: savedChallan.id,
-            challanNo: savedChallan.challanNumber
-          },
           invoice: {
             ...prevData.invoice,
             orderNo: prevData.salesOrder.orderNo,
@@ -1188,38 +1113,23 @@ const MultiStepSalesForm = ({ onSubmit, initialData, initialStep }) => {
               discount: 0,
               amount: item.rate * item.deliveredQty,
               warehouse: item.warehouse || "",
-              warehouses: item.warehouses || [],
+              warehouses: item.warehouses || [], // Preserve warehouses
             })),
           },
         }));
-
-        setKey("invoice");
+        return "invoice";
       }
 
-      else if (key === "invoice") {
-        // Validate
-        const errors = validateInvoice(formData);
-        if (errors.length > 0) {
-          toast.error(errors.join(', '));
-          return;
-        }
-
-        // Save to backend
-        const savedInvoice = await saveInvoice(formData, documentIds, setDocumentIds);
-
-        // Update form data
+      if (prev === "invoice") {
         setFormData((prevData) => ({
           ...prevData,
-          invoice: {
-            ...prevData.invoice,
-            id: savedInvoice.id,
-            invoiceNo: savedInvoice.invoiceNumber || prevData.invoice.invoiceNo
-          },
           payment: {
             ...prevData.payment,
             invoiceNo: prevData.invoice.invoiceNo,
             paymentDate: new Date().toISOString().split("T")[0],
-            totalAmount: calculateTotalAmount(prevData.invoice.items).toFixed(2),
+            totalAmount: calculateTotalAmount(prevData.invoice.items).toFixed(
+              2
+            ),
             amount: "",
             customerName: prevData.invoice.customerName,
             customerAddress: prevData.invoice.customerAddress,
@@ -1235,34 +1145,11 @@ const MultiStepSalesForm = ({ onSubmit, initialData, initialStep }) => {
             companyFavicon: prevData.invoice.companyFavicon,
           },
         }));
-
-        setKey("payment");
+        return "payment";
       }
 
-      else if (key === "payment") {
-        // Validate
-        const errors = validatePayment(formData);
-        if (errors.length > 0) {
-          toast.error(errors.join(', '));
-          return;
-        }
-
-        // Save to backend
-        const savedPayment = await savePayment(formData, documentIds, setDocumentIds);
-
-        // Success - show completion message
-        toast.success('Sales workflow completed successfully!');
-
-        // Optionally reset form or navigate away
-        // navigate('/company/salesreport');
-      }
-
-    } catch (error) {
-      console.error('Save error:', error);
-      // Error already shown in helper functions
-    } finally {
-      setSaving(false);
-    }
+      return "quotation";
+    });
   };
 
   const handleNext = () => {
@@ -2591,7 +2478,6 @@ const MultiStepSalesForm = ({ onSubmit, initialData, initialStep }) => {
               handleSaveDraft={handleSaveDraft}
               handleSaveNext={handleSaveNext}
               handleNext={handleNext}
-              saving={saving}
               showAdd={showAdd}
               showEdit={showEdit}
               newItem={newItem}
@@ -2626,7 +2512,6 @@ const MultiStepSalesForm = ({ onSubmit, initialData, initialStep }) => {
               handleSaveDraft={handleSaveDraft}
               handleSaveNext={handleSaveNext}
               handleNext={handleNext}
-              saving={saving}
               showAdd={showAdd}
               showEdit={showEdit}
               newItem={newItem}
@@ -2661,7 +2546,6 @@ const MultiStepSalesForm = ({ onSubmit, initialData, initialStep }) => {
               handleSaveDraft={handleSaveDraft}
               handleSaveNext={handleSaveNext}
               handleNext={handleNext}
-              saving={saving}
               showAdd={showAdd}
               showEdit={showEdit}
               newItem={newItem}
@@ -2696,7 +2580,6 @@ const MultiStepSalesForm = ({ onSubmit, initialData, initialStep }) => {
               handleSaveDraft={handleSaveDraft}
               handleSaveNext={handleSaveNext}
               handleNext={handleNext}
-              saving={saving}
               showAdd={showAdd}
               showEdit={showEdit}
               newItem={newItem}
@@ -2729,8 +2612,6 @@ const MultiStepSalesForm = ({ onSubmit, initialData, initialStep }) => {
               handleSkip={handleSkip}
               handleSaveDraft={handleSaveDraft}
               handleFinalSubmit={handleFinalSubmit}
-              handleSaveNext={handleSaveNext}
-              saving={saving}
               showAdd={showAdd}
               showEdit={showEdit}
               newItem={newItem}
