@@ -5,7 +5,10 @@ nixPkgs = ['nodejs_22', 'openssl']
 cmds = ['npm install --legacy-peer-deps']
 
 [phases.build]
-cmds = ['npx prisma generate']
+cmds = [
+  'npx prisma generate',
+  'chmod +x scripts/start.sh'
+]
 
 [start]
-cmd = 'npx prisma migrate deploy && node src/server.js'
+cmd = 'bash scripts/start.sh'
