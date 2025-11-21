@@ -6,6 +6,8 @@
 import express from 'express';
 import authRoutes from './v1/auth.route.js';
 import userRoutes from './v1/user.route.js';
+import vendorRoutes from './v1/vendorRoutes.js';
+import customerRoutes from './v1/customerRoutes.js';
 import inventoryRoutes from './v1/inventoryRoutes.js';
 import purchaseRoutes from './v1/purchaseRoutes.js';
 import salesRoutes from './v1/salesRoutes.js';
@@ -31,6 +33,8 @@ router.get('/health', (req, res) => {
  */
 router.use('/v1/auth', authRoutes);
 router.use('/v1/users', userRoutes);
+router.use('/v1/vendors', vendorRoutes);
+router.use('/v1/customers', customerRoutes);
 router.use('/v1', inventoryRoutes);
 router.use('/v1', purchaseRoutes);
 router.use('/v1', salesRoutes);
@@ -50,6 +54,8 @@ router.get('/', (req, res) => {
       health: '/api/health',
       auth: '/api/v1/auth',
       users: '/api/v1/users',
+      vendors: '/api/v1/vendors',
+      customers: '/api/v1/customers',
       inventory: {
         products: '/api/v1/products',
         brands: '/api/v1/brands',
