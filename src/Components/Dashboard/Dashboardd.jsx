@@ -31,30 +31,19 @@ const Dashboardd = () => {
   const [apiError, setApiError] = useState(false); // Changed from error to apiError
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const response = await axiosInstance.get(`${BaseUrl}superadmindhasboard`);
-        setDashboardData(response.data.data);
-        setApiError(false);
-      } catch (err) {
-        console.error("Error fetching dashboard data:", err);
-        setApiError(true);
-        // Create empty dashboard data structure when API fails
-        setDashboardData({
-          total_companies: 0,
-          total_requests: 0,
-          total_revenue: 0,
-          new_signups: 0,
-          growth: [],
-          signupCompanies: [],
-          revenueTrends: []
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDashboardData();
+    // Initialize with default dashboard data
+    // TODO: Connect to actual dashboard API endpoint when available
+    setDashboardData({
+      total_companies: 0,
+      total_requests: 0,
+      total_revenue: 0,
+      new_signups: 0,
+      growth: [],
+      signupCompanies: [],
+      revenueTrends: []
+    });
+    setApiError(false);
+    setLoading(false);
   }, []);
 
   // Process chart data from API response
