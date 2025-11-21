@@ -61,24 +61,23 @@ const UnitOfMeasure = () => {
     }
   };
 
-  // Fetch Units from API by company ID - using the specific endpoint
+  // Fetch Units - Using default units (backend endpoint not implemented yet)
   const fetchUnits = async () => {
     setUnitsLoading(true);
     try {
-      // ✅ NEW ENDPOINT: /api/unit-details/getUnitDetailsByCompanyId/{company_id}
-      const response = await axiosInstance.get(`${BaseUrl}unit-details/getUnitDetailsByCompanyId/${companyId}`);
-      
-      console.log("API Response:", response.data); // Debug log
-      
-      if (response.data.success) { // ✅ Changed from 'status' to 'success'
-        // The API already filters by company_id, so we can use the data directly
-        setUnits(response.data.data);
-      } else {
-        setError("Failed to fetch units");
-      }
+      // TODO: Implement unit-details endpoint in backend
+      // Using default units for now
+      const defaultUnits = [
+        { id: 1, uom_name: 'Piece', abbreviation: 'pc' },
+        { id: 2, uom_name: 'Box', abbreviation: 'box' },
+        { id: 3, uom_name: 'Kilogram', abbreviation: 'kg' },
+        { id: 4, uom_name: 'Meter', abbreviation: 'm' },
+        { id: 5, uom_name: 'Liter', abbreviation: 'L' }
+      ];
+      setUnits(defaultUnits);
     } catch (err) {
-      console.error("Fetch Units API Error:", err);
-      setError("Failed to fetch units. Please try again.");
+      console.error("Error setting units:", err);
+      setError("Failed to load units.");
     } finally {
       setUnitsLoading(false);
     }

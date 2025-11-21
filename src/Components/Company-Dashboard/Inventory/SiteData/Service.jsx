@@ -78,24 +78,16 @@ function Service() {
     }
   };
 
-  // ✅ UPDATED: Fetch unit options using the new API endpoint
+  // Fetch unit options - Using default units (backend endpoint not implemented yet)
   const fetchUnitOptions = async () => {
     try {
       setUnitsLoading(true);
-      // ✅ Updated endpoint to fetch unit details by company ID
-      const response = await axiosInstance.get(`${BaseUrl}unit-details/getUnitDetailsByCompanyId/${companyId}`);
-      
-      console.log("Unit Details API Response:", response.data); // Debug log
-      
-      if (response.data.success && response.data.data) {
-        // Extract uom_name from each unit object
-        const unitNames = response.data.data.map(unit => unit.uom_name);
-        setUnitOptions(unitNames);
-      }
-    } catch (error) {
-      console.error("Error fetching unit options:", error.response?.data || error.message);
-      // Fallback to default options
+      // TODO: Implement unit-details endpoint in backend
+      // Using default options for now
       setUnitOptions(["piece", "kg", "meter", "liter", "box", "day", "yard", "sq.ft", "cubic meter", "Project"]);
+    } catch (error) {
+      console.error("Error setting unit options:", error);
+      setUnitOptions(["piece", "kg", "meter", "liter", "box"]);
     } finally {
       setUnitsLoading(false);
     }

@@ -94,7 +94,7 @@ function InventoryAdjustment() {
   const fetchWarehouses = async () => {
     if (!companyId) return;
     try {
-      const response = await axiosInstance.get(`warehouses/company/${companyId}`);
+      const response = await axiosInstance.get(`warehouses`);
       if (response.data.success && Array.isArray(response.data.data)) {
         const mapped = response.data.data.map(wh => ({
           id: wh.id,

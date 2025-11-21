@@ -128,7 +128,7 @@
 //   const fetchWarehouses = async () => {
 //     if (!companyId) return [];
 //     try {
-//       const res = await axiosInstance.get(`/warehouses/company/${companyId}`);
+//       const res = await axiosInstance.get(`/warehouses`);
 //       return Array.isArray(res.data?.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
 //     } catch (err) {
 //       console.error('Failed to load warehouses', err);
@@ -1274,7 +1274,7 @@ const PurchaseReturn = () => {
   const fetchWarehouses = async () => {
     if (!companyId) return [];
     try {
-      const res = await axiosInstance.get(`/warehouses/company/${companyId}`);
+      const res = await axiosInstance.get(`/warehouses`);
       return Array.isArray(res.data?.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
     } catch (err) {
       console.error('Failed to load warehouses', err);

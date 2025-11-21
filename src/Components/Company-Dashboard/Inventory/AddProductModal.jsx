@@ -264,12 +264,10 @@ const AddProductModal = ({
     const fetchCategories = async () => {
       setIsLoadingCategories(true);
       try {
-        const response = await axiosInstance.get(
-          `item-categories/company/${companyID}`
-        );
+        const response = await axiosInstance.get(`categories`);
         if (response.data?.success && Array.isArray(response.data.data)) {
           const categoryNames = response.data.data.map(
-            (cat) => cat.item_category_name
+            (cat) => cat.name || cat.item_category_name
           );
           setFetchedCategories(categoryNames);
         } else {
@@ -292,9 +290,7 @@ const AddProductModal = ({
     const fetchWarehouses = async () => {
       setIsLoadingWarehouses(true);
       try {
-        const response = await axiosInstance.get(
-          `warehouses/company/${companyId}`
-        );
+        const response = await axiosInstance.get(`warehouses`);
         if (response.data?.success && Array.isArray(response.data.data)) {
           const filteredWarehouses = response.data.data;
           setWarehouses(filteredWarehouses);
@@ -331,30 +327,31 @@ const AddProductModal = ({
   }, [companyId]);
 
   // Fetch unit details
+  // Note: Unit details endpoint doesn't exist in backend yet, using default values
   useEffect(() => {
     if (!companyId) return;
 
     const fetchUnitDetails = async () => {
       setIsLoadingUnitDetails(true);
       try {
-        const response = await axiosInstance.get(
-          `unit-details/getUnitDetailsByCompanyId/${companyId}`
-        );
-        if (response.data?.success && Array.isArray(response.data.data)) {
-          setUnitDetails(response.data.data);
-          
-          // Set default unit if adding new product and no unit is set
-          if (isAdding && !localNewItem.unitDetailId && response.data.data.length > 0) {
-            setLocalNewItem(prev => ({
-              ...prev,
-              unitDetailId: response.data.data[0].id
-            }));
-          }
-        } else {
-          setUnitDetails([]);
+        // TODO: Implement unit-details endpoint in backend
+        // For now, use default units
+        const defaultUnits = [
+          { id: 1, name: 'Piece', symbol: 'pc' },
+          { id: 2, name: 'Box', symbol: 'box' },
+          { id: 3, name: 'Kilogram', symbol: 'kg' },
+        ];
+        setUnitDetails(defaultUnits);
+
+        // Set default unit if adding new product and no unit is set
+        if (isAdding && !localNewItem.unitDetailId && defaultUnits.length > 0) {
+          setLocalNewItem(prev => ({
+            ...prev,
+            unitDetailId: defaultUnits[0].id
+          }));
         }
       } catch (error) {
-        console.error("Error fetching unit details:", error);
+        console.error("Error setting unit details:", error);
         setUnitDetails([]);
       } finally {
         setIsLoadingUnitDetails(false);
@@ -369,12 +366,10 @@ const AddProductModal = ({
     const updateCategoryId = async () => {
       if (localNewItem.itemCategory && fetchedCategories.length > 0) {
         try {
-          const response = await axiosInstance.get(
-            `item-categories/company/${companyID}`
-          );
+          const response = await axiosInstance.get(`categories`);
           if (response.data?.success && Array.isArray(response.data.data)) {
             const category = response.data.data.find(
-              (cat) => cat.item_category_name === localNewItem.itemCategory
+              (cat) => (cat.name || cat.item_category_name) === localNewItem.itemCategory
             );
             if (category) {
               setLocalNewItem((prev) => ({
@@ -403,16 +398,14 @@ const AddProductModal = ({
     }
     setIsAddingCategory(true);
     try {
-      await axiosInstance.post("item-categories", {
-        company_id: companyId,
-        item_category_name: newCategory.trim(),
+      await axiosInstance.post("categories", {
+        name: newCategory.trim(),
+        description: ""
       });
 
-      const res = await axiosInstance.get(
-        `item-categories/company/${companyID}`
-      );
+      const res = await axiosInstance.get(`categories`);
       if (res.data?.success && Array.isArray(res.data.data)) {
-        const names = res.data.data.map((c) => c.item_category_name);
+        const names = res.data.data.map((c) => c.name || c.item_category_name);
         setFetchedCategories(names);
         setLocalNewItem((prev) => ({
           ...prev,

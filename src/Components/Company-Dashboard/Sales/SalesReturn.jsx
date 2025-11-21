@@ -76,7 +76,7 @@ const SalesReturn = () => {
 
   const fetchWarehouses = async () => {
     try {
-      const res = await axiosInstance.get(`/warehouses/company/${companyId}`);
+      const res = await axiosInstance.get(`/warehouses`);
       const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
       setWarehouses(data);
     } catch (err) {

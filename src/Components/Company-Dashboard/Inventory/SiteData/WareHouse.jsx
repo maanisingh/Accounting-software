@@ -56,7 +56,7 @@ const WareHouse = () => {
       setLoading(true);
       setError(null);
       const response = await axiosInstance.get(
-        `/warehouses/company/${companyId}`
+        `/warehouses`
       );
 
       let warehouseData = [];

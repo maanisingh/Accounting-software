@@ -114,7 +114,7 @@ function StockTransfer() {
     if (!companyId) return;
     setWarehousesLoading(true);
     try {
-      const response = await axios.get(`${BaseUrl}warehouses/company/${companyId}`);
+      const response = await axios.get(`${BaseUrl}warehouses`);
       const isSuccess = response.data?.success || response.data?.status;
       const warehousesData = Array.isArray(response.data?.data) ? response.data.data : [];
 
