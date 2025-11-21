@@ -55,6 +55,19 @@ async function cleanup() {
     });
     console.log(`    ✓ Deleted ${pos.count} purchase orders`);
 
+    // Delete bill items and bills
+    console.log('  → Deleting bill items...');
+    const billItems = await prisma.billItem.deleteMany({
+      where: { bill: { companyId } }
+    });
+    console.log(`    ✓ Deleted ${billItems.count} bill items`);
+
+    console.log('  → Deleting bills...');
+    const bills = await prisma.bill.deleteMany({
+      where: { companyId }
+    });
+    console.log(`    ✓ Deleted ${bills.count} bills`);
+
     console.log('  → Deleting products...');
     const products = await prisma.product.deleteMany({
       where: { companyId }
