@@ -46,10 +46,20 @@ const corsOptions = {
 
     // Check if origin is in the allowed list
     if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+      return callback(null, true);
     }
+
+    // Allow Railway domains (for deployments)
+    if (origin.includes('.railway.app') || origin.includes('.up.railway.app')) {
+      return callback(null, true);
+    }
+
+    // Allow localhost for development
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      return callback(null, true);
+    }
+
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   optionsSuccessStatus: 200,
