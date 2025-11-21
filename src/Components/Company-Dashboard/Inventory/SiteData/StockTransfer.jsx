@@ -63,7 +63,7 @@ function StockTransfer() {
     if (!companyId) return;
     setProductsLoading(true);
     try {
-      const response = await axiosInstance.get(`${BaseUrl}products`);
+      const response = await axiosInstance.get(`/products`);
       const isSuccess = response.data?.success || response.data?.status;
       const productsData = Array.isArray(response.data?.data) ? response.data.data : [];
 
@@ -114,7 +114,7 @@ function StockTransfer() {
     if (!companyId) return;
     setWarehousesLoading(true);
     try {
-      const response = await axios.get(`${BaseUrl}warehouses`);
+      const response = await axios.get(`/warehouses`);
       const isSuccess = response.data?.success || response.data?.status;
       const warehousesData = Array.isArray(response.data?.data) ? response.data.data : [];
 

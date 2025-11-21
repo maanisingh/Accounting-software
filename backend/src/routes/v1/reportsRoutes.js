@@ -181,6 +181,13 @@ router.get('/sales-returns', salesReportController.getSalesReturns);
  */
 router.get('/sales-tax', salesReportController.getSalesTax);
 
+/**
+ * @route GET /api/v1/reports/pos-summary
+ * @desc Get POS Summary Report
+ * @access Private
+ */
+router.get('/pos-summary', salesReportController.getPOSSummary);
+
 // ==================== PURCHASE REPORTS (8 endpoints) ====================
 
 /**
@@ -254,6 +261,13 @@ router.get('/inventory-summary', inventoryReportController.getInventorySummary);
  * @access Private
  */
 router.get('/inventory-valuation', inventoryReportController.getInventoryValuation);
+
+/**
+ * @route GET /api/v1/reports/stock-valuation
+ * @desc Get Stock Valuation (alias for inventory-valuation)
+ * @access Private
+ */
+router.get('/stock-valuation', inventoryReportController.getInventoryValuation);
 
 /**
  * @route GET /api/v1/reports/inventory-movement

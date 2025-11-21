@@ -146,7 +146,7 @@ const PlanPricing = () => {
           throw new Error("Base URL is not configured.");
         }
 
-        const response = await axios.get(`${BaseUrl}plans`);
+        const response = await axios.get(`/plans`);
 
         if (response.data && Array.isArray(response.data.data)) {
           setPlans(response.data.data);
@@ -222,7 +222,7 @@ const PlanPricing = () => {
       });
 
       if (result.isConfirmed) {
-        await axios.delete(`${BaseUrl}plans/${planId}`);
+        await axios.delete(`/plans/${planId}`);
         setPlans(plans.filter(p => p.id !== planId));
         if (currentPlans.length === 1 && currentPage > 1) setCurrentPage(currentPage - 1);
         Swal.fire("Deleted!", "The plan has been deleted.", "success");

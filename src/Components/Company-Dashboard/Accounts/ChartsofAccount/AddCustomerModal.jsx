@@ -54,7 +54,7 @@ const AddCustomerModal = ({ show, onHide, onSave, customerFormData, setCustomerF
       }
 
       // Make API call
-      const response = await axiosInstance.post(`${BaseUrl}vendorCustomer`, formData, {
+      const response = await axiosInstance.post(`/vendorCustomer`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

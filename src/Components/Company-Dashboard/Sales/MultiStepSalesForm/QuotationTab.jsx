@@ -66,7 +66,7 @@ const QuotationTab = ({
 
     const fetchCustomers = async () => {
       try {
-        const response = await axiosInstance.get(`${BaseUrl}vendorCustomer/company/${company_id}?type=customer`);
+        const response = await axiosInstance.get(`/vendorCustomer/company/${company_id}?type=customer`);
         if (response.data.success) {
           setCustomerList(response.data.data);
           setFilteredCustomerList(response.data.data);
@@ -83,7 +83,7 @@ const QuotationTab = ({
     // Inside the fetchCompanies function, update the state assignment:
     const fetchCompanies = async () => {
       try {
-        const res = await axiosInstance.get(`${BaseUrl}auth/Company`);
+        const res = await axiosInstance.get(`/auth/Company`);
         const companies = res?.data?.data || [];
 
         // Try to find company by id from local storage; fall back to first company
@@ -163,7 +163,7 @@ const QuotationTab = ({
     // Refresh customer list after adding/editing
     const fetchCustomers = async () => {
       try {
-        const response = await axiosInstance.get(`${BaseUrl}vendorCustomer/company/${company_id}?type=customer`);
+        const response = await axiosInstance.get(`/vendorCustomer/company/${company_id}?type=customer`);
         if (response.data.success) {
           setCustomerList(response.data.data);
         }

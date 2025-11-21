@@ -117,7 +117,7 @@
 //   const fetchVendors = async () => {
 //     if (!companyId) return [];
 //     try {
-//       const res = await axiosInstance.get(`/vendorCustomer/company/${companyId}`, { params: { type: 'vender' } });
+//       const res = await axiosInstance.get(`/vendorCustomer/company/${companyId}`, { params: { type: 'vendor' } });
 //       return Array.isArray(res.data?.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
 //     } catch (err) {
 //       console.error('Failed to load vendors', err);
@@ -1263,7 +1263,7 @@ const PurchaseReturn = () => {
   const fetchVendors = async () => {
     if (!companyId) return [];
     try {
-      const res = await axiosInstance.get(`/vendorCustomer/company/${companyId}`, { params: { type: 'vender' } });
+      const res = await axiosInstance.get(`/vendorCustomer/company/${companyId}`, { params: { type: 'vendor' } });
       return Array.isArray(res.data?.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
     } catch (err) {
       console.error('Failed to load vendors', err);

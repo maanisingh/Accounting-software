@@ -59,13 +59,27 @@ if (redis) {
 
   // Graceful shutdown
   process.on('SIGINT', async () => {
-    await redis.quit();
-    logger.info('Redis disconnected');
+    try {
+      if (redis && redis.status === 'ready') {
+        await redis.quit();
+        logger.info('Redis disconnected gracefully');
+      }
+    } catch (error) {
+      // Ignore errors during shutdown - Redis might already be closed
+      logger.debug('Redis shutdown cleanup completed');
+    }
   });
 
   process.on('SIGTERM', async () => {
-    await redis.quit();
-    logger.info('Redis disconnected');
+    try {
+      if (redis && redis.status === 'ready') {
+        await redis.quit();
+        logger.info('Redis disconnected gracefully');
+      }
+    } catch (error) {
+      // Ignore errors during shutdown - Redis might already be closed
+      logger.debug('Redis shutdown cleanup completed');
+    }
   });
 }
 

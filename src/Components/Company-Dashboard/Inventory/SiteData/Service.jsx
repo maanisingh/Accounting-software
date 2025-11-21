@@ -46,7 +46,7 @@ function Service() {
     try {
       setServicesLoading(true);
       // ✅ Updated endpoint to include company_id
-      const response = await axiosInstance.get(`${BaseUrl}services/company/${companyId}`);
+      const response = await axiosInstance.get(`/services/company/${companyId}`);
       
       console.log("Services API Response:", response.data); // Debug log
       
@@ -146,13 +146,13 @@ function Service() {
       };
 
       if (editMode && form.id) {
-        await axiosInstance.put(`${BaseUrl}services/${form.id}`, payload);
+        await axiosInstance.put(`/services/${form.id}`, payload);
         toast.success("Service updated successfully!", {
           toastId: 'service-update-success',
           autoClose: 3000
         });
       } else {
-        await axiosInstance.post(`${BaseUrl}services`, payload);
+        await axiosInstance.post(`/services`, payload);
         toast.success("Service added successfully!", {
           toastId: 'service-add-success',
           autoClose: 3000
@@ -203,7 +203,7 @@ function Service() {
   const handleDeleteConfirm = async () => {
     try {
       setLoading(true);
-      await axiosInstance.delete(`${BaseUrl}services/${deleteId}`);
+      await axiosInstance.delete(`/services/${deleteId}`);
       toast.success("Service deleted successfully!", {
         toastId: 'service-delete-success',
         autoClose: 3000

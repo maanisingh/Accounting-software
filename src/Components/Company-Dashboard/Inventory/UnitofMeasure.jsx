@@ -45,7 +45,7 @@ const UnitOfMeasure = () => {
   const fetchUOMs = async () => {
     setUomLoading(true);
     try {
-      const response = await axiosInstance.get(`${BaseUrl}uoms`);
+      const response = await axiosInstance.get(`/uoms`);
       if (response.data.success) { // ✅ Changed from 'status' to 'success'
         // Extract unique unit names from the response data
         const uniqueUoms = [...new Set(response.data.data.map(item => item.unit_name))];
@@ -112,7 +112,7 @@ const UnitOfMeasure = () => {
     
     try {
       // Find the UOM ID from the selected unit name
-      const uomResponse = await axiosInstance.get(`${BaseUrl}uoms`);
+      const uomResponse = await axiosInstance.get(`/uoms`);
       let uomId = null;
       
       if (uomResponse.data.success) { // ✅ Changed from 'status' to 'success'
@@ -130,7 +130,7 @@ const UnitOfMeasure = () => {
 
       if (editId) {
         // Update existing unit
-        const response = await axiosInstance.put(`${BaseUrl}unit-details/${editId}`, unitData);
+        const response = await axiosInstance.put(`/unit-details/${editId}`, unitData);
         if (response.data.success) { // ✅ Changed from 'status' to 'success'
           setUnits(units.map(u => u.id === editId ? { ...u, ...unitData, uom_name: unitName } : u)); // ✅ Changed from 'unit_name' to 'uom_name'
           toast.success("Unit updated successfully!", {
@@ -140,7 +140,7 @@ const UnitOfMeasure = () => {
         }
       } else {
         // Create new unit
-        const response = await axiosInstance.post(`${BaseUrl}unit-details`, unitData);
+        const response = await axiosInstance.post(`/unit-details`, unitData);
         if (response.data.success) { // ✅ Changed from 'status' to 'success'
           setUnits([...units, { ...response.data.data, uom_name: unitName }]); // ✅ Changed from 'unit_name' to 'uom_name'
           toast.success("Unit created successfully!", {
@@ -175,7 +175,7 @@ const UnitOfMeasure = () => {
     setLoading(true);
     
     try {
-      const response = await axiosInstance.delete(`${BaseUrl}unit-details/${deleteId}`, {
+      const response = await axiosInstance.delete(`/unit-details/${deleteId}`, {
         data: { company_id: companyId }
       });
       if (response.data.success) { // ✅ Changed from 'status' to 'success'
@@ -222,7 +222,7 @@ const UnitOfMeasure = () => {
         setLoading(true);
         const promises = data.map(async (item) => {
           // Find UOM ID for the unit name
-          const uomResponse = await axiosInstance.get(`${BaseUrl}uoms`);
+          const uomResponse = await axiosInstance.get(`/uoms`);
           let uomId = null;
           
           if (uomResponse.data.success) { // ✅ Changed from 'status' to 'success'
@@ -237,7 +237,7 @@ const UnitOfMeasure = () => {
             uom_id: uomId,
             weight_per_unit: item["Weight per Unit"] || "",
           };
-          return axiosInstance.post(`${BaseUrl}unit-details`, newUnit);
+          return axiosInstance.post(`/unit-details`, newUnit);
         });
         
         await Promise.all(promises);
@@ -317,7 +317,7 @@ const UnitOfMeasure = () => {
     setError("");
 
     try {
-      const response = await axiosInstance.post(`${BaseUrl}uoms`, {
+      const response = await axiosInstance.post(`/uoms`, {
         company_id: companyId,
         unit_name: uomName,
       });
@@ -363,7 +363,7 @@ const UnitOfMeasure = () => {
 
     try {
       // Find the UOM ID from the selected unit name
-      const uomResponse = await axiosInstance.get(`${BaseUrl}uoms`);
+      const uomResponse = await axiosInstance.get(`/uoms`);
       if (uomResponse.data.success) { // ✅ Changed from 'status' to 'success'
         const selectedUomData = uomResponse.data.data.find(item => item.unit_name === selectedUnit);
         
@@ -375,7 +375,7 @@ const UnitOfMeasure = () => {
           return;
         }
 
-        const response = await axiosInstance.post(`${BaseUrl}unit-details`, {
+        const response = await axiosInstance.post(`/unit-details`, {
           company_id: companyId,
           uom_id: selectedUomData.id,
           weight_per_unit: weightPerUnit

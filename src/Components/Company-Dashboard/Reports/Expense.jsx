@@ -71,7 +71,7 @@ const Expense = () => {
   const fetchAccounts = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${BaseUrl}accounts`);
+      const response = await fetch(`/accounts`);
       const result = await response.json();
 
       // ✅ Change this line:
@@ -92,7 +92,7 @@ const Expense = () => {
   const fetchVendors = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${BaseUrl}vendors`);
+      const response = await fetch(`/vendors`);
       const result = await response.json();
       console.log("Fetched vendorsfffffffffff:", result);
 
@@ -113,7 +113,7 @@ const Expense = () => {
   const fetchExpenseVouchers = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${BaseUrl}expensevoucher/company/${companyId}`);
+      const response = await fetch(`/expensevoucher/company/${companyId}`);
       const result = await response.json();
 
       if (result.status) { // Changed from result.success to result.status
@@ -259,7 +259,7 @@ const Expense = () => {
     };
 
     try {
-      const response = await fetch(`${BaseUrl}expensevoucher`, {
+      const response = await fetch(`/expensevoucher`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -308,7 +308,7 @@ const Expense = () => {
     };
 
     try {
-      const response = await fetch(`${BaseUrl}expensevoucher/${editExpense.id}`, {
+      const response = await fetch(`/expensevoucher/${editExpense.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -342,7 +342,7 @@ const Expense = () => {
       setSubmitting(true);
 
       try {
-        const response = await fetch(`${BaseUrl}expensevoucher/${deleteExpense.id}`, {
+        const response = await fetch(`/expensevoucher/${deleteExpense.id}`, {
           method: 'DELETE',
         });
 

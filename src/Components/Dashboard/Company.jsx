@@ -81,7 +81,7 @@ const Company = () => {
   // Fetch companies data
   const fetchCompanies = async () => {
     try {
-      const response = await axios.get(`${BaseUrl}auth/Company`);
+      const response = await axios.get(`/auth/Company`);
       setCompanies(response.data.data || []); // Ensure it's always an array
       setApiError(false);
     } catch (err) {
@@ -102,7 +102,7 @@ const Company = () => {
   useEffect(() => {
     const fetchPlans = async () => {
       try {
-        const response = await axios.get(`${BaseUrl}plans`);
+        const response = await axios.get(`/plans`);
         // The API returns plans in response.data.data as an array
         const plansData = response.data.data || [];
         setPlans(Array.isArray(plansData) ? plansData : []);
@@ -128,7 +128,7 @@ const Company = () => {
 
       try {
         const response = await axios.get(
-          `${BaseUrl}companyusers/getCompanyUsersByCompanyId/${company.id}`
+          `/companyusers/getCompanyUsersByCompanyId/${company.id}`
         );
         setCompanyUsers(response.data.data || []);
       } catch (err) {
@@ -220,7 +220,7 @@ const Company = () => {
 
     try {
       // Make API call to delete the company
-      await axios.delete(`${BaseUrl}auth/Company/${companyToDelete.id}`);
+      await axios.delete(`/auth/Company/${companyToDelete.id}`);
 
       // Remove the company from state
       const updatedCompanies = [...companies];
@@ -274,7 +274,7 @@ const Company = () => {
       }
 
       // Make API call
-      await axios.put(`${BaseUrl}auth/Company/${editCompany.id}`, formData, {
+      await axios.put(`/auth/Company/${editCompany.id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -355,7 +355,7 @@ const Company = () => {
       }
 
       // Make API call
-      const response = await axios.post(`${BaseUrl}auth/Company`, formData, {
+      const response = await axios.post(`/auth/Company`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

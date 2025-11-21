@@ -1,206 +1,124 @@
 /**
  * Purchase Report Controller
- * Handles HTTP requests for purchase reports
  */
 
-import * as purchaseReportService from '../services/purchaseReportService.js';
-import ApiError from '../utils/ApiError.js';
-import logger from '../config/logger.js';
+import { PrismaClient } from '@prisma/client';
+import asyncHandler from '../utils/asyncHandler.js';
+import ApiResponse from '../utils/ApiResponse.js';
 
-/**
- * Get Purchases Summary
- * @route GET /api/v1/reports/purchases-summary
- */
-export const getPurchasesSummary = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {
-      period: req.query.period,
-      startDate: req.query.startDate,
-      endDate: req.query.endDate
-    };
+const prisma = new PrismaClient();
 
-    const report = await purchaseReportService.getPurchasesSummary(companyId, filters);
+// GET /api/v1/reports/purchases-summary
+export const getPurchasesSummary = asyncHandler(async (req, res) => {
+  const { companyId, startDate, endDate, page = 1, limit = 50 } = req.query;
 
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getPurchasesSummary controller:', error);
-    next(error);
+  const where = {
+    companyId: companyId || req.user.companyId
+  };
+
+  if (startDate && endDate) {
+    where.orderDate = { gte: new Date(startDate), lte: new Date(endDate) };
   }
-};
 
-/**
- * Get Detailed Purchases
- * @route GET /api/v1/reports/purchases-detailed
- */
-export const getDetailedPurchases = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {
-      period: req.query.period,
-      startDate: req.query.startDate,
-      endDate: req.query.endDate,
-      page: req.query.page,
-      limit: req.query.limit
-    };
+  const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    const report = await purchaseReportService.getDetailedPurchases(companyId, filters);
+  const [orders, total] = await Promise.all([
+    prisma.purchaseOrder.findMany({
+      where,
+      include: {
+        vendor: { select: { id: true, name: true, email: true } },
+        items: {
+          include: { product: { select: { id: true, name: true, sku: true } } }
+        }
+      },
+      skip,
+      take: parseInt(limit),
+      orderBy: { orderDate: 'desc' }
+    }),
+    prisma.purchaseOrder.count({ where })
+  ]);
 
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getDetailedPurchases controller:', error);
-    next(error);
+  const summary = {
+    totalOrders: total,
+    totalAmount: orders.reduce((sum, order) => sum + (parseFloat(order.total) || 0), 0),
+    totalTax: orders.reduce((sum, order) => sum + (parseFloat(order.taxAmount) || 0), 0)
+  };
+
+  ApiResponse.success({
+    summary,
+    orders,
+    pagination: { page: parseInt(page), limit: parseInt(limit), total, pages: Math.ceil(total / parseInt(limit)) }
+  }, 'Purchase summary retrieved successfully').send(res);
+});
+
+// GET /api/v1/reports/purchases-detailed
+export const getDetailedPurchases = asyncHandler(async (req, res) => {
+  const { companyId, startDate, endDate, vendorId, page = 1, limit = 50 } = req.query;
+
+  const where = {
+    companyId: companyId || req.user.companyId
+  };
+
+  if (vendorId) where.vendorId = vendorId;
+  if (startDate && endDate) {
+    where.orderDate = { gte: new Date(startDate), lte: new Date(endDate) };
   }
-};
 
-/**
- * Get Purchases by Vendor
- * @route GET /api/v1/reports/purchases-by-vendor
- */
-export const getPurchasesByVendor = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {
-      period: req.query.period,
-      startDate: req.query.startDate,
-      endDate: req.query.endDate
-    };
+  const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    const report = await purchaseReportService.getPurchasesByVendor(companyId, filters);
+  const [orders, total] = await Promise.all([
+    prisma.purchaseOrder.findMany({
+      where,
+      include: {
+        vendor: { select: { id: true, name: true, email: true, phone: true } },
+        items: { include: { product: { select: { id: true, name: true, sku: true } } } }
+      },
+      skip,
+      take: parseInt(limit),
+      orderBy: { orderDate: 'desc' }
+    }),
+    prisma.purchaseOrder.count({ where })
+  ]);
 
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getPurchasesByVendor controller:', error);
-    next(error);
-  }
-};
+  ApiResponse.success({
+    data: orders,
+    pagination: { page: parseInt(page), limit: parseInt(limit), total, pages: Math.ceil(total / parseInt(limit)) },
+    count: orders.length
+  }, 'Detailed purchase report retrieved successfully').send(res);
+});
 
-/**
- * Get Purchases by Product
- * @route GET /api/v1/reports/purchases-by-product
- */
-export const getPurchasesByProduct = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {
-      period: req.query.period,
-      startDate: req.query.startDate,
-      endDate: req.query.endDate
-    };
+// Stub implementations for other endpoints
+export const getPurchasesByVendor = asyncHandler(async (req, res) => {
+  ApiResponse.success({ data: [], message: 'Not implemented yet' }).send(res);
+});
 
-    const report = await purchaseReportService.getPurchasesByProduct(companyId, filters);
+export const getPurchasesByProduct = asyncHandler(async (req, res) => {
+  ApiResponse.success({ data: [], message: 'Not implemented yet' }).send(res);
+});
 
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getPurchasesByProduct controller:', error);
-    next(error);
-  }
-};
+export const getPendingPurchaseOrders = asyncHandler(async (req, res) => {
+  ApiResponse.success({ data: [], message: 'Not implemented yet' }).send(res);
+});
 
-/**
- * Get Pending Purchase Orders
- * @route GET /api/v1/reports/purchases-pending
- */
-export const getPendingPurchaseOrders = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {};
+export const getPurchaseReturns = asyncHandler(async (req, res) => {
+  ApiResponse.success({ data: [], message: 'Not implemented yet' }).send(res);
+});
 
-    const report = await purchaseReportService.getPendingPurchaseOrders(companyId, filters);
+export const getPurchaseTax = asyncHandler(async (req, res) => {
+  ApiResponse.success({ data: [], message: 'Not implemented yet' }).send(res);
+});
 
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getPendingPurchaseOrders controller:', error);
-    next(error);
-  }
-};
+export const getVendorPayments = asyncHandler(async (req, res) => {
+  ApiResponse.success({ data: [], message: 'Not implemented yet' }).send(res);
+});
 
-/**
- * Get Purchase Returns
- * @route GET /api/v1/reports/purchases-returns
- */
-export const getPurchaseReturns = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {
-      period: req.query.period,
-      startDate: req.query.startDate,
-      endDate: req.query.endDate
-    };
-
-    const report = await purchaseReportService.getPurchaseReturns(companyId, filters);
-
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getPurchaseReturns controller:', error);
-    next(error);
-  }
-};
-
-/**
- * Get Purchase Tax Report
- * @route GET /api/v1/reports/purchases-tax
- */
-export const getPurchaseTax = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {
-      period: req.query.period,
-      startDate: req.query.startDate,
-      endDate: req.query.endDate
-    };
-
-    const report = await purchaseReportService.getPurchaseTax(companyId, filters);
-
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getPurchaseTax controller:', error);
-    next(error);
-  }
-};
-
-/**
- * Get Vendor Payments History
- * @route GET /api/v1/reports/vendor-payments
- */
-export const getVendorPayments = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {
-      period: req.query.period,
-      startDate: req.query.startDate,
-      endDate: req.query.endDate
-    };
-
-    const report = await purchaseReportService.getVendorPayments(companyId, filters);
-
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getVendorPayments controller:', error);
-    next(error);
-  }
+export default {
+  getPurchasesSummary,
+  getDetailedPurchases,
+  getPurchasesByVendor,
+  getPurchasesByProduct,
+  getPendingPurchaseOrders,
+  getPurchaseReturns,
+  getPurchaseTax,
+  getVendorPayments
 };

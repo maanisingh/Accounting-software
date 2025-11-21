@@ -1,4 +1,14 @@
 {
-  "projectId": "0836917a-c662-433c-9224-26815edee4e4",
-  "serviceId": "a47638f4-7ddd-4588-8bfb-a01081af2d0d"
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "npm install && npx prisma generate"
+  },
+  "deploy": {
+    "startCommand": "npx prisma migrate deploy && node src/server.js",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10,
+    "healthcheckPath": "/api/v1/health",
+    "healthcheckTimeout": 100
+  }
 }

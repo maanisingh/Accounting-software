@@ -1,0 +1,200 @@
+config:
+  target: "http://localhost:8020"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm up"
+    - duration: 120
+      arrivalRate: 10
+      name: "Sustained load"
+    - duration: 60
+      arrivalRate: 20
+      name: "Peak load"
+  processor: "./artillery-processor.js"
+  variables:
+    testEmail: "admin@zirakbook.com"
+    testPassword: "Admin123"
+
+scenarios:
+  # ============================================================================
+  # Authentication & User Flow
+  # ============================================================================
+  - name: "Authentication Flow"
+    weight: 20
+    flow:
+      - post:
+          url: "/api/v1/auth/login"
+          json:
+            email: "{{ testEmail }}"
+            password: "{{ testPassword }}"
+          capture:
+            - json: "$.data.tokens.accessToken"
+              as: "authToken"
+            - json: "$.data.user.companyId"
+              as: "companyId"
+      - get:
+          url: "/api/v1/auth/me"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/v1/auth/company"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+  # ============================================================================
+  # Customer Management Flow
+  # ============================================================================
+  - name: "Customer Operations"
+    weight: 15
+    flow:
+      - post:
+          url: "/api/v1/auth/login"
+          json:
+            email: "{{ testEmail }}"
+            password: "{{ testPassword }}"
+          capture:
+            - json: "$.data.tokens.accessToken"
+              as: "authToken"
+            - json: "$.data.user.companyId"
+              as: "companyId"
+      - get:
+          url: "/api/v1/customers?companyId={{ companyId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - post:
+          url: "/api/v1/customers"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            companyId: "{{ companyId }}"
+            name: "Load Test Customer {{ $randomNumber }}"
+            email: "customer{{ $randomNumber }}@loadtest.com"
+            phone: "+123456{{ $randomNumber }}"
+            address: "123 Test St"
+            city: "Test City"
+            country: "Test Country"
+            postalCode: "12345"
+
+  # ============================================================================
+  # Product & Inventory Flow
+  # ============================================================================
+  - name: "Product Operations"
+    weight: 15
+    flow:
+      - post:
+          url: "/api/v1/auth/login"
+          json:
+            email: "{{ testEmail }}"
+            password: "{{ testPassword }}"
+          capture:
+            - json: "$.data.tokens.accessToken"
+              as: "authToken"
+            - json: "$.data.user.companyId"
+              as: "companyId"
+      - get:
+          url: "/api/v1/products?companyId={{ companyId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/v1/brands?companyId={{ companyId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/v1/categories?companyId={{ companyId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/v1/stock?companyId={{ companyId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+  # ============================================================================
+  # Reports Flow (Heavy Read Operations)
+  # ============================================================================
+  - name: "Financial Reports"
+    weight: 25
+    flow:
+      - post:
+          url: "/api/v1/auth/login"
+          json:
+            email: "{{ testEmail }}"
+            password: "{{ testPassword }}"
+          capture:
+            - json: "$.data.tokens.accessToken"
+              as: "authToken"
+            - json: "$.data.user.companyId"
+              as: "companyId"
+      - get:
+          url: "/api/v1/reports/balance-sheet?companyId={{ companyId }}&startDate=2024-01-01&endDate=2024-12-31"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/v1/reports/profit-loss?companyId={{ companyId }}&startDate=2024-01-01&endDate=2024-12-31"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/v1/reports/trial-balance?companyId={{ companyId }}&startDate=2024-01-01&endDate=2024-12-31"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/v1/reports/inventory-summary?companyId={{ companyId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+  # ============================================================================
+  # Sales Cycle Flow
+  # ============================================================================
+  - name: "Sales Operations"
+    weight: 15
+    flow:
+      - post:
+          url: "/api/v1/auth/login"
+          json:
+            email: "{{ testEmail }}"
+            password: "{{ testPassword }}"
+          capture:
+            - json: "$.data.tokens.accessToken"
+              as: "authToken"
+            - json: "$.data.user.companyId"
+              as: "companyId"
+      - get:
+          url: "/api/v1/sales-quotations?companyId={{ companyId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/v1/sales-orders?companyId={{ companyId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/v1/invoices?companyId={{ companyId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+  # ============================================================================
+  # Purchase Cycle Flow
+  # ============================================================================
+  - name: "Purchase Operations"
+    weight: 10
+    flow:
+      - post:
+          url: "/api/v1/auth/login"
+          json:
+            email: "{{ testEmail }}"
+            password: "{{ testPassword }}"
+          capture:
+            - json: "$.data.tokens.accessToken"
+              as: "authToken"
+            - json: "$.data.user.companyId"
+              as: "companyId"
+      - get:
+          url: "/api/v1/purchase-quotations?companyId={{ companyId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/v1/purchase-orders?companyId={{ companyId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/v1/bills?companyId={{ companyId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"

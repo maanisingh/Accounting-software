@@ -85,7 +85,7 @@ const RolesPermissions = () => {
       return;
     }
     try {
-      const response = await axios.get(`${BaseUrl}user-roles?company_id=${companyId}`);
+      const response = await axios.get(`/user-roles?company_id=${companyId}`);
       if (response.data?.success && Array.isArray(response.data.data)) {
         const mappedRoles = response.data.data.map(role => {
           let generalPerms = [];
@@ -153,7 +153,7 @@ const RolesPermissions = () => {
 
     try {
       // ✅ Send STRING payload as per your backend requirement
-      const response = await axios.patch(`${BaseUrl}user-roles/${roleId}/status`, {
+      const response = await axios.patch(`/user-roles/${roleId}/status`, {
         company_id: companyId,
         status: newStatus // ✅ "Active" or "Inactive" (string)
       });
@@ -218,7 +218,7 @@ const RolesPermissions = () => {
         });
       };
       const permissionsPayload = buildModulePermissionsArray(form.modulePermissions || {});
-      const response = await axios.post(`${BaseUrl}user-roles`, {
+      const response = await axios.post(`/user-roles`, {
         company_id: companyId,
         role_name: form.name,
         general_permissions: Array.isArray(form.permissions) ? form.permissions.map(p => String(p).toLowerCase()) : [],
@@ -272,7 +272,7 @@ const RolesPermissions = () => {
         });
       };
       const permissionsPayload = buildModulePermissionsArray(form.modulePermissions || {});
-      const response = await axios.put(`${BaseUrl}user-roles/${selected.id}`, {
+      const response = await axios.put(`/user-roles/${selected.id}`, {
         company_id: companyId,
         role_name: form.name,
         general_permissions: Array.isArray(form.permissions) ? form.permissions.map(p => String(p).toLowerCase()) : [],
@@ -304,7 +304,7 @@ const RolesPermissions = () => {
 
   const handleDeleteConfirm = async () => {
     try {
-      const response = await axios.delete(`${BaseUrl}user-roles/${selected.id}`, {
+      const response = await axios.delete(`/user-roles/${selected.id}`, {
         params: { company_id: companyId }
       });
       if (response.data && response.status) {
@@ -404,7 +404,7 @@ const RolesPermissions = () => {
     setIsAddingType(true);
     setTypeError("");
     try {
-      const response = await axios.post(`${BaseUrl}roletype`, {
+      const response = await axios.post(`/roletype`, {
         type_name: newRoleType,
         company_id: companyId
       });

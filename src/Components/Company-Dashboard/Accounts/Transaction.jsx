@@ -135,7 +135,7 @@ const Transaction = () => {
 
       // ✅ Fetch customers
       const customerResponse = await axiosInstance.get(`/customers`);
-      // ✅ Fetch vendors — with CORRECT spelling: "vendor", NOT "vender"
+      // ✅ Fetch vendors — with CORRECT spelling: "vendor", NOT "vendor"
       const vendorResponse = await axiosInstance.get(`/vendors`);
 
       console.log("Customers API Response:", customerResponse.data);
@@ -172,7 +172,7 @@ const Transaction = () => {
 
     try {
       setLoading(true);
-      const response = await axiosInstance.get(`/transactions`);
+      const response = await axiosInstance.get(`/journal-entries`);
 
       if (response.data.success) {
         let rawData = response.data.data;
@@ -351,7 +351,7 @@ const Transaction = () => {
         note: form.note
       };
 
-      const response = await axiosInstance.post('/transactions', payload);
+      const response = await axiosInstance.post('/journal-entries', payload);
 
       if (response.data.success) {
         await refetchTransactions();
@@ -422,7 +422,7 @@ const Transaction = () => {
         note: form.note
       };
 
-      const response = await axiosInstance.put(`/transactions/${txnId}`, payload);
+      const response = await axiosInstance.put(`/journal-entries/${txnId}`, payload);
 
       if (response.data.success) {
         toast.success("Transaction updated successfully!");
@@ -458,7 +458,7 @@ const Transaction = () => {
     if (!window.confirm("Are you sure you want to delete this transaction?")) return;
 
     try {
-      const response = await axiosInstance.delete(`/transactions/${txnId}`);
+      const response = await axiosInstance.delete(`/journal-entries/${txnId}`);
       if (response.data.success) {
         toast.success("Transaction deleted successfully!");
         await refetchTransactions();

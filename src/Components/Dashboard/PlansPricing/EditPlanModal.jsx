@@ -191,7 +191,7 @@ const EditPlanModal = ({ show, handleClose, plan, handleSave }) => {
       };
       
       const response = await axios.put(
-        `${BaseUrl}plans/${formData.id}`, 
+        `/plans/${formData.id}`, 
         payload
       );
       

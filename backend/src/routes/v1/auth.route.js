@@ -45,6 +45,17 @@ router.post(
 );
 
 /**
+ * @route   POST /api/v1/auth/refresh
+ * @desc    Refresh access token (alias for backward compatibility)
+ * @access  Public
+ */
+router.post(
+  '/refresh',
+  validateBody(authValidation.refreshTokenSchema),
+  authController.refreshToken
+);
+
+/**
  * @route   POST /api/v1/auth/logout
  * @desc    Logout user
  * @access  Private
@@ -87,6 +98,28 @@ router.get(
   '/verify',
   authenticate,
   authController.verifyToken
+);
+
+/**
+ * @route   GET /api/v1/auth/Company
+ * @desc    Get company information for logged in user
+ * @access  Private
+ */
+router.get(
+  '/Company',
+  authenticate,
+  authController.getCompany
+);
+
+/**
+ * @route   GET /api/v1/auth/company
+ * @desc    Get company information for logged in user (alias)
+ * @access  Private
+ */
+router.get(
+  '/company',
+  authenticate,
+  authController.getCompany
 );
 
 export default router;

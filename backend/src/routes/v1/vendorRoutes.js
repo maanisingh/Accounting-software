@@ -37,6 +37,28 @@ router.get(
 );
 
 /**
+ * @route   GET /api/v1/vendors/getVendorsByCompany/:id
+ * @desc    Get vendors by company ID (alias for backward compatibility)
+ * @access  Private
+ * @note    MUST be before /:id route
+ */
+router.get(
+  '/getVendorsByCompany/:id',
+  vendorController.getVendors
+);
+
+/**
+ * @route   GET /api/v1/vendors/company/:id
+ * @desc    Get vendors by company ID
+ * @access  Private
+ * @note    MUST be before /:id route
+ */
+router.get(
+  '/company/:id',
+  vendorController.getVendors
+);
+
+/**
  * @route   GET /api/v1/vendors/:id
  * @desc    Get vendor by ID
  * @access  Private

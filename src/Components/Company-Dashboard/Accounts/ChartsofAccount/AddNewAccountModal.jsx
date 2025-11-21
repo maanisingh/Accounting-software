@@ -79,7 +79,7 @@ const AddNewAccountModal = ({
     try {
       setLoadingSubgroups(true);
       setAccountError('');
-      const response = await axiosInstance.get(`${BaseUrl}accounts/types`);
+      const response = await axiosInstance.get('/accounts/types');
       console.log("Subgroups response:", response.data);
       // Updated to handle the actual response structure
       if (response.data.success) {
@@ -100,7 +100,7 @@ const AddNewAccountModal = ({
     try {
       setLoadingSubOfSubgroups(true);
       setAccountError('');
-      const response = await axiosInstance.get(`${BaseUrl}account/sub-of-subgroup/${subgroupId}`);
+      const response = await axiosInstance.get(`/account/sub-of-subgroup/${subgroupId}`);
       console.log("Sub of subgroups response:", response.data);
       // Updated to handle the actual response structure
       if (response.data.success) {
@@ -120,7 +120,7 @@ const AddNewAccountModal = ({
   const handleDeleteSubOfSubgroup = async (id) => {
     try {
       setAccountError('');
-      const response = await axiosInstance.delete(`${BaseUrl}account/sub-of-subgroup/${id}`);
+      const response = await axiosInstance.delete(`/account/sub-of-subgroup/${id}`);
       
       if (response.data.success) {
         // Show success toast
@@ -168,7 +168,7 @@ const AddNewAccountModal = ({
       };
 
       // Make API call using new endpoint
-      const response = await axiosInstance.post(`${BaseUrl}account/create-subgroup`, payload);
+      const response = await axiosInstance.post(`/account/create-subgroup`, payload);
 
       // Call handleAddNewParent callback with response data
       handleAddNewParent(response.data);
@@ -221,7 +221,7 @@ const AddNewAccountModal = ({
       };
 
       // Make API call using new endpoint
-      const response = await axiosInstance.post(`${BaseUrl}account`, payload);
+      const response = await axiosInstance.post(`/account`, payload);
 
       // Call onSave callback with response data
       onSave(response.data);
@@ -273,7 +273,7 @@ const AddNewAccountModal = ({
       };
 
       // Make API call using new endpoint
-      const response = await axiosInstance.post(`${BaseUrl}account/sub-of-subgroup`, payload);
+      const response = await axiosInstance.post(`/account/sub-of-subgroup`, payload);
 
       // Show success toast
       toast.success('Sub of subgroup added successfully');

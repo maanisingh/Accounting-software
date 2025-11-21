@@ -25,7 +25,7 @@ const RequestPlan = () => {
   useEffect(() => {
     const fetchPlans = async () => {
       try {
-        const response = await axios.get(`${BaseUrl}requestforplan`);
+        const response = await axios.get(`/requestforplan`);
 
         let fetchedData = response.data?.data || response.data;
 
@@ -74,7 +74,7 @@ const RequestPlan = () => {
     setActionLoading(prev => ({ ...prev, [planId]: true }));
 
     try {
-      await axios.put(`${BaseUrl}requestforplan/${planId}`, {
+      await axios.put(`/requestforplan/${planId}`, {
         status: newStatus
       });
       console.log(`Plan ID ${planId} updated to ${newStatus}`);

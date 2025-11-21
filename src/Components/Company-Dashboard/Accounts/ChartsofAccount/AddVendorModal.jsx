@@ -42,7 +42,7 @@ const AddVendorModal = ({ show, onHide, onSave, vendorFormData, setVendorFormDat
       formData.append('credit_period_days', vendorFormData.creditPeriod || ''); // Changed field name
       formData.append('enable_gst', vendorFormData.gstEnabled); // Changed field name
       formData.append('gstIn', vendorFormData.gstin || ''); // Changed field name
-      formData.append('type', 'vender'); // Added default type
+      formData.append('type', 'vendor'); // Added default type
       
       // Add files if they exist
       if (vendorFormData.idCardImage) {
@@ -54,7 +54,7 @@ const AddVendorModal = ({ show, onHide, onSave, vendorFormData, setVendorFormDat
       }
 
       // Make API call
-      const response = await axiosInstance.post(`${BaseUrl}vendorCustomer`, formData, {
+      const response = await axiosInstance.post(`/vendorCustomer`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

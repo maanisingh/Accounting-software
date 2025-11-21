@@ -353,6 +353,47 @@ export const verifyToken = async (userId) => {
   return true;
 };
 
+/**
+ * Get company information
+ * @param {string} companyId - Company ID
+ * @returns {Promise<Object>} Company information
+ */
+export const getCompany = async (companyId) => {
+  if (!companyId) {
+    throw ApiError.badRequest('Company ID is required');
+  }
+
+  const company = await prisma.company.findUnique({
+    where: { id: companyId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      address: true,
+      city: true,
+      state: true,
+      country: true,
+      postalCode: true,
+      taxNumber: true,
+      registrationNo: true,
+      logo: true,
+      fiscalYearStart: true,
+      fiscalYearEnd: true,
+      baseCurrency: true,
+      isActive: true,
+      createdAt: true,
+      updatedAt: true
+    }
+  });
+
+  if (!company) {
+    throw ApiError.notFound('Company not found', ERROR_CODES.DB_RECORD_NOT_FOUND);
+  }
+
+  return company;
+};
+
 export default {
   register,
   login,
@@ -360,5 +401,6 @@ export default {
   logout,
   changePassword,
   getCurrentUser,
-  verifyToken
+  verifyToken,
+  getCompany
 };

@@ -13,6 +13,12 @@ import purchaseRoutes from './v1/purchaseRoutes.js';
 import salesRoutes from './v1/salesRoutes.js';
 import accountsRoutes from './v1/accountsRoutes.js';
 import reportsRoutes from './v1/reportsRoutes.js';
+import uomRoutes from './v1/uomRoutes.js';
+import taxClassRoutes from './v1/taxClassRoutes.js';
+import serviceRoutes from './v1/serviceRoutes.js';
+import userRoleRoutes from './v1/userRoleRoutes.js';
+import voucherRoutes from './v1/voucherRoutes.js';
+import invoiceRoutes from './v1/invoiceRoutes.js';
 
 const router = express.Router();
 
@@ -40,6 +46,16 @@ router.use('/v1', purchaseRoutes);
 router.use('/v1', salesRoutes);
 router.use('/v1', accountsRoutes);
 router.use('/v1/reports', reportsRoutes);
+router.use('/v1/uoms', uomRoutes);
+router.use('/v1/tax-classes', taxClassRoutes);
+router.use('/v1/services', serviceRoutes);
+router.use('/v1/user-roles', userRoleRoutes);
+router.use('/v1/roles', userRoleRoutes); // Alias for user-roles
+router.use('/v1/vouchers', voucherRoutes);
+router.use('/v1/income-vouchers', voucherRoutes);
+router.use('/v1/contra-vouchers', voucherRoutes);
+router.use('/v1/pos-invoices', voucherRoutes);
+router.use('/v1', invoiceRoutes);
 
 /**
  * API info endpoint

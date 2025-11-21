@@ -60,7 +60,7 @@ const AccountActionModal = ({
         console.log("PUT Payload:", payload);
 
         // Make the API call to update the account
-        const response = await axiosInstance.put(`${BaseUrl}account/${accountRow.id}`, payload);
+        const response = await axiosInstance.put(`/account/${accountRow.id}`, payload);
 
         console.log("PUT Response:", response.data);
 
@@ -102,7 +102,7 @@ const AccountActionModal = ({
 
       if (accountRow && accountRow.id) {
         // Make the API call to delete the account
-        const response = await axiosInstance.delete(`${BaseUrl}account/${accountRow.id}`);
+        const response = await axiosInstance.delete(`/account/${accountRow.id}`);
 
         if (response.data) {
           // Call the onDelete callback to update the UI

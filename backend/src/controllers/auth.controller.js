@@ -113,6 +113,20 @@ export const verifyToken = asyncHandler(async (req, res) => {
   ).send(res);
 });
 
+/**
+ * Get company information for logged in user
+ * @route GET /api/v1/auth/Company
+ * @access Private
+ */
+export const getCompany = asyncHandler(async (req, res) => {
+  const company = await authService.getCompany(req.user.companyId);
+
+  ApiResponse.success(
+    company,
+    'Company information retrieved successfully'
+  ).send(res);
+});
+
 export default {
   register,
   login,
@@ -120,5 +134,6 @@ export default {
   logout,
   getCurrentUser,
   changePassword,
-  verifyToken
+  verifyToken,
+  getCompany
 };

@@ -1,27 +1,22 @@
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
+import bcryptjs from 'bcryptjs';
+import pkg from 'pg';
+const { Client } = pkg;
 
-const prisma = new PrismaClient();
+const password = 'Admin123';
+const hash = await bcryptjs.hash(password, 10);
 
-async function updatePassword() {
-  try {
-    // Update password to simpler one without special chars
-    const hashedPassword = await bcrypt.hash('Admin123', 12);
-    
-    const user = await prisma.user.update({
-      where: { email: 'liveadmin@zirakbook.com' },
-      data: { password: hashedPassword }
-    });
-    
-    console.log('✅ Password updated successfully!');
-    console.log('📧 Email: liveadmin@zirakbook.com');
-    console.log('🔑 Password: Admin123');
-    
-  } catch (error) {
-    console.error('❌ Error:', error.message);
-  } finally {
-    await prisma.$disconnect();
-  }
-}
+console.log('Generated hash:', hash);
 
-updatePassword();
+const client = new Client({
+  host: 'localhost',
+  port: 5437,
+  database: 'zirakbook_accounting',
+  user: 'zirakbook_user',
+  password: 'zirakbook_password'
+});
+
+await client.connect();
+await client.query('UPDATE "User" SET password = $1 WHERE email = $2', [hash, 'admin@zirakbook.com']);
+await client.end();
+
+console.log('Password updated successfully');

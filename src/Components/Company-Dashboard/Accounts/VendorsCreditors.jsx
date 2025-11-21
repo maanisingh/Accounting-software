@@ -25,14 +25,14 @@ const VendorsCustomers = () => {
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [vendorType, setVendorType] = useState("vender");
+  const [vendorType, setVendorType] = useState("vendor");
   const { symbol, convertPrice: convertrice } = useContext(CurrencyContext);
 
-  const getAccountType = (type) => type === "vender" ? "Sundry Creditors" : "Sundry Debtors";
+  const getAccountType = (type) => type === "vendor" ? "Sundry Creditors" : "Sundry Debtors";
 
   const [vendorFormData, setVendorFormData] = useState({
     name: "",
-    accountType: getAccountType("vender"),
+    accountType: getAccountType("vendor"),
     accountName: "",
     balanceType: "Credit",
     payable: "",
@@ -72,7 +72,7 @@ const VendorsCustomers = () => {
     try {
       setLoading(true);
       setError(null); // Clear previous errors
-      const response = await axiosInstance.get(`/vendors` + (vendorType === 'vender' ? '' : '') + ``);
+      const response = await axiosInstance.get(`/vendors` + (vendorType === 'vendor' ? '' : '') + ``);
 
       // Check if response is successful and has data
       if (response.status === 200 && response.data && Array.isArray(response.data.data)) {
@@ -259,8 +259,8 @@ const VendorsCustomers = () => {
       // Check if response is successful (status 200-299)
       if (response.status >= 200 && response.status < 300) {
         toast.success(selectedVendor
-          ? `${vendorType === 'vender' ? 'Vendor' : 'Customer'} updated successfully!`
-          : `${vendorType === 'vender' ? 'Vendor' : 'Customer'} added successfully!`
+          ? `${vendorType === 'vendor' ? 'Vendor' : 'Customer'} updated successfully!`
+          : `${vendorType === 'vendor' ? 'Vendor' : 'Customer'} added successfully!`
         );
         setShowAddEditModal(false);
         setSelectedVendor(null);
@@ -325,7 +325,7 @@ const VendorsCustomers = () => {
 
       // Check if response is successful (status 200-299)
       if (response.status >= 200 && response.status < 300) {
-        toast.success(`${vendorType === 'vender' ? 'Vendor' : 'Customer'} deleted successfully!`);
+        toast.success(`${vendorType === 'vendor' ? 'Vendor' : 'Customer'} deleted successfully!`);
         setShowDelete(false);
         setSelectedVendor(null);
         // Auto-reload data
@@ -352,7 +352,7 @@ const VendorsCustomers = () => {
     const doc = new jsPDF('p', 'mm', 'a4');
     let yPos = 20;
     doc.setFontSize(20);
-    doc.text(`${vendorType === 'vender' ? 'Vendor' : 'Customer'} Detailed Report`, 14, yPos);
+    doc.text(`${vendorType === 'vendor' ? 'Vendor' : 'Customer'} Detailed Report`, 14, yPos);
     yPos += 10;
     const today = new Date().toLocaleString();
     doc.setFontSize(10);
@@ -372,7 +372,7 @@ const VendorsCustomers = () => {
         doc.setFontSize(14);
         doc.setTextColor(0);
         doc.setFont("helvetica", "bold");
-        doc.text(`${vendorType === 'vender' ? 'Vendor' : 'Customer'} #${index + 1}: ${vendor.name}`, 14, yPos);
+        doc.text(`${vendorType === 'vendor' ? 'Vendor' : 'Customer'} #${index + 1}: ${vendor.name}`, 14, yPos);
         yPos += 8;
         doc.setDrawColor(39, 178, 182);
         doc.line(14, yPos, 200, yPos);
@@ -514,7 +514,7 @@ const VendorsCustomers = () => {
   const handleExport = () => {
     const ws = XLSX.utils.json_to_sheet(vendors);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, `${vendorType === 'vender' ? 'Vendor' : 'Customer'}`);
+    XLSX.utils.book_append_sheet(wb, ws, `${vendorType === 'vendor' ? 'Vendor' : 'Customer'}`);
     const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     saveAs(new Blob([wbout], { type: "application/octet-stream" }), `${vendorType}_Export.xlsx`);
   };
@@ -553,7 +553,7 @@ const VendorsCustomers = () => {
       <ToastContainer position="top-right" autoClose={3000} />
       <Row className="align-items-center mb-3">
         <Col xs={12} md={4}>
-          <h4 className="fw-bold mb-0">{vendorType === 'vender' ? 'Vendor' : 'Customer'} Management</h4>
+          <h4 className="fw-bold mb-0">{vendorType === 'vendor' ? 'Vendor' : 'Customer'} Management</h4>
         </Col>
         <Col xs={12} md={8}>
           <div className="d-flex flex-wrap gap-2 justify-content-md-end">
@@ -564,23 +564,23 @@ const VendorsCustomers = () => {
               variant="warning"
               className="rounded-pill d-flex align-items-center"
               onClick={handleDownloadTemplate}
-              title={`Download ${vendorType === 'vender' ? 'Vendor' : 'Customer'} PDF Report`}
+              title={`Download ${vendorType === 'vendor' ? 'Vendor' : 'Customer'} PDF Report`}
             >
               Download PDF
             </Button>
             <Button variant="success" className="rounded-pill d-flex align-items-center" style={{ backgroundColor: "#53b2a5", border: "none" }} onClick={handleAddClick}>
-              <FaPlus /> Add {vendorType === 'vender' ? 'Vendor' : 'Customer'}
+              <FaPlus /> Add {vendorType === 'vendor' ? 'Vendor' : 'Customer'}
             </Button>
           </div>
         </Col>
       </Row>
       <Row className="mb-3 justify-content-start">
         <Col xs={12} md={6} lg={4}>
-          <Form.Control type="text" placeholder={`Search ${vendorType === 'vender' ? 'Vendor' : 'Customer'}...`} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="rounded-pill" />
+          <Form.Control type="text" placeholder={`Search ${vendorType === 'vendor' ? 'Vendor' : 'Customer'}...`} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="rounded-pill" />
         </Col>
         <Col xs={12} md={6} lg={4} className="ms-auto">
           <Form.Select value={vendorType} onChange={(e) => setVendorType(e.target.value)}>
-            <option value="vender">Vendor</option>
+            <option value="vendor">Vendor</option>
             <option value="customer">Customer</option>
           </Form.Select>
         </Col>
@@ -590,7 +590,7 @@ const VendorsCustomers = () => {
           <div className="spinner-border text-primary" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
-          <p className="mt-2">Loading {vendorType === 'vender' ? 'Vendors' : 'Customers'} for Company</p>
+          <p className="mt-2">Loading {vendorType === 'vendor' ? 'Vendors' : 'Customers'} for Company</p>
         </div>
       )}
       {error && (
@@ -702,7 +702,7 @@ const VendorsCustomers = () => {
                 ) : (
                   <tr>
                     <td colSpan="9" className="text-center text-muted">
-                      No {vendorType === 'vender' ? 'Vendors' : 'Customers'} found.
+                      No {vendorType === 'vendor' ? 'Vendors' : 'Customers'} found.
                     </td>
                   </tr>
                 )}
@@ -728,7 +728,7 @@ const VendorsCustomers = () => {
       {/* View Modal */}
       <Modal show={showView} onHide={() => setShowView(false)} centered size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>{vendorType === 'vender' ? 'Vendor' : 'Customer'} Details</Modal.Title>
+          <Modal.Title>{vendorType === 'vendor' ? 'Vendor' : 'Customer'} Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedVendor && (
@@ -880,7 +880,7 @@ const VendorsCustomers = () => {
         backdrop="static"
       >
         <Modal.Header closeButton className="bg-light">
-          <Modal.Title>{selectedVendor ? `Edit ${vendorType === 'vender' ? 'Vendor' : 'Customer'}` : `Add ${vendorType === 'vender' ? 'Vendor' : 'Customer'}`}</Modal.Title>
+          <Modal.Title>{selectedVendor ? `Edit ${vendorType === 'vendor' ? 'Vendor' : 'Customer'}` : `Add ${vendorType === 'vendor' ? 'Vendor' : 'Customer'}`}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -1253,7 +1253,7 @@ const VendorsCustomers = () => {
             onClick={handleSave}
             disabled={saving}
           >
-            {saving ? 'Saving...' : selectedVendor ? `Update ${vendorType === 'vender' ? 'Vendor' : 'Customer'}` : `Save ${vendorType === 'vender' ? 'Vendor' : 'Customer'}`}
+            {saving ? 'Saving...' : selectedVendor ? `Update ${vendorType === 'vendor' ? 'Vendor' : 'Customer'}` : `Save ${vendorType === 'vendor' ? 'Vendor' : 'Customer'}`}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -1264,7 +1264,7 @@ const VendorsCustomers = () => {
           <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete {vendorType === 'vender' ? 'Vendor' : 'Customer'} <strong>"{selectedVendor?.name}"</strong>? This action cannot be undone.
+          Are you sure you want to delete {vendorType === 'vendor' ? 'Vendor' : 'Customer'} <strong>"{selectedVendor?.name}"</strong>? This action cannot be undone.
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowDelete(false)} disabled={deleting}>
@@ -1285,11 +1285,11 @@ const VendorsCustomers = () => {
         <Card.Body>
           <h5 className="fw-semibold border-bottom pb-2 mb-3 text-primary">Page Info</h5>
           <ul className="text-muted fs-6 mb-0" style={{ listStyleType: "disc", paddingLeft: "1.5rem" }}>
-            <li>Manage {vendorType === 'vender' ? 'Vendor' : 'Customer'} details including contact and billing information.</li>
+            <li>Manage {vendorType === 'vendor' ? 'Vendor' : 'Customer'} details including contact and billing information.</li>
             <li>Track payable balances and credit periods.</li>
-            <li>Perform CRUD operations: add, view, edit, and delete {vendorType === 'vender' ? 'Vendors' : 'Customers'}.</li>
-            <li>Import and export {vendorType === 'vender' ? 'Vendor' : 'Customer'} data using Excel templates.</li>
-            <li>Assign account types and view transaction ledger for each {vendorType === 'vender' ? 'Vendor' : 'Customer'}.</li>
+            <li>Perform CRUD operations: add, view, edit, and delete {vendorType === 'vendor' ? 'Vendors' : 'Customers'}.</li>
+            <li>Import and export {vendorType === 'vendor' ? 'Vendor' : 'Customer'} data using Excel templates.</li>
+            <li>Assign account types and view transaction ledger for each {vendorType === 'vendor' ? 'Vendor' : 'Customer'}.</li>
           </ul>
         </Card.Body>
       </Card>

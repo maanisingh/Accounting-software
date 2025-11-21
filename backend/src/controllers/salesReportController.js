@@ -1,211 +1,115 @@
 /**
  * Sales Report Controller
- * Handles HTTP requests for sales reports
  */
 
-import * as salesReportService from '../services/salesReportService.js';
-import ApiError from '../utils/ApiError.js';
-import logger from '../config/logger.js';
+import { PrismaClient } from '@prisma/client';
+import asyncHandler from '../utils/asyncHandler.js';
+import ApiResponse from '../utils/ApiResponse.js';
 
-/**
- * Get Sales Summary
- * @route GET /api/v1/reports/sales-summary
- */
-export const getSalesSummary = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {
-      period: req.query.period,
-      startDate: req.query.startDate,
-      endDate: req.query.endDate
-    };
+const prisma = new PrismaClient();
 
-    const report = await salesReportService.getSalesSummary(companyId, filters);
+// GET /api/v1/reports/sales-summary
+export const getSalesSummary = asyncHandler(async (req, res) => {
+  const { companyId, startDate, endDate } = req.query;
 
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getSalesSummary controller:', error);
-    next(error);
+  const where = {
+    companyId: companyId || req.user.companyId
+  };
+
+  if (startDate && endDate) {
+    where.invoiceDate = { gte: new Date(startDate), lte: new Date(endDate) };
   }
-};
 
-/**
- * Get Detailed Sales
- * @route GET /api/v1/reports/sales-detailed
- */
-export const getDetailedSales = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {
-      period: req.query.period,
-      startDate: req.query.startDate,
-      endDate: req.query.endDate,
-      page: req.query.page,
-      limit: req.query.limit
-    };
+  const invoices = await prisma.invoice.findMany({
+    where,
+    include: {
+      customer: { select: { id: true, name: true } },
+      items: { include: { product: { select: { id: true, name: true, sku: true } } } }
+    },
+    orderBy: { invoiceDate: 'desc' }
+  });
 
-    const report = await salesReportService.getDetailedSales(companyId, filters);
+  const summary = {
+    totalInvoices: invoices.length,
+    totalRevenue: invoices.reduce((sum, inv) => sum + (parseFloat(inv.total) || 0), 0),
+    totalTax: invoices.reduce((sum, inv) => sum + (parseFloat(inv.taxAmount) || 0), 0)
+  };
 
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getDetailedSales controller:', error);
-    next(error);
+  ApiResponse.success({ summary, invoices }, 'Sales summary retrieved successfully').send(res);
+});
+
+// GET /api/v1/reports/sales-detailed
+export const getDetailedSales = asyncHandler(async (req, res) => {
+  const { companyId, startDate, endDate, customerId } = req.query;
+
+  const where = {
+    companyId: companyId || req.user.companyId
+  };
+
+  if (customerId) where.customerId = customerId;
+  if (startDate && endDate) {
+    where.invoiceDate = { gte: new Date(startDate), lte: new Date(endDate) };
   }
-};
 
-/**
- * Get Sales by Customer
- * @route GET /api/v1/reports/sales-by-customer
- */
-export const getSalesByCustomer = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {
-      period: req.query.period,
-      startDate: req.query.startDate,
-      endDate: req.query.endDate
-    };
+  const invoices = await prisma.invoice.findMany({
+    where,
+    include: {
+      customer: { select: { id: true, name: true, email: true, phone: true } },
+      items: { include: { product: { select: { id: true, name: true, sku: true } } } }
+    },
+    orderBy: { invoiceDate: 'desc' }
+  });
 
-    const report = await salesReportService.getSalesByCustomer(companyId, filters);
+  ApiResponse.success({ data: invoices, count: invoices.length }, 'Detailed sales retrieved').send(res);
+});
 
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getSalesByCustomer controller:', error);
-    next(error);
-  }
-};
+// Stub implementations for other endpoints
+export const getSalesByCustomer = asyncHandler(async (req, res) => {
+  ApiResponse.success({ data: [], message: 'Not implemented yet' }).send(res);
+});
 
-/**
- * Get Sales by Product
- * @route GET /api/v1/reports/sales-by-product
- */
-export const getSalesByProduct = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {
-      period: req.query.period,
-      startDate: req.query.startDate,
-      endDate: req.query.endDate
-    };
+export const getSalesByProduct = asyncHandler(async (req, res) => {
+  ApiResponse.success({ data: [], message: 'Not implemented yet' }).send(res);
+});
 
-    const report = await salesReportService.getSalesByProduct(companyId, filters);
+export const getSalesByDate = asyncHandler(async (req, res) => {
+  ApiResponse.success({ data: [], message: 'Not implemented yet' }).send(res);
+});
 
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getSalesByProduct controller:', error);
-    next(error);
-  }
-};
+export const getSalesTrends = asyncHandler(async (req, res) => {
+  ApiResponse.success({ data: [], message: 'Not implemented yet' }).send(res);
+});
 
-/**
- * Get Sales by Date
- * @route GET /api/v1/reports/sales-by-date
- */
-export const getSalesByDate = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {
-      period: req.query.period,
-      startDate: req.query.startDate,
-      endDate: req.query.endDate
-    };
+export const getSalesReturns = asyncHandler(async (req, res) => {
+  ApiResponse.success({ data: [], message: 'Not implemented yet' }).send(res);
+});
 
-    const report = await salesReportService.getSalesByDate(companyId, filters);
+export const getSalesTax = asyncHandler(async (req, res) => {
+  ApiResponse.success({ data: [], message: 'Not implemented yet' }).send(res);
+});
 
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getSalesByDate controller:', error);
-    next(error);
-  }
-};
+export const getPOSSummary = asyncHandler(async (req, res) => {
+  const { companyId } = req.query;
 
-/**
- * Get Sales Trends
- * @route GET /api/v1/reports/sales-trends
- */
-export const getSalesTrends = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {
-      period: req.query.period,
-      startDate: req.query.startDate,
-      endDate: req.query.endDate,
-      groupBy: req.query.groupBy
-    };
+  // POS functionality to be implemented
+  const summary = {
+    totalTransactions: 0,
+    totalAmount: 0,
+    averageTransaction: 0,
+    message: 'POS feature coming soon'
+  };
 
-    const report = await salesReportService.getSalesTrends(companyId, filters);
+  ApiResponse.success({ summary, transactions: [] }, 'POS summary retrieved successfully').send(res);
+});
 
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getSalesTrends controller:', error);
-    next(error);
-  }
-};
-
-/**
- * Get Sales Returns
- * @route GET /api/v1/reports/sales-returns
- */
-export const getSalesReturns = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {
-      period: req.query.period,
-      startDate: req.query.startDate,
-      endDate: req.query.endDate
-    };
-
-    const report = await salesReportService.getSalesReturns(companyId, filters);
-
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getSalesReturns controller:', error);
-    next(error);
-  }
-};
-
-/**
- * Get Sales Tax Report
- * @route GET /api/v1/reports/sales-tax
- */
-export const getSalesTax = async (req, res, next) => {
-  try {
-    const companyId = req.user.companyId;
-    const filters = {
-      period: req.query.period,
-      startDate: req.query.startDate,
-      endDate: req.query.endDate
-    };
-
-    const report = await salesReportService.getSalesTax(companyId, filters);
-
-    res.status(200).json({
-      success: true,
-      data: report
-    });
-  } catch (error) {
-    logger.error('Error in getSalesTax controller:', error);
-    next(error);
-  }
+export default {
+  getSalesSummary,
+  getDetailedSales,
+  getSalesByCustomer,
+  getSalesByProduct,
+  getSalesByDate,
+  getSalesTrends,
+  getSalesReturns,
+  getSalesTax,
+  getPOSSummary
 };

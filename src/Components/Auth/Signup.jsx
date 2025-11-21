@@ -30,7 +30,7 @@ const Signup = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(`${BaseUrl}adminuser/register`, {
+      const response = await axios.post(`/adminuser/register`, {
         name: fullName,
         email,
         username,
