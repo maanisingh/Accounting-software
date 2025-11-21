@@ -1,417 +1,118 @@
-# Authentication Module - Quick Start Guide
+# ZirakBook Inventory Module - Quick Start Guide
 
-## Installation & Setup
+## 5-Minute Setup & Test
 
-### 1. Install Dependencies
+### Step 1: Prerequisites Check
 ```bash
+# Ensure backend is running
 cd /root/zirabook-accounting-full/backend
 npm install
-```
-
-### 2. Configure Environment
-```bash
-cp .env.example .env
-# Edit .env with your configuration
-```
-
-### 3. Setup Database
-```bash
-# Generate Prisma Client
-npx prisma generate
-
-# Run migrations
-npx prisma migrate dev
-
-# Open Prisma Studio to create a company
-npx prisma studio
-```
-
-### 4. Start Server
-```bash
-# Development mode with hot reload
 npm run dev
-
-# Production mode
-npm start
 ```
 
-## API Endpoints
-
-### Authentication Endpoints
-
-#### Register User
+### Step 2: Get Authentication Token
 ```bash
-POST /api/v1/auth/register
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "Pass@123",
-  "confirmPassword": "Pass@123",
-  "name": "John Doe",
-  "phone": "1234567890",
-  "role": "VIEWER",
-  "companyId": "uuid-here"
-}
-```
-
-#### Login
-```bash
-POST /api/v1/auth/login
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "Pass@123"
-}
-```
-
-#### Get Current User
-```bash
-GET /api/v1/auth/me
-Authorization: Bearer {accessToken}
-```
-
-#### Refresh Token
-```bash
-POST /api/v1/auth/refresh-token
-Content-Type: application/json
-
-{
-  "refreshToken": "your-refresh-token"
-}
-```
-
-#### Logout
-```bash
-POST /api/v1/auth/logout
-Authorization: Bearer {accessToken}
-```
-
-#### Change Password
-```bash
-POST /api/v1/auth/change-password
-Authorization: Bearer {accessToken}
-Content-Type: application/json
-
-{
-  "currentPassword": "OldPass@123",
-  "newPassword": "NewPass@123",
-  "confirmPassword": "NewPass@123"
-}
-```
-
-### User Management Endpoints
-
-#### Create User (Admin only)
-```bash
-POST /api/v1/users
-Authorization: Bearer {accessToken}
-Content-Type: application/json
-
-{
-  "email": "newuser@example.com",
-  "password": "Pass@123",
-  "name": "New User",
-  "role": "ACCOUNTANT",
-  "companyId": "uuid-here"
-}
-```
-
-#### Get All Users
-```bash
-GET /api/v1/users?page=1&limit=20&role=ACCOUNTANT&status=ACTIVE&search=john
-Authorization: Bearer {accessToken}
-```
-
-#### Get User by ID
-```bash
-GET /api/v1/users/{userId}
-Authorization: Bearer {accessToken}
-```
-
-#### Update User
-```bash
-PATCH /api/v1/users/{userId}
-Authorization: Bearer {accessToken}
-Content-Type: application/json
-
-{
-  "name": "Updated Name",
-  "phone": "9876543210",
-  "role": "MANAGER"
-}
-```
-
-#### Delete User (Admin only)
-```bash
-DELETE /api/v1/users/{userId}
-Authorization: Bearer {accessToken}
-```
-
-#### Activate User (Admin only)
-```bash
-POST /api/v1/users/{userId}/activate
-Authorization: Bearer {accessToken}
-```
-
-#### Deactivate User (Admin only)
-```bash
-POST /api/v1/users/{userId}/deactivate
-Authorization: Bearer {accessToken}
-```
-
-#### Change User Status (Admin only)
-```bash
-POST /api/v1/users/{userId}/status
-Authorization: Bearer {accessToken}
-Content-Type: application/json
-
-{
-  "status": "SUSPENDED",
-  "reason": "Policy violation"
-}
-```
-
-#### Get User Statistics (Admin only)
-```bash
-GET /api/v1/users/stats?companyId={companyId}
-Authorization: Bearer {accessToken}
-```
-
-#### Get User Permissions
-```bash
-GET /api/v1/users/{userId}/permissions
-Authorization: Bearer {accessToken}
-```
-
-#### Assign Permissions (Admin only)
-```bash
-POST /api/v1/users/{userId}/permissions
-Authorization: Bearer {accessToken}
-Content-Type: application/json
-
-{
-  "permissionIds": [
-    "permission-uuid-1",
-    "permission-uuid-2"
-  ]
-}
-```
-
-#### Revoke Permissions (Admin only)
-```bash
-DELETE /api/v1/users/{userId}/permissions
-Authorization: Bearer {accessToken}
-Content-Type: application/json
-
-{
-  "permissionIds": [
-    "permission-uuid-1",
-    "permission-uuid-2"
-  ]
-}
-```
-
-## User Roles
-
-- `SUPERADMIN` - Full system access
-- `COMPANY_ADMIN` - Company-level administration
-- `ACCOUNTANT` - Accounting operations
-- `MANAGER` - Management operations
-- `SALES_USER` - Sales operations
-- `PURCHASE_USER` - Purchase operations
-- `INVENTORY_USER` - Inventory operations
-- `VIEWER` - Read-only access
-
-## User Status
-
-- `ACTIVE` - User can login and use system
-- `INACTIVE` - User cannot login
-- `SUSPENDED` - User account suspended (with reason)
-
-## Response Format
-
-### Success Response
-```json
-{
-  "success": true,
-  "statusCode": 200,
-  "message": "Operation successful",
-  "data": {}
-}
-```
-
-### Error Response
-```json
-{
-  "success": false,
-  "statusCode": 400,
-  "errorCode": "VALIDATION_ERROR",
-  "message": "Validation failed",
-  "errors": [
-    {
-      "field": "email",
-      "message": "Please provide a valid email address",
-      "type": "string.email"
-    }
-  ]
-}
-```
-
-### Paginated Response
-```json
-{
-  "success": true,
-  "statusCode": 200,
-  "message": "Data retrieved successfully",
-  "data": [],
-  "metadata": {
-    "pagination": {
-      "page": 1,
-      "limit": 20,
-      "total": 100,
-      "totalPages": 5,
-      "hasNextPage": true,
-      "hasPrevPage": false
-    }
-  }
-}
-```
-
-## Common Error Codes
-
-- `AUTH_INVALID_CREDENTIALS` - Invalid email or password
-- `AUTH_TOKEN_EXPIRED` - Token has expired
-- `AUTH_TOKEN_INVALID` - Invalid or malformed token
-- `AUTH_INSUFFICIENT_PERMISSIONS` - User lacks required permissions
-- `AUTH_ACCOUNT_SUSPENDED` - Account has been suspended
-- `VALIDATION_ERROR` - Request validation failed
-- `DB_RECORD_NOT_FOUND` - Requested record not found
-- `DB_DUPLICATE_ENTRY` - Duplicate entry (e.g., email)
-- `RATE_LIMIT_EXCEEDED` - Too many requests
-
-## Testing with cURL
-
-### 1. Register First User
-```bash
-curl -X POST http://localhost:8003/api/v1/auth/register \
+# Login (replace with your credentials)
+curl -X POST http://localhost:3000/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "admin@test.com",
-    "password": "Admin@123",
-    "confirmPassword": "Admin@123",
-    "name": "Admin User",
-    "companyId": "your-company-uuid",
-    "role": "COMPANY_ADMIN"
+    "email": "admin@example.com",
+    "password": "YourPassword123!"
   }'
+
+# Copy the "accessToken" from response
 ```
 
-### 2. Login
+### Step 3: Set Token Variable
 ```bash
-curl -X POST http://localhost:8003/api/v1/auth/login \
+export TOKEN="paste-your-token-here"
+export BASE_URL="http://localhost:3000/api/v1"
+```
+
+### Step 4: Quick Test - Create Workflow
+
+#### 4.1 Create a Brand
+```bash
+BRAND_ID=$(curl -s -X POST $BASE_URL/brands \
+  -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{
-    "email": "admin@test.com",
-    "password": "Admin@123"
-  }'
-```
-Save the `accessToken` from response.
+  -d '{"name":"Apple","description":"Premium electronics"}' \
+  | jq -r '.data.id')
 
-### 3. Get Current User
-```bash
-curl http://localhost:8003/api/v1/auth/me \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+echo "Brand ID: $BRAND_ID"
 ```
 
-### 4. Create Another User
+#### 4.2 Create a Category
 ```bash
-curl -X POST http://localhost:8003/api/v1/users \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+CATEGORY_ID=$(curl -s -X POST $BASE_URL/categories \
+  -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{
-    "email": "accountant@test.com",
-    "password": "Acct@123",
-    "name": "Accountant User",
-    "role": "ACCOUNTANT",
-    "companyId": "your-company-uuid"
-  }'
+  -d '{"name":"Smartphones","description":"Mobile phones"}' \
+  | jq -r '.data.id')
+
+echo "Category ID: $CATEGORY_ID"
 ```
 
-### 5. List Users
+#### 4.3 Create a Warehouse
 ```bash
-curl "http://localhost:8003/api/v1/users?page=1&limit=10" \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+WAREHOUSE_ID=$(curl -s -X POST $BASE_URL/warehouses \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"code":"WH-01","name":"Main Warehouse","city":"Mumbai","isDefault":true}' \
+  | jq -r '.data.id')
+
+echo "Warehouse ID: $WAREHOUSE_ID"
 ```
 
-## Environment Variables
-
-Key variables to configure in `.env`:
-
+#### 4.4 Create a Product
 ```bash
-# Database
-DATABASE_URL=postgresql://user:password@localhost:5432/zirakbook_db
+PRODUCT_ID=$(curl -s -X POST $BASE_URL/products \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"sku\":\"IPH-14-128\",
+    \"name\":\"iPhone 14 128GB\",
+    \"unit\":\"PCS\",
+    \"purchasePrice\":85000,
+    \"sellingPrice\":99990,
+    \"taxRate\":18,
+    \"reorderLevel\":5,
+    \"categoryId\":\"$CATEGORY_ID\",
+    \"brandId\":\"$BRAND_ID\"
+  }" | jq -r '.data.id')
 
-# JWT Secrets (change these!)
-JWT_SECRET=your-super-secret-jwt-key
-JWT_REFRESH_SECRET=your-super-secret-refresh-key
-
-# Redis
-REDIS_HOST=localhost
-REDIS_PORT=6379
-
-# Server
-PORT=8003
-NODE_ENV=development
+echo "Product ID: $PRODUCT_ID"
 ```
 
-## Troubleshooting
+#### 4.5 Add Initial Stock
+```bash
+curl -X POST $BASE_URL/products/$PRODUCT_ID/adjust \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"warehouseId\":\"$WAREHOUSE_ID\",
+    \"quantity\":50,
+    \"reason\":\"Initial stock entry from supplier invoice #INV-001\"
+  }"
+```
 
-### Issue: Cannot connect to database
-**Solution**: Check DATABASE_URL in .env and ensure PostgreSQL is running
-
-### Issue: Cannot connect to Redis
-**Solution**: Check REDIS_HOST and REDIS_PORT, ensure Redis is running
-
-### Issue: JWT_SECRET not defined
-**Solution**: Add JWT_SECRET to .env file
-
-### Issue: Company not found during registration
-**Solution**: Create a company first using Prisma Studio
-
-### Issue: Rate limit exceeded
-**Solution**: Wait 15 minutes or adjust RATE_LIMIT_MAX_REQUESTS in .env
-
-## Production Deployment
-
-1. Set `NODE_ENV=production`
-2. Use strong JWT secrets (min 32 characters)
-3. Configure proper CORS_ORIGIN
-4. Set up proper Redis instance
-5. Use managed PostgreSQL database
-6. Enable HTTPS
-7. Set up monitoring and logging
-8. Configure rate limiting appropriately
-9. Regular security updates
-10. Database backups
-
-## Development Tips
-
-- Use Prisma Studio for database management: `npx prisma studio`
-- View logs in `./logs` directory
-- Check `combined.log` for all logs, `error.log` for errors only
-- Use Thunder Client or Postman for API testing
-- Enable debug logging: set `LOG_LEVEL=debug` in .env
-
-## Next Steps
-
-1. ✅ Authentication Module (Complete)
-2. Inventory Module
-3. Sales Module
-4. Purchase Module
-5. Accounting Module
-6. Reports Module
+#### 4.6 Check Stock Level
+```bash
+curl -X GET $BASE_URL/products/$PRODUCT_ID/stock \
+  -H "Authorization: Bearer $TOKEN" | jq
+```
 
 ---
 
-For detailed documentation, see AUTH_MODULE_DOCUMENTATION.md
+## All 42 Endpoints Ready
+
+- Products: 10 endpoints
+- Brands: 4 endpoints
+- Categories: 4 endpoints
+- Warehouses: 6 endpoints
+- Stock: 10 endpoints
+- Movements: 8 endpoints
+
+**Total: 42/42 Complete**
+
+See INVENTORY_MODULE_TESTING.md for full details.

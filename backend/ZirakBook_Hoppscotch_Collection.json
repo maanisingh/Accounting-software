@@ -1,0 +1,1386 @@
+{
+  "v": 2,
+  "name": "ZirakBook Accounting System - Complete API Collection",
+  "folders": [
+    {
+      "v": 2,
+      "name": "1. Authentication",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/auth/register",
+          "name": "Register User",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"Test SuperAdmin\",\n  \"email\": \"admin@test.com\",\n  \"password\": \"Admin@123\",\n  \"confirmPassword\": \"Admin@123\",\n  \"companyId\": \"CREATE_COMPANY_FIRST_OR_USE_EXISTING\",\n  \"role\": \"SUPERADMIN\"\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/auth/login",
+          "name": "Login",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"Admin@123\"\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/auth/me",
+          "name": "Get Current User",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/auth/refresh",
+          "name": "Refresh Token",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/auth/logout",
+          "name": "Logout",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+          }
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "2. Inventory - Products",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/products",
+          "name": "Create Product",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"Test Product\",\n  \"sku\": \"TEST-SKU-001\",\n  \"description\": \"Test product description\",\n  \"type\": \"GOODS\",\n  \"unit\": \"PCS\",\n  \"sellingPrice\": 100.00,\n  \"purchasePrice\": 80.00,\n  \"taxRate\": 18.00,\n  \"hsnCode\": \"1234\",\n  \"reorderLevel\": 10,\n  \"isActive\": true\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/products",
+          "name": "Get All Products",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "page",
+              "value": "1",
+              "active": false
+            },
+            {
+              "key": "limit",
+              "value": "20",
+              "active": false
+            },
+            {
+              "key": "type",
+              "value": "GOODS",
+              "active": false
+            },
+            {
+              "key": "isActive",
+              "value": "true",
+              "active": false
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/products/:id",
+          "name": "Get Product by ID",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/products/:id",
+          "name": "Update Product",
+          "method": "PUT",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"Updated Product Name\",\n  \"sellingPrice\": 110.00\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/products/:id",
+          "name": "Delete Product",
+          "method": "DELETE",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/products/search",
+          "name": "Search Products",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "q",
+              "value": "test",
+              "active": true
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/products/bulk",
+          "name": "Bulk Create Products",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"products\": [\n    {\n      \"name\": \"Product 1\",\n      \"sku\": \"SKU-001\",\n      \"type\": \"GOODS\",\n      \"unit\": \"PCS\",\n      \"sellingPrice\": 100,\n      \"purchasePrice\": 80\n    },\n    {\n      \"name\": \"Product 2\",\n      \"sku\": \"SKU-002\",\n      \"type\": \"GOODS\",\n      \"unit\": \"PCS\",\n      \"sellingPrice\": 150,\n      \"purchasePrice\": 120\n    }\n  ]\n}"
+          }
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "2. Inventory - Brands",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/brands",
+          "name": "Create Brand",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"Premium Brand\",\n  \"description\": \"High-quality premium products\"\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/brands",
+          "name": "Get All Brands",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/brands/:id",
+          "name": "Get Brand by ID",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/brands/:id",
+          "name": "Update Brand",
+          "method": "PUT",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"Updated Brand Name\"\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/brands/:id",
+          "name": "Delete Brand",
+          "method": "DELETE",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "2. Inventory - Categories",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/categories",
+          "name": "Create Category",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"Electronics\",\n  \"description\": \"Electronic products and accessories\"\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/categories",
+          "name": "Get All Categories",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "2. Inventory - Warehouses",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/warehouses",
+          "name": "Create Warehouse",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"Main Warehouse\",\n  \"code\": \"WH001\",\n  \"address\": \"123 Industrial Area\",\n  \"city\": \"Mumbai\",\n  \"state\": \"Maharashtra\",\n  \"country\": \"India\",\n  \"pincode\": \"400001\",\n  \"isActive\": true\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/warehouses",
+          "name": "Get All Warehouses",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "2. Inventory - Stock",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/stock",
+          "name": "Get Stock Levels",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "productId",
+              "value": "",
+              "active": false
+            },
+            {
+              "key": "warehouseId",
+              "value": "",
+              "active": false
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/stock/adjust",
+          "name": "Adjust Stock",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"productId\": \"{{productId}}\",\n  \"warehouseId\": \"{{warehouseId}}\",\n  \"adjustmentType\": \"IN\",\n  \"quantity\": 100,\n  \"reason\": \"Opening stock\",\n  \"reference\": \"ADJ-001\"\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/stock/transfer",
+          "name": "Transfer Stock",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"productId\": \"{{productId}}\",\n  \"fromWarehouseId\": \"{{warehouseId1}}\",\n  \"toWarehouseId\": \"{{warehouseId2}}\",\n  \"quantity\": 50,\n  \"reason\": \"Stock rebalancing\",\n  \"reference\": \"TRF-001\"\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/stock-movements",
+          "name": "Get Stock Movements",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "productId",
+              "value": "",
+              "active": false
+            },
+            {
+              "key": "warehouseId",
+              "value": "",
+              "active": false
+            },
+            {
+              "key": "type",
+              "value": "IN",
+              "active": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "3. Purchases - Vendors",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/vendors",
+          "name": "Create Vendor",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"ABC Suppliers Ltd\",\n  \"email\": \"contact@abcsuppliers.com\",\n  \"phone\": \"9876543210\",\n  \"address\": \"456 Supplier Street\",\n  \"city\": \"Delhi\",\n  \"state\": \"Delhi\",\n  \"country\": \"India\",\n  \"pincode\": \"110001\",\n  \"gstin\": \"07AABCU9603R1ZX\",\n  \"paymentTerms\": \"NET_30\",\n  \"creditLimit\": 500000.00,\n  \"isActive\": true\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/vendors",
+          "name": "Get All Vendors",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "3. Purchases - Purchase Orders",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/purchase-orders",
+          "name": "Create Purchase Order",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"vendorId\": \"{{vendorId}}\",\n  \"orderDate\": \"2025-11-21\",\n  \"expectedDate\": \"2025-11-30\",\n  \"paymentTerms\": \"NET_30\",\n  \"notes\": \"Urgent order - please expedite\",\n  \"items\": [\n    {\n      \"productId\": \"{{productId}}\",\n      \"quantity\": 100,\n      \"unitPrice\": 80.00,\n      \"taxRate\": 18.00,\n      \"discount\": 0\n    }\n  ]\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/purchase-orders",
+          "name": "Get All Purchase Orders",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "status",
+              "value": "PENDING_APPROVAL",
+              "active": false
+            },
+            {
+              "key": "vendorId",
+              "value": "",
+              "active": false
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/purchase-orders/:id",
+          "name": "Get PO by ID",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/purchase-orders/:id/approve",
+          "name": "Approve Purchase Order",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/purchase-orders/:id/reject",
+          "name": "Reject Purchase Order",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"reason\": \"Budget constraints\"\n}"
+          }
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "3. Purchases - Goods Receipts",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/goods-receipts",
+          "name": "Create Goods Receipt",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"purchaseOrderId\": \"{{purchaseOrderId}}\",\n  \"receivedDate\": \"2025-11-21\",\n  \"warehouseId\": \"{{warehouseId}}\",\n  \"notes\": \"All items received in good condition\",\n  \"items\": [\n    {\n      \"productId\": \"{{productId}}\",\n      \"orderedQuantity\": 100,\n      \"receivedQuantity\": 100,\n      \"acceptedQuantity\": 100,\n      \"rejectedQuantity\": 0\n    }\n  ]\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/goods-receipts",
+          "name": "Get All Goods Receipts",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "3. Purchases - Bills",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/bills",
+          "name": "Create Bill",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"vendorId\": \"{{vendorId}}\",\n  \"billDate\": \"2025-11-21\",\n  \"dueDate\": \"2025-12-21\",\n  \"goodsReceiptId\": \"{{goodsReceiptId}}\",\n  \"notes\": \"Payment as per terms\",\n  \"items\": [\n    {\n      \"productId\": \"{{productId}}\",\n      \"quantity\": 100,\n      \"unitPrice\": 80.00,\n      \"taxRate\": 18.00,\n      \"discount\": 0\n    }\n  ]\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/bills",
+          "name": "Get All Bills",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "status",
+              "value": "UNPAID",
+              "active": false
+            },
+            {
+              "key": "vendorId",
+              "value": "",
+              "active": false
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/bills/:id",
+          "name": "Get Bill by ID",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "4. Sales - Customers",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/customers",
+          "name": "Create Customer",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"XYZ Corporation\",\n  \"email\": \"sales@xyzcorp.com\",\n  \"phone\": \"9123456789\",\n  \"address\": \"789 Business Park\",\n  \"city\": \"Bangalore\",\n  \"state\": \"Karnataka\",\n  \"country\": \"India\",\n  \"pincode\": \"560001\",\n  \"gstin\": \"29AABCU9603R1ZX\",\n  \"paymentTerms\": \"NET_15\",\n  \"creditLimit\": 300000.00,\n  \"isActive\": true\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/customers",
+          "name": "Get All Customers",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "4. Sales - Sales Orders",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/sales-orders",
+          "name": "Create Sales Order",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"customerId\": \"{{customerId}}\",\n  \"orderDate\": \"2025-11-21\",\n  \"expectedDate\": \"2025-11-25\",\n  \"paymentTerms\": \"NET_15\",\n  \"notes\": \"Rush order - priority delivery\",\n  \"items\": [\n    {\n      \"productId\": \"{{productId}}\",\n      \"quantity\": 50,\n      \"unitPrice\": 100.00,\n      \"taxRate\": 18.00,\n      \"discount\": 0\n    }\n  ]\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/sales-orders",
+          "name": "Get All Sales Orders",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "4. Sales - Delivery Challans",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/delivery-challans",
+          "name": "Create Delivery Challan",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"salesOrderId\": \"{{salesOrderId}}\",\n  \"deliveryDate\": \"2025-11-21\",\n  \"warehouseId\": \"{{warehouseId}}\",\n  \"notes\": \"Delivered by courier\",\n  \"items\": [\n    {\n      \"productId\": \"{{productId}}\",\n      \"quantity\": 50\n    }\n  ]\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/delivery-challans",
+          "name": "Get All Delivery Challans",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "5. Accounts - Chart of Accounts",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/accounts",
+          "name": "Create Account",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"code\": \"4000\",\n  \"name\": \"Sales Revenue\",\n  \"type\": \"REVENUE\",\n  \"description\": \"Revenue from product sales\",\n  \"isActive\": true\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/accounts",
+          "name": "Get All Accounts",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "type",
+              "value": "REVENUE",
+              "active": false
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/accounts/:id/ledger",
+          "name": "Get Account Ledger",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "startDate",
+              "value": "2025-01-01",
+              "active": true
+            },
+            {
+              "key": "endDate",
+              "value": "2025-12-31",
+              "active": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "5. Accounts - Journal Entries",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/journal-entries",
+          "name": "Create Journal Entry",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"entryDate\": \"2025-11-21\",\n  \"reference\": \"JE-001\",\n  \"notes\": \"Opening balance adjustment\",\n  \"lines\": [\n    {\n      \"accountId\": \"{{accountId1}}\",\n      \"transactionType\": \"DEBIT\",\n      \"amount\": 10000.00,\n      \"description\": \"Cash received\"\n    },\n    {\n      \"accountId\": \"{{accountId2}}\",\n      \"transactionType\": \"CREDIT\",\n      \"amount\": 10000.00,\n      \"description\": \"Revenue recognized\"\n    }\n  ]\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/journal-entries",
+          "name": "Get All Journal Entries",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/journal-entries/:id/post",
+          "name": "Post Journal Entry",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{}"
+          }
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "5. Accounts - Payments",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/payments",
+          "name": "Create Payment",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"vendorId\": \"{{vendorId}}\",\n  \"paymentDate\": \"2025-11-21\",\n  \"amount\": 9440.00,\n  \"paymentMethod\": \"BANK_TRANSFER\",\n  \"reference\": \"TXN123456\",\n  \"notes\": \"Payment for Bill #001\",\n  \"bills\": [\n    {\n      \"billId\": \"{{billId}}\",\n      \"amount\": 9440.00\n    }\n  ]\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/payments",
+          "name": "Get All Payments",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "5. Accounts - Receipts",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/receipts",
+          "name": "Create Receipt",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"customerId\": \"{{customerId}}\",\n  \"receiptDate\": \"2025-11-21\",\n  \"amount\": 5900.00,\n  \"paymentMethod\": \"BANK_TRANSFER\",\n  \"reference\": \"REC-001\",\n  \"notes\": \"Payment received for Invoice\",\n  \"invoices\": [\n    {\n      \"invoiceId\": \"{{invoiceId}}\",\n      \"amount\": 5900.00\n    }\n  ]\n}"
+          }
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/receipts",
+          "name": "Get All Receipts",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "6. Reports - Financial",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/reports/balance-sheet",
+          "name": "Balance Sheet",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "asOfDate",
+              "value": "2025-11-21",
+              "active": true
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/reports/profit-loss",
+          "name": "Profit & Loss Statement",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "startDate",
+              "value": "2025-01-01",
+              "active": true
+            },
+            {
+              "key": "endDate",
+              "value": "2025-11-21",
+              "active": true
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/reports/trial-balance",
+          "name": "Trial Balance",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "asOfDate",
+              "value": "2025-11-21",
+              "active": true
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/reports/cash-flow",
+          "name": "Cash Flow Statement",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "startDate",
+              "value": "2025-01-01",
+              "active": true
+            },
+            {
+              "key": "endDate",
+              "value": "2025-11-21",
+              "active": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "6. Reports - Sales",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/reports/sales-summary",
+          "name": "Sales Summary",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "startDate",
+              "value": "2025-01-01",
+              "active": true
+            },
+            {
+              "key": "endDate",
+              "value": "2025-11-21",
+              "active": true
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/reports/sales-by-customer",
+          "name": "Sales by Customer",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "startDate",
+              "value": "2025-01-01",
+              "active": true
+            },
+            {
+              "key": "endDate",
+              "value": "2025-11-21",
+              "active": true
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/reports/sales-by-product",
+          "name": "Sales by Product",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "startDate",
+              "value": "2025-01-01",
+              "active": true
+            },
+            {
+              "key": "endDate",
+              "value": "2025-11-21",
+              "active": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "6. Reports - Inventory",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/reports/stock-valuation",
+          "name": "Stock Valuation",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/reports/stock-movement",
+          "name": "Stock Movement Report",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "startDate",
+              "value": "2025-01-01",
+              "active": true
+            },
+            {
+              "key": "endDate",
+              "value": "2025-11-21",
+              "active": true
+            }
+          ]
+        },
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/reports/low-stock",
+          "name": "Low Stock Alert",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "v": 2,
+      "name": "6. Reports - Tax",
+      "requests": [
+        {
+          "v": "2",
+          "endpoint": "http://localhost:8020/api/v1/reports/gst",
+          "name": "GST Report",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}",
+              "active": true
+            }
+          ],
+          "params": [
+            {
+              "key": "startDate",
+              "value": "2025-01-01",
+              "active": true
+            },
+            {
+              "key": "endDate",
+              "value": "2025-11-21",
+              "active": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -12,13 +12,18 @@ const redisConfig = {
   password: process.env.REDIS_PASSWORD || undefined,
   db: parseInt(process.env.REDIS_DB, 10) || 0,
   retryStrategy: (times) => {
-    const delay = Math.min(times * 50, 2000);
+    // Stop retrying after 3 attempts
+    if (times > 3) {
+      logger.warn('Redis max retries reached, giving up');
+      return null;
+    }
+    const delay = Math.min(times * 1000, 3000);
     return delay;
   },
-  maxRetriesPerRequest: 10,
+  maxRetriesPerRequest: 3,
   enableReadyCheck: true,
   lazyConnect: true,
-  connectTimeout: 10000
+  connectTimeout: 5000
 };
 
 // Create Redis client singleton

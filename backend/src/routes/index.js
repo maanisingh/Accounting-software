@@ -6,6 +6,11 @@
 import express from 'express';
 import authRoutes from './v1/auth.route.js';
 import userRoutes from './v1/user.route.js';
+import inventoryRoutes from './v1/inventoryRoutes.js';
+import purchaseRoutes from './v1/purchaseRoutes.js';
+import salesRoutes from './v1/salesRoutes.js';
+import accountsRoutes from './v1/accountsRoutes.js';
+import reportsRoutes from './v1/reportsRoutes.js';
 
 const router = express.Router();
 
@@ -26,6 +31,11 @@ router.get('/health', (req, res) => {
  */
 router.use('/v1/auth', authRoutes);
 router.use('/v1/users', userRoutes);
+router.use('/v1', inventoryRoutes);
+router.use('/v1', purchaseRoutes);
+router.use('/v1', salesRoutes);
+router.use('/v1', accountsRoutes);
+router.use('/v1/reports', reportsRoutes);
 
 /**
  * API info endpoint
@@ -39,7 +49,41 @@ router.get('/', (req, res) => {
     endpoints: {
       health: '/api/health',
       auth: '/api/v1/auth',
-      users: '/api/v1/users'
+      users: '/api/v1/users',
+      inventory: {
+        products: '/api/v1/products',
+        brands: '/api/v1/brands',
+        categories: '/api/v1/categories',
+        warehouses: '/api/v1/warehouses',
+        stock: '/api/v1/stock',
+        movements: '/api/v1/movements'
+      },
+      purchases: {
+        quotations: '/api/v1/purchase-quotations',
+        orders: '/api/v1/purchase-orders',
+        receipts: '/api/v1/goods-receipts',
+        bills: '/api/v1/bills',
+        returns: '/api/v1/purchase-returns'
+      },
+      sales: {
+        quotations: '/api/v1/sales-quotations',
+        orders: '/api/v1/sales-orders',
+        challans: '/api/v1/delivery-challans',
+        returns: '/api/v1/sales-returns'
+      },
+      accounts: {
+        accounts: '/api/v1/accounts',
+        journalEntries: '/api/v1/journal-entries',
+        payments: '/api/v1/payments',
+        receipts: '/api/v1/receipts'
+      },
+      reports: {
+        financial: '/api/v1/reports/balance-sheet',
+        sales: '/api/v1/reports/sales-summary',
+        purchases: '/api/v1/reports/purchases-summary',
+        inventory: '/api/v1/reports/inventory-summary',
+        tax: '/api/v1/reports/tax-summary'
+      }
     }
   });
 });

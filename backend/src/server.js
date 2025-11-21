@@ -39,7 +39,7 @@ const startServer = async () => {
         await redis.ping();
         logger.info('Redis connected successfully');
       } catch (error) {
-        logger.warn('Redis connection failed, continuing without cache:', error.message);
+        logger.warn(`Redis connection failed, continuing without cache: ${error.message}`);
       }
     } else {
       logger.warn('Redis client not initialized, continuing without cache');

@@ -23,9 +23,9 @@ const globalForPrisma = global;
 const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
 
 // Log Prisma events
-prisma.$on('warn', (e) => logger.warn('Prisma Warning:', e));
-prisma.$on('error', (e) => logger.error('Prisma Error:', e));
-prisma.$on('info', (e) => logger.info('Prisma Info:', e.message));
+prisma.$on('warn', (e) => logger.warn(`Prisma Warning: ${e.message || JSON.stringify(e)}`));
+prisma.$on('error', (e) => logger.error(`Prisma Error: ${e.message || JSON.stringify(e)}`));
+prisma.$on('info', (e) => logger.info(`Prisma Info: ${e.message || JSON.stringify(e)}`));
 prisma.$on('query', (e) => {
   if (process.env.NODE_ENV === 'development') {
     logger.debug(`Query: ${e.query} | Params: ${e.params} | Duration: ${e.duration}ms`);
