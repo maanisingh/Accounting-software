@@ -41,7 +41,8 @@ const Login = () => {
 
       // ✅ Fixed response destructuring to match actual API response
       const { message, data } = response.data;
-      const { user, accessToken } = data; // API returns 'accessToken', not 'token'
+      const { user, tokens } = data; // API returns tokens object
+      const { accessToken } = tokens; // Extract accessToken from tokens
 
       if (accessToken && user && user.id) {
         // Save auth data
