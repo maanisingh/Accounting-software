@@ -53,7 +53,7 @@
 //         setLoading(true);
         
 //         // Fetch products
-//         const productResponse = await axiosInstance.get(`/products/company/${companyId}`);
+//         const productResponse = await axiosInstance.get(`/products`);
 //         console.log("Product API Response:", productResponse.data);
         
 //         if (productResponse.data && productResponse.data.success) {
@@ -63,7 +63,7 @@
 //         }
         
 //         // Fetch taxes 
-//         const taxResponse = await axiosInstance.get(`/taxclasses/company/${companyId}`);
+//         const taxResponse = await axiosInstance.get(`/tax-classes`);
 //         console.log("Tax API Response:", taxResponse.data);
         
 //         if (taxResponse.data && taxResponse.data.success && taxResponse.data.data && taxResponse.data.data.length > 0) {
@@ -882,7 +882,7 @@ const PointOfSale = () => {
         setLoading(true);
 
         // Fetch products
-        const productResponse = await axiosInstance.get(`/products/company/${companyId}`);
+        const productResponse = await axiosInstance.get(`/products`);
         console.log("Product API Response:", productResponse.data);
 
         if (productResponse.data && productResponse.data.success) {
@@ -892,7 +892,7 @@ const PointOfSale = () => {
         }
 
         // Fetch taxes 
-        const taxResponse = await axiosInstance.get(`/taxclasses/company/${companyId}`);
+        const taxResponse = await axiosInstance.get(`/tax-classes`);
         console.log("Tax API Response:", taxResponse.data);
 
         if (taxResponse.data && taxResponse.data.success && taxResponse.data.data && taxResponse.data.data.length > 0) {

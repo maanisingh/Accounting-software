@@ -114,7 +114,7 @@ const ContraVoucher = () => {
 
     const fetchAccounts = async () => {
       try {
-        const response = await axiosInstance.get(`account/company/${companyId}`);
+        const response = await axiosInstance.get(`accounts`);
         let accountsArray = [];
 
         if (Array.isArray(response.data)) {
@@ -152,7 +152,7 @@ const ContraVoucher = () => {
     const fetchContraVouchers = async () => {
       setTableLoading(true);
       try {
-        const response = await axiosInstance.get(`contravouchers/company/${companyId}`);
+        const response = await axiosInstance.get(`contra-vouchers`);
         let data = [];
         if (Array.isArray(response.data)) {
           data = response.data;

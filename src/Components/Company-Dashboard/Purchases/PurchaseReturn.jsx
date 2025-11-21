@@ -139,7 +139,7 @@
 //   const fetchProducts = async () => {
 //     if (!companyId) return [];
 //     try {
-//       const res = await axiosInstance.get(`/products/company/${companyId}`);
+//       const res = await axiosInstance.get(`/products`);
 //       return Array.isArray(res.data?.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
 //     } catch (err) {
 //       console.error('Failed to load products', err);
@@ -1285,7 +1285,7 @@ const PurchaseReturn = () => {
   const fetchProducts = async () => {
     if (!companyId) return [];
     try {
-      const res = await axiosInstance.get(`/products/company/${companyId}`);
+      const res = await axiosInstance.get(`/products`);
       return Array.isArray(res.data?.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
     } catch (err) {
       console.error('Failed to load products', err);

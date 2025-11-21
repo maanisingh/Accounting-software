@@ -159,7 +159,7 @@ const CustomersDebtors = () => {
       setError(null);
 
       const response = await axiosInstance.get(
-        `vendorCustomer/company/${companyId}?type=customer`
+        `customers`
       );
 
       if (response?.status) {

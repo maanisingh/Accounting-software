@@ -79,7 +79,7 @@ const Income = () => {
       setError(null);
 
       const response = await axiosInstance.get(
-        `vendorCustomer/company/${companyId}?type=customer`
+        `customers`
       );
 
       console.log("Customers API response:", response.data);

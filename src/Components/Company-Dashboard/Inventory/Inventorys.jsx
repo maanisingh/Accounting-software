@@ -42,7 +42,7 @@ const InventoryItems = () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
-        `products/company/${companyId}`
+        `products`
       );
 
       if (response.data?.success && Array.isArray(response.data.data)) {

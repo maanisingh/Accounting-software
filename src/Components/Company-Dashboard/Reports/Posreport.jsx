@@ -28,7 +28,7 @@ const PosReport = () => {
   // ✅ Fetch POS data
   const fetchPosData = async () => {
     try {
-      const res = await axiosInstance.get(`posinvoice/company/${companyId}`);
+      const res = await axiosInstance.get(`pos-invoices`);
       const data = Array.isArray(res.data?.data) ? res.data.data : [];
 
       // ✅ Auto-generate invoice numbers

@@ -385,7 +385,7 @@ const MultiStepSalesForm = ({ onSubmit, initialData, initialStep }) => {
 
     setLoadingItems(true);
     try {
-      const response = await axiosInstance.get(`products/company/${companyId}`);
+      const response = await axiosInstance.get(`products`);
       const data = response.data;
 
       if (data.success) {

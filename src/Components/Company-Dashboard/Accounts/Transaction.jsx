@@ -134,9 +134,9 @@ const Transaction = () => {
       setLoadingCustomers(true);
 
       // ✅ Fetch customers
-      const customerResponse = await axiosInstance.get(`/vendorCustomer/company/${CompanyId}?type=customer`);
+      const customerResponse = await axiosInstance.get(`/customers`);
       // ✅ Fetch vendors — with CORRECT spelling: "vendor", NOT "vender"
-      const vendorResponse = await axiosInstance.get(`/vendorCustomer/company/${CompanyId}?type=vender`);
+      const vendorResponse = await axiosInstance.get(`/vendors`);
 
       console.log("Customers API Response:", customerResponse.data);
       console.log("Vendors API Response:", vendorResponse.data);
@@ -172,7 +172,7 @@ const Transaction = () => {
 
     try {
       setLoading(true);
-      const response = await axiosInstance.get(`/transactions/company/${CompanyId}`);
+      const response = await axiosInstance.get(`/transactions`);
 
       if (response.data.success) {
         let rawData = response.data.data;

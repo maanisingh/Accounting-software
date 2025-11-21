@@ -61,7 +61,7 @@ function InventoryAdjustment() {
   const fetchItems = async () => {
     if (!companyId) return;
     try {
-      const response = await axiosInstance.get(`products/company/${companyId}`);
+      const response = await axiosInstance.get(`products`);
       if (Array.isArray(response.data.data)) {
         const mapped = response.data.data.map(item => ({
           id: item.id,
@@ -113,7 +113,7 @@ function InventoryAdjustment() {
   const fetchAdjustments = async () => {
     if (!companyId) return;
     try {
-      const response = await axiosInstance.get(`inventoryadjustment/company/${companyId}`);
+      const response = await axiosInstance.get(`inventory-adjustments`);
       if (response.data.success && Array.isArray(response.data.data)) {
         const mapped = response.data.data.map(adj => {
           let typeLabel = 'Adjust Value';

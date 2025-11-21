@@ -120,7 +120,7 @@ const Users = () => {
       }
 
       try {
-        const response = await axiosInstance.get(`/auth/User/company/${companyId}`);
+        const response = await axiosInstance.get(`/users`);
 
         if (response.data.success && Array.isArray(response.data.data)) {
           const companyUsers = response.data.data.map(user => {

@@ -16,7 +16,7 @@ const CustomerList = ({ onSelectCustomer }) => {
     const fetchCustomers = async () => {
       try {
         setLoading(true);
-        const response = await axiosInstance.get(`/vendorCustomer/company/${companyId}?type=customer`);
+        const response = await axiosInstance.get(`/customers`);
         
         if (response.data.success) {
           setCustomers(response.data.data);

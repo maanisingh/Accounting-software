@@ -305,13 +305,13 @@ const CreateVoucherModal = ({ show, onHide, onSave, editData, companyId }) => {
     if (!companyId) return;
     try {
       setLoadingVendors(true);
-      const vendorRes = await axiosInstance.get(`vendorCustomer/company/${companyId}?type=vender`);
+      const vendorRes = await axiosInstance.get(`vendors`);
       setVendors(vendorRes.data.data || []);
       setLoadingCustomers(true);
-      const customerRes = await axiosInstance.get(`vendorCustomer/company/${companyId}?type=customer`);
+      const customerRes = await axiosInstance.get(`customers`);
       setCustomers(customerRes.data.data || []);
       setLoadingAccounts(true);
-      const accountRes = await axiosInstance.get(`/account/company/${companyId}`);
+      const accountRes = await axiosInstance.get(`/accounts`);
       setAccounts(accountRes.data.data || []);
     } catch (err) {
       console.error("Error fetching dropdown data:", err);
@@ -326,7 +326,7 @@ const CreateVoucherModal = ({ show, onHide, onSave, editData, companyId }) => {
     if (!companyId) return;
     try {
       setLoadingProducts(true);
-      const response = await axiosInstance.get(`/products/company/${companyId}`, {
+      const response = await axiosInstance.get(`/products`, {
         params: { search: searchTerm }
       });
       if (response.data.success && response.data.data) {
@@ -1632,7 +1632,7 @@ const CreateVoucher = () => {
     }
     try {
       setLoading(true);
-      const response = await axiosInstance.get(`/voucher/company/${companyId}`);
+      const response = await axiosInstance.get(`/vouchers`);
       if (response.data.success) {
         const mapped = response.data.data.map(mapApiVoucherToLocal);
         setVouchers(mapped);

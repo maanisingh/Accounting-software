@@ -102,7 +102,7 @@ const PurchaseQuotationTab = ({ onSubmit, initialData }) => {
     setLoadingVendors(true);
     try {
       const response = await axiosInstance.get(
-        `/vendorCustomer/company/${companyId}?type=vender`
+        `/vendors`
       );
       if (response.data && response.data.success) {
         setVendors(response.data.data);
@@ -122,7 +122,7 @@ const PurchaseQuotationTab = ({ onSubmit, initialData }) => {
     setLoadingProducts(true);
     try {
       const response = await axiosInstance.get(
-        `/products/company/${companyId}`
+        `/products`
       );
       if (response.data && response.data.success) {
         setApiProducts(response.data.data);

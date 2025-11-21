@@ -92,7 +92,7 @@ const Expense = () => {
   const fetchVendors = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${BaseUrl}vendorCustomer/company/${companyId}?type=vender`);
+      const response = await fetch(`${BaseUrl}vendors`);
       const result = await response.json();
       console.log("Fetched vendorsfffffffffff:", result);
 

@@ -72,7 +72,7 @@ const VendorsCustomers = () => {
     try {
       setLoading(true);
       setError(null); // Clear previous errors
-      const response = await axiosInstance.get(`/vendorCustomer/company/${CompanyId}?type=${vendorType}`);
+      const response = await axiosInstance.get(`/vendors` + (vendorType === 'vender' ? '' : '') + ``);
 
       // Check if response is successful and has data
       if (response.status === 200 && response.data && Array.isArray(response.data.data)) {
