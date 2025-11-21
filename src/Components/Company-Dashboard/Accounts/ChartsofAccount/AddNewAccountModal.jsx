@@ -79,7 +79,7 @@ const AddNewAccountModal = ({
     try {
       setLoadingSubgroups(true);
       setAccountError('');
-      const response = await axiosInstance.get(`${BaseUrl}account/subgroup/${companyId}`);
+      const response = await axiosInstance.get(`${BaseUrl}accounts/types`);
       console.log("Subgroups response:", response.data);
       // Updated to handle the actual response structure
       if (response.data.success) {

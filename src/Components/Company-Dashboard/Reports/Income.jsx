@@ -146,7 +146,7 @@ const Income = () => {
       setError(null);
 
       const response = await axiosInstance.get(
-        `account/company/${companyId}`
+        `accounts`
       );
 
       console.log("Accounts API response:", response.data);

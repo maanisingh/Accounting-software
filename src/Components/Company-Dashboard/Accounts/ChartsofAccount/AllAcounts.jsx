@@ -189,7 +189,7 @@ const AllAccounts = () => {
   const fetchAccountData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get(`${BaseUrl}account/company/${companyId}`);
+      const response = await axiosInstance.get(`${BaseUrl}accounts`);
       console.log("API Response:", response.data);
       
       // Check if response has the expected structure

@@ -71,7 +71,7 @@ const Expense = () => {
   const fetchAccounts = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${BaseUrl}account/company/${companyId}`);
+      const response = await fetch(`${BaseUrl}accounts`);
       const result = await response.json();
 
       // ✅ Change this line:
