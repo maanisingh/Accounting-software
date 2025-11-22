@@ -22,6 +22,7 @@ import inventoryAdjustmentRoutes from './v1/inventoryAdjustmentRoutes.js';
 import returnsRoutes from './v1/returnsRoutes.js';
 import invoiceRoutes from './v1/invoiceRoutes.js';
 import legacyRoutes from './v1/legacyRoutes.js';
+import setupRoutes from './setup.routes.js';
 
 const router = express.Router();
 
@@ -36,6 +37,11 @@ router.get('/health', (req, res) => {
     environment: process.env.NODE_ENV || 'development'
   });
 });
+
+/**
+ * Setup endpoint (one-time database seeding)
+ */
+router.use('/setup', setupRoutes);
 
 /**
  * API v1 routes
