@@ -76,15 +76,15 @@ const seed = async () => {
     // Create default chart of accounts
     console.log('\n📊 Creating chart of accounts...');
     const accounts = [
-      { code: '1000', name: 'Cash', type: 'ASSET', description: 'Cash on hand', companyId: company.id },
-      { code: '1010', name: 'Bank Account', type: 'ASSET', description: 'Bank account balance', companyId: company.id },
-      { code: '1200', name: 'Accounts Receivable', type: 'ASSET', description: 'Money owed by customers', companyId: company.id },
-      { code: '1500', name: 'Inventory', type: 'ASSET', description: 'Products in stock', companyId: company.id },
-      { code: '2000', name: 'Accounts Payable', type: 'LIABILITY', description: 'Money owed to suppliers', companyId: company.id },
-      { code: '3000', name: 'Owner Equity', type: 'EQUITY', description: 'Owner investment', companyId: company.id },
-      { code: '4000', name: 'Sales Revenue', type: 'REVENUE', description: 'Revenue from sales', companyId: company.id },
-      { code: '5000', name: 'Cost of Goods Sold', type: 'EXPENSE', description: 'Direct costs of products sold', companyId: company.id },
-      { code: '6000', name: 'Operating Expenses', type: 'EXPENSE', description: 'Business operating costs', companyId: company.id },
+      { accountNumber: '1000', accountName: 'Cash', accountType: 'ASSET', description: 'Cash on hand', companyId: company.id },
+      { accountNumber: '1010', accountName: 'Bank Account', accountType: 'ASSET', description: 'Bank account balance', companyId: company.id },
+      { accountNumber: '1200', accountName: 'Accounts Receivable', accountType: 'ASSET', description: 'Money owed by customers', companyId: company.id },
+      { accountNumber: '1500', accountName: 'Inventory', accountType: 'ASSET', description: 'Products in stock', companyId: company.id },
+      { accountNumber: '2000', accountName: 'Accounts Payable', accountType: 'LIABILITY', description: 'Money owed to suppliers', companyId: company.id },
+      { accountNumber: '3000', accountName: 'Owner Equity', accountType: 'EQUITY', description: 'Owner investment', companyId: company.id },
+      { accountNumber: '4000', accountName: 'Sales Revenue', accountType: 'REVENUE', description: 'Revenue from sales', companyId: company.id },
+      { accountNumber: '5000', accountName: 'Cost of Goods Sold', accountType: 'EXPENSE', description: 'Direct costs of products sold', companyId: company.id },
+      { accountNumber: '6000', accountName: 'Operating Expenses', accountType: 'EXPENSE', description: 'Business operating costs', companyId: company.id },
     ];
 
     await prisma.account.createMany({
