@@ -17,9 +17,11 @@ const CustomerList = ({ onSelectCustomer }) => {
       try {
         setLoading(true);
         const response = await axiosInstance.get(`/customers`);
-        
+
         if (response.data.success) {
-          setCustomers(response.data.data);
+          // Handle different response structures - API returns {data: {customers: [...]}}
+          const customersArray = response.data.customers || response.data.data?.customers || response.data.data || [];
+          setCustomers(Array.isArray(customersArray) ? customersArray : []);
         } else {
           setError("Failed to fetch customers");
         }
