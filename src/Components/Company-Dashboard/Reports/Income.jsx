@@ -337,6 +337,7 @@ const Income = () => {
     fetchCustomersByCompany();
     fetchAccountsByCompany(); // ✅ NEW: Fetch accounts
     fetchIncomeVouchers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId]);
 
   // Fetch customers when create modal is opened if not already loaded

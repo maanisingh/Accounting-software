@@ -423,12 +423,40 @@ const CustomersDebtors = () => {
     setCurrentIndex(null);
   };
 
-  // Filter customers
+  // Helper function for Excel columns
+  const getCustomerColumns = () => {
+    return [
+      "name",
+      "contact",
+      "email",
+      "taxNumber",
+      "altMobile",
+      "balance",
+      "taxEnabled",
+      "billing.name",
+      "billing.phone",
+      "billing.address",
+      "billing.city",
+      "billing.state",
+      "billing.country",
+      "billing.zip",
+      "shipping.name",
+      "shipping.phone",
+      "shipping.address",
+      "shipping.city",
+      "shipping.state",
+      "shipping.country",
+      "shipping.zip",
+    ];
+  };
+
+  // Filter customers with null/undefined safety
   const filteredCustomers = customersList.filter((customer) => {
+    if (!customer) return false;
     const matchesSearch =
-      customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.contact.toLowerCase().includes(searchTerm.toLowerCase());
+      (customer.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (customer.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (customer.contact || "").toLowerCase().includes(searchTerm.toLowerCase());
     return matchesSearch;
   });
 

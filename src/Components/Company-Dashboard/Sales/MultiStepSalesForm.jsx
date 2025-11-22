@@ -113,6 +113,7 @@ const MultiStepSalesForm = ({ onSubmit, initialData, initialStep }) => {
   // Fetch company details when component mounts or companyId changes
   useEffect(() => {
     fetchCompanyDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId]);
 
   const handleServiceInput = (e) => {
@@ -439,6 +440,7 @@ const MultiStepSalesForm = ({ onSubmit, initialData, initialStep }) => {
   useEffect(() => {
     fetchProducts();
     fetchWarehouses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId]);
 
   const [showUOMModal, setShowUOMModal] = useState(false);

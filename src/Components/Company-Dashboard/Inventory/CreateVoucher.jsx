@@ -446,6 +446,7 @@ const CreateVoucherModal = ({ show, onHide, onSave, editData, companyId }) => {
     if (productSearchTerm.trim() === "") return;
     const timer = setTimeout(() => fetchProducts(productSearchTerm), 300);
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productSearchTerm, companyId]);
 
   // ✅ New useEffect for customer/vendor search
@@ -512,6 +513,7 @@ const CreateVoucherModal = ({ show, onHide, onSave, editData, companyId }) => {
 
   useEffect(() => {
     fetchDropdownData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId]);
 
   useEffect(() => {

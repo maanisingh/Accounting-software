@@ -169,6 +169,7 @@ function InventoryAdjustment() {
       fetchItems();
       fetchWarehouses();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId]);
 
   // Re-fetch adjustments when items/warehouses change
@@ -176,6 +177,7 @@ function InventoryAdjustment() {
     if (companyId && allItems.length > 0 && allWarehouses.length > 0) {
       fetchAdjustments();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId, allItems, allWarehouses]);
 
   // Auto-generate voucher
@@ -197,15 +199,18 @@ function InventoryAdjustment() {
     }
   }, [showModal, editingAdjustment]);
 
-  // Filter items
+  // Filter items with null-safety
   useEffect(() => {
     if (itemSearch === '') {
       setFilteredItems(allItems);
     } else {
-      const filtered = allItems.filter(item =>
-        item.name.toLowerCase().includes(itemSearch.toLowerCase()) ||
-        (item.sku && item.sku.toLowerCase().includes(itemSearch.toLowerCase()))
-      );
+      const filtered = allItems.filter(item => {
+        if (!item) return false;
+        return (
+          (item.name || "").toLowerCase().includes(itemSearch.toLowerCase()) ||
+          (item.sku || "").toLowerCase().includes(itemSearch.toLowerCase())
+        );
+      });
       setFilteredItems(filtered);
     }
   }, [itemSearch, allItems]);
@@ -227,8 +232,9 @@ function InventoryAdjustment() {
     setTotalAmount(total);
   }, [rows]);
 
-  // Filter adjustments
+  // Filter adjustments with null-safety
   const filteredAdjustments = adjustments.filter(adjustment => {
+    if (!adjustment) return false;
     const adjDate = new Date(adjustment.voucherDate);
     const from = filters.fromDate ? new Date(filters.fromDate) : null;
     const to = filters.toDate ? new Date(filters.toDate) : null;
@@ -237,19 +243,21 @@ function InventoryAdjustment() {
     if (to && adjDate > new Date(to.getTime() + 86400000)) return false;
     if (filters.type && adjustment.adjustmentType !== filters.type) return false;
     if (filters.sourceWarehouse) {
-      const match = adjustment.items.some(item =>
-        item.warehouseName.toLowerCase().includes(filters.sourceWarehouse.toLowerCase())
+      const match = adjustment.items?.some(item =>
+        (item.warehouseName || "").toLowerCase().includes(filters.sourceWarehouse.toLowerCase())
       );
       if (!match) return false;
     }
     if (filters.searchItem) {
       const search = filters.searchItem.toLowerCase();
-      const match = adjustment.items.some(item => item.itemName.toLowerCase().includes(search));
+      const match = adjustment.items?.some(item =>
+        (item.itemName || "").toLowerCase().includes(search)
+      );
       if (!match) return false;
     }
-    if (filters.autoVoucherNo && !adjustment.voucherNo.toLowerCase().includes(filters.autoVoucherNo.toLowerCase())) return false;
+    if (filters.autoVoucherNo && !(adjustment.voucherNo || "").toLowerCase().includes(filters.autoVoucherNo.toLowerCase())) return false;
     if (filters.manualVoucherNo && adjustment.manualVoucherNo &&
-      !adjustment.manualVoucherNo.toLowerCase().includes(filters.manualVoucherNo.toLowerCase())) return false;
+      !(adjustment.manualVoucherNo || "").toLowerCase().includes(filters.manualVoucherNo.toLowerCase())) return false;
 
     return true;
   });

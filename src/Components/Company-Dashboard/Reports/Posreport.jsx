@@ -118,6 +118,7 @@ const PosReport = () => {
 
   useEffect(() => {
     fetchPosData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Apply filters when any filter changes
@@ -125,6 +126,7 @@ const PosReport = () => {
     if (posData.length > 0) {
       applyFilters();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paymentStatusFilter, fromDate, toDate, customerSearch, posData]);
 
   // Get status badge styling

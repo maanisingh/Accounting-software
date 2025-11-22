@@ -242,6 +242,7 @@ const ReceivedCustomer = () => {
           setFilteredReceivedInto([]);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId]);
 
   // Fetch Customers
@@ -262,6 +263,7 @@ const ReceivedCustomer = () => {
           setFilteredReceivedFrom([]);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId]);
 
   // Filter logic
@@ -347,7 +349,7 @@ const ReceivedCustomer = () => {
     if (editingReceipt) {
       setReceipts(receipts.map(r => r.id === editingReceipt.id ? { ...data, id: editingReceipt.id } : r));
     } else {
-      const newId = receipts.length > 0 ? Math.max(...receipts.map(r => r.id)) + 1 : 1;
+      const newId = receipts.length > 0 ? Math.max(...receipts.filter(r => r && r.id).map(r => r.id)) + 1 : 1;
       setReceipts([...receipts, { ...data, id: newId }]);
     }
   };

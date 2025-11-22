@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { Tabs, Tab, Button, Modal } from "react-bootstrap";
 import html2pdf from "html2pdf.js";
 import * as XLSX from "xlsx";
@@ -518,7 +518,9 @@ const MultiStepPurchaseForm = ({ onSubmit, initialData, initialStep }) => {
     });
   };
 
-  const handleSaveDraft = () => onSubmit(formData, key);
+  const handleSaveDraft = () => {
+    if (onSubmit) onSubmit(formData, key);
+  };
 
   const handleSaveNext = () => {
     handleSaveDraft();

@@ -26,7 +26,7 @@ const VendorsCustomers = () => {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [vendorType, setVendorType] = useState("vendor");
-  const { symbol, convertPrice: convertrice } = useContext(CurrencyContext);
+  const { symbol, convertPrice: convertrice } = useContext(CurrencyContext) || { symbol: '$', convertPrice: (val) => val };
 
   const getAccountType = (type) => type === "vendor" ? "Sundry Creditors" : "Sundry Debtors";
 
@@ -341,11 +341,14 @@ const VendorsCustomers = () => {
     }
   };
 
-  const filteredVendors = vendors.filter((v) =>
-    v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (v.email && v.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (v.phone && v.phone.includes(searchTerm))
-  );
+  const filteredVendors = vendors.filter((v) => {
+    if (!v) return false;
+    return (
+      (v.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (v.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (v.phone || "").includes(searchTerm)
+    );
+  });
 
   // Export / Import / PDF logic unchanged
   const handleDownloadTemplate = () => {

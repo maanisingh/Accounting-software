@@ -134,9 +134,10 @@ const InventoryItems = () => {
   const uniqueWarehouses = getAllWarehouses();
 
   const filteredItems = items.filter((item) => {
-    const matchesSearch = item.itemName.toLowerCase().includes(searchTerm.toLowerCase());
+    if (!item) return false;
+    const matchesSearch = (item.itemName || "").toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "All" || item.itemCategory === selectedCategory;
-    const matchesWarehouse = selectedWarehouse === "All" || 
+    const matchesWarehouse = selectedWarehouse === "All" ||
       item.warehouses?.some(w => w.name === selectedWarehouse);
 
     let matchesQuantity = true;

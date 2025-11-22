@@ -143,6 +143,7 @@ const ContraVoucher = () => {
     };
 
     fetchAccounts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId]);
 
   // Fetch vouchers
@@ -170,6 +171,7 @@ const ContraVoucher = () => {
     };
 
     fetchContraVouchers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId]);
 
   // Close dropdowns

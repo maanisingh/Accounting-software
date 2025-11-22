@@ -139,7 +139,8 @@ const Expense = () => {
     fetchAccounts();
     fetchVendors();
     fetchExpenseVouchers();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [companyId]);
 
   // Auto receipt number logic
   useEffect(() => {
@@ -592,7 +593,7 @@ const Expense = () => {
                   <optgroup label="Accounts">
                     {accounts.length > 0 ? (
                       accounts.map((account) => (
-                        <option key={`acc-${account.id}`} value={account.parent_account.subgroup_name}>
+                        <option key={`acc-${account.id}`} value={account?.parent_account?.subgroup_name || ''}>
                           {/* {account?.parent_account?.subgroup_name || 'N/A'}  */}
                           {account?.sub_of_subgroup?.name || 'N/A'}
                         </option>
@@ -604,8 +605,8 @@ const Expense = () => {
                   <optgroup label="Vendors">
                     {vendors.length > 0 ? (
                       vendors.map((vendor) => (
-                        <option key={`vend-${vendor.id}`} value={vendor.name_english}>
-                          {vendor.name_english} ({vendor.company_name})
+                        <option key={`vend-${vendor.id}`} value={vendor.name_english || ''}>
+                          {vendor.name_english || 'N/A'} ({vendor.company_name || 'N/A'})
                         </option>
                       ))
                     ) : vendorsLoaded ? (

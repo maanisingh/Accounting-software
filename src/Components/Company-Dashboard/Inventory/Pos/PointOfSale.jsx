@@ -911,6 +911,7 @@ const PointOfSale = () => {
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId]);
 
   // Initialize warehouse stock from products

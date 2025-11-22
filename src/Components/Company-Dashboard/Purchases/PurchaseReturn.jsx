@@ -1322,6 +1322,7 @@ const PurchaseReturn = () => {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId]);
 
   const handleInputChange = (e) => {
@@ -1586,9 +1587,10 @@ const PurchaseReturn = () => {
     }
   };
 
-  const filteredVendors = vendors.filter(vendor =>
-    vendor.name_english.toLowerCase().includes(vendorSearch.toLowerCase())
-  );
+  const filteredVendors = vendors.filter(vendor => {
+    if (!vendor) return false;
+    return (vendor.name_english || "").toLowerCase().includes(vendorSearch.toLowerCase());
+  });
 
   const filteredWarehouses = warehouses.filter(warehouse => {
     if (!warehouse) return false;
