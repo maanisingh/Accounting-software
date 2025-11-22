@@ -94,8 +94,8 @@ export const JWT_CONFIG = {
 
 export const RATE_LIMIT = {
   WINDOW_MS: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 900000, // 15 minutes
-  MAX_REQUESTS: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS, 10) || 100,
-  AUTH_MAX_ATTEMPTS: 5 // Login attempts
+  MAX_REQUESTS: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS, 10) || 1000, // Increased for testing
+  AUTH_MAX_ATTEMPTS: parseInt(process.env.AUTH_MAX_ATTEMPTS, 10) || 100 // Increased for testing
 };
 
 export const MODULES = {
