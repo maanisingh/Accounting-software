@@ -885,7 +885,7 @@ const CreateVoucherModal = ({ show, onHide, onSave, editData, companyId }) => {
       transferAmount: "Transfer Amount", receivedFrom: "Received From (Customer)",
       purchasedFrom: "Purchased From (Vendor)", paidTo: "Paid To (Vendor)", soldTo: "Sold To (Customer)",
       fromAccount: "From Account", toAccount: "To Account", companyName: "Company Name",
-      paidFrom: "Paid From", paidTo: "Paid To", receivedFrom: "Received From", receivedInto: "Received Into"
+      paidFrom: "Paid From", receivedInto: "Received Into"
     },
     ar: {
       salesInvoice: "فاتورة مبيعات", receipt: "إيصال", purchaseBill: "فاتورة شراء", payment: "دفع",
@@ -897,7 +897,7 @@ const CreateVoucherModal = ({ show, onHide, onSave, editData, companyId }) => {
       total: "المجموع", notes: "ملاحظات", signature: "التوقيع", photo: "صورة", attachments: "مرفقات",
       transferAmount: "مبلغ التحويل", receivedFrom: "مستلم من (العميل)", purchasedFrom: "مشترى من (المورد)",
       paidTo: "مدفوع ل (المورد)", soldTo: "مباع ل (العميل)", fromAccount: "من الحساب", toAccount: "إلى الحساب",
-      companyName: "اسم الشركة", paidFrom: "دفع من", paidTo: "دفع إلى", receivedFrom: "مستلم من", receivedInto: "تم الاستلام في"
+      companyName: "اسم الشركة", paidFrom: "دفع من", receivedInto: "تم الاستلام في"
     }
   };
 

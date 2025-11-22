@@ -255,7 +255,6 @@ const MultiStepSalesForm = ({ onSubmit, initialData, initialStep }) => {
       footerNote: "Thank you!",
       // 👉 Quotation No (Auto + Manual)
       quotationNo: "", // Auto-generated QUO No
-      manualQuotationRef: "", // Manual QUO Ref
     },
     deliveryChallan: {
       referenceId: "",
