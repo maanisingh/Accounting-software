@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 // Get all contra vouchers for a company
 export const getContraVouchers = async (req, res) => {
   try {
-    const { companyId } = req.query;
+    const companyId = req.user?.companyId || req.query.companyId;
     const { startDate, endDate, page = 1, limit = 50 } = req.query;
 
     if (!companyId) {

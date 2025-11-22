@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 // Get all POS invoices for a company
 export const getPOSInvoices = async (req, res) => {
   try {
-    const { companyId } = req.query;
+    const companyId = req.user?.companyId || req.query.companyId;
     const { startDate, endDate, status, page = 1, limit = 50 } = req.query;
 
     if (!companyId) {

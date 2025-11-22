@@ -9,6 +9,7 @@ import * as customerController from '../../controllers/customerController.js';
 import * as salesReturnController from '../../controllers/salesReturnController.js';
 import * as salesReportController from '../../controllers/salesReportController.js';
 import * as purchaseReportController from '../../controllers/purchaseReportController.js';
+import * as accountController from '../../controllers/accountController.js';
 
 const router = express.Router();
 
@@ -98,6 +99,20 @@ router.get('/purchase-reports/summary', async (req, res, next) => {
 router.get('/purchase-reports/detailed', async (req, res, next) => {
   // Map companyId query param if needed
   return purchaseReportController.getDetailedPurchases(req, res, next);
+});
+
+/**
+ * @route   GET /api/v1/account/getAccountByCompany/:id
+ * @desc    Get accounts by company ID (legacy endpoint)
+ * @access  Private
+ * @note    This is an alias for /api/v1/accounts?companyId=:id
+ */
+router.get('/account/getAccountByCompany/:id', async (req, res, next) => {
+  // Set companyId from URL param to query param
+  req.query.companyId = req.params.id;
+
+  // Forward to account controller
+  return accountController.getAccounts(req, res, next);
 });
 
 export default router;

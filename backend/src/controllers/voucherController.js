@@ -4,6 +4,84 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
+// Get all vouchers (uses companyId from auth token)
+export const getVouchers = async (req, res) => {
+  try {
+    const companyId = req.user?.companyId || req.query.companyId;
+
+    if (!companyId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Company ID is required'
+      });
+    }
+
+    const { type, status, startDate, endDate, page = 1, limit = 50 } = req.query;
+
+    const where = { companyId };
+
+    if (type) {
+      where.type = type;
+    }
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (startDate && endDate) {
+      where.createdAt = {
+        gte: new Date(startDate),
+        lte: new Date(endDate)
+      };
+    }
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const [vouchers, total] = await Promise.all([
+      prisma.stockMovement.findMany({
+        where,
+        include: {
+          product: {
+            select: {
+              id: true,
+              name: true,
+              sku: true
+            }
+          },
+          warehouse: {
+            select: {
+              id: true,
+              name: true
+            }
+          }
+        },
+        skip,
+        take: parseInt(limit),
+        orderBy: { createdAt: 'desc' }
+      }),
+      prisma.stockMovement.count({ where })
+    ]);
+
+    res.json({
+      success: true,
+      data: vouchers,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / parseInt(limit))
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching vouchers:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch vouchers',
+      error: error.message
+    });
+  }
+};
+
 // Get all vouchers for a company
 export const getVouchersByCompany = async (req, res) => {
   try {

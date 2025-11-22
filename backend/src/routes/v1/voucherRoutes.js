@@ -13,6 +13,9 @@ router.use(authenticate);
 
 // ==================== INVENTORY VOUCHERS ====================
 
+// GET /api/v1/vouchers - Get all vouchers (from auth token)
+router.get('/', voucherController.getVouchers);
+
 // GET /api/v1/vouchers/company/:companyId - Get all vouchers
 router.get('/company/:companyId', voucherController.getVouchersByCompany);
 
