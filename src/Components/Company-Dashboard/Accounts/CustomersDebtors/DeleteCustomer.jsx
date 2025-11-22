@@ -20,9 +20,9 @@ const DeleteCustomer = ({ show, onHide, onConfirm, customerId }) => {
       setError(null);
       
       // Make DELETE API call
-      const response = await axiosInstance.delete(`/vendorCustomer/${customerId}`);
-      
-      if (response.data.status) {
+      const response = await axiosInstance.delete(`/api/v1/customers/${customerId}`);
+
+      if (response.data.success) {
         // Notify parent component of successful deletion
         onConfirm();
         onHide();

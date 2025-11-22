@@ -57,38 +57,38 @@ const AddEditCustomerModal = ({
         setError(null);
         try {
           const response = await axiosInstance.get(
-            `/vendorCustomer/${customerId}`
+            `/api/v1/customers/${customerId}`
           );
 
           if (response.data.success && response.data.data) {
             const customer = response.data.data;
             setOriginalData(customer);
             setCustomerFormData({
-              nameEnglish: customer.name_english || "",
-              nameArabic: customer.name_arabic || "",
-              companyName: customer.company_name || "",
-              googleLocation: customer.google_location || "",
+              nameEnglish: customer.name || "",
+              nameArabic: "",
+              companyName: customer.name || "",
+              googleLocation: "",
               idCardImage: null,
               anyFile: null,
-              accountName: customer.account_name || "",
-              accountBalance: customer.account_balance?.toString() || "0.00",
-              creationDate: customer.creation_date
-                ? new Date(customer.creation_date).toISOString().split("T")[0]
+              accountName: customer.name || "",
+              accountBalance: customer.creditLimit?.toString() || "0.00",
+              creationDate: customer.createdAt
+                ? new Date(customer.createdAt).toISOString().split("T")[0]
                 : new Date().toISOString().split("T")[0],
-              bankAccountNumber: customer.bank_account_number || "",
-              bankIfsc: customer.bank_ifsc || "",
-              bankNameBranch: customer.bank_name_branch || "",
+              bankAccountNumber: "",
+              bankIfsc: "",
+              bankNameBranch: "",
               country: customer.country || "",
               state: customer.state || "",
-              pincode: customer.pincode || "",
+              pincode: customer.postalCode || "",
               address: customer.address || "",
-              stateCode: customer.state_code || "",
-              shippingAddress: customer.shipping_address || "",
+              stateCode: "",
+              shippingAddress: customer.address || "",
               phone: customer.phone || "",
               email: customer.email || "",
-              creditPeriodDays: customer.credit_period_days?.toString() || "",
-              enableGst: customer.enable_gst === true,
-              gstin: customer.gstIn || "",
+              creditPeriodDays: customer.creditDays?.toString() || "30",
+              enableGst: customer.taxNumber ? true : false,
+              gstin: customer.taxNumber || "",
             });
           } else {
             setError("Failed to load customer data.");
@@ -112,85 +112,41 @@ const AddEditCustomerModal = ({
       setIsSubmitting(true);
       setError(null);
 
-      const formData = new FormData();
-      formData.append("company_id", companyId);
-      formData.append("name_english", customerFormData.nameEnglish);
-      formData.append("name_arabic", customerFormData.nameArabic);
-      formData.append("company_name", customerFormData.companyName);
-      formData.append("google_location", customerFormData.googleLocation);
-      formData.append("account_name", customerFormData.accountName);
-      formData.append("account_balance", customerFormData.accountBalance);
+      // Create JSON payload matching backend API schema
+      const requestData = {
+        name: customerFormData.nameEnglish || customerFormData.companyName,
+        email: customerFormData.email,
+        phone: customerFormData.phone,
+        address: customerFormData.address,
+        city: customerFormData.state, // Using state as city for now
+        state: customerFormData.state,
+        country: customerFormData.country,
+        postalCode: customerFormData.pincode,
+        taxNumber: customerFormData.enableGst ? customerFormData.gstin : null,
+        creditLimit: parseFloat(customerFormData.accountBalance) || 0,
+        creditDays: parseInt(customerFormData.creditPeriodDays) || 30,
+        notes: customerFormData.shippingAddress || ""
+      };
 
-      // ✅ FIX: Convert "YYYY-MM-DD" to ISO 8601 datetime string
-      const creationDateISO = new Date(customerFormData.creationDate).toISOString();
-      formData.append("creation_date", creationDateISO);
-
-      formData.append("bank_account_number", customerFormData.bankAccountNumber);
-      formData.append("bank_ifsc", customerFormData.bankIfsc);
-      formData.append("bank_name_branch", customerFormData.bankNameBranch);
-      formData.append("country", customerFormData.country);
-      formData.append("state", customerFormData.state);
-      formData.append("pincode", customerFormData.pincode);
-      formData.append("address", customerFormData.address);
-      formData.append("state_code", customerFormData.stateCode);
-      formData.append("shipping_address", customerFormData.shippingAddress);
-      formData.append("phone", customerFormData.phone);
-      formData.append("email", customerFormData.email);
-      formData.append("credit_period_days", customerFormData.creditPeriodDays || "0");
-      formData.append("enable_gst", customerFormData.enableGst ? "1" : "0");
-      formData.append("gstIn", customerFormData.gstin);
-
-      // ✅ CRITICAL: Add type = customer so backend recognizes it
-      formData.append("type", "customer");
-
-      if (
-        customerFormData.idCardImage &&
-        customerFormData.idCardImage instanceof File
-      ) {
-        if (!validateImageFile(customerFormData.idCardImage)) {
-          setError(
-            "Invalid ID card image. Please upload a valid image file (JPEG, PNG, or JPG under 5MB)."
-          );
-          toast.error(
-            "Invalid ID card image. Please upload a valid image file (JPEG, PNG, or JPG under 5MB)."
-          );
-          setIsSubmitting(false);
-          return;
+      // Remove empty/null fields
+      Object.keys(requestData).forEach(key => {
+        if (requestData[key] === "" || requestData[key] === null) {
+          delete requestData[key];
         }
-        formData.append("id_card_image", customerFormData.idCardImage);
-      }
-
-      if (
-        customerFormData.anyFile &&
-        customerFormData.anyFile instanceof File
-      ) {
-        if (customerFormData.anyFile.type.match("image.*")) {
-          if (!validateImageFile(customerFormData.anyFile)) {
-            setError(
-              "Invalid image file. Please upload a valid image file (JPEG, PNG, or JPG under 5MB)."
-            );
-            toast.error(
-              "Invalid image file. Please upload a valid image file (JPEG, PNG, or JPG under 5MB)."
-            );
-            setIsSubmitting(false);
-            return;
-          }
-        }
-        formData.append("any_file", customerFormData.anyFile);
-      }
+      });
 
       let response;
       if (editMode && customerId) {
         response = await axiosInstance.put(
-          `/vendorCustomer/${customerId}`,
-          formData,
+          `/api/v1/customers/${customerId}`,
+          requestData,
           {
-            headers: { "Content-Type": "multipart/form-data" },
+            headers: { "Content-Type": "application/json" },
           }
         );
       } else {
-        response = await axiosInstance.post("/vendorCustomer", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
+        response = await axiosInstance.post("/api/v1/customers", requestData, {
+          headers: { "Content-Type": "application/json" },
         });
       }
 
