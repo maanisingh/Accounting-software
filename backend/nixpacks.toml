@@ -6,11 +6,8 @@ cmds = ['npm install --legacy-peer-deps']
 
 [phases.build]
 cmds = [
-  'npx prisma generate',
-  'npx prisma db push --accept-data-loss',
-  'node prisma/seed.js',
-  'chmod +x scripts/start.sh'
+  'npx prisma generate'
 ]
 
 [start]
-cmd = 'bash scripts/start.sh'
+cmd = 'npx prisma db push --accept-data-loss && node prisma/seed.js && node src/server.js'
