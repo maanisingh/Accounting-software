@@ -1,5 +1,6 @@
 [build]
 builder = "NIXPACKS"
+buildCommand = "npm install && VITE_API_URL=https://accounting-software-production.up.railway.app/api/v1 npm run build"
 
 [deploy]
 startCommand = "node server.js"
@@ -8,3 +9,4 @@ restartPolicyMaxRetries = 10
 
 [env]
 NODE_ENV = "production"
+VITE_API_URL = "https://accounting-software-production.up.railway.app/api/v1"
