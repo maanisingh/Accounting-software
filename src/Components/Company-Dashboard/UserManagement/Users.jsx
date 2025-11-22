@@ -124,10 +124,11 @@ const Users = () => {
 
         if (response.data.success && Array.isArray(response.data.data)) {
           const companyUsers = response.data.data.map(user => {
-            // Map role ID to role name using fetched roles
-            const roleId = user.user_role?.toString() || "3";
-            const roleObj = roles.find(r => r.id.toString() === roleId);
-            const roleName = roleObj ? roleObj.role_name : "Sales Executive";
+            // Map role to role name using fetched roles
+            // FIX: API returns roles with 'role' field not 'id' field
+            const userRole = user.user_role || user.role || "SALES_USER";
+            const roleObj = roles.find(r => r.role === userRole);
+            const roleName = roleObj ? (roleObj.name || roleObj.role_name) : "Sales Executive";
 
             return {
               id: user.id,
@@ -135,7 +136,7 @@ const Users = () => {
               phone: user.phone,
               email: user.email,
               role: roleName,
-              user_role: roleId,
+              user_role: userRole,
               status: user.UserStatus || user.status || "Active",
               img: user.profile || "",
               company_id: user.company_id,
@@ -227,7 +228,7 @@ const Users = () => {
           id: response.data.id || Date.now(),
           img: previewImg,
           company_id: companyId,
-          role: roles.find(r => r.id.toString() === form.user_role)?.role_name || "Sales Executive"
+          role: roles.find(r => r.role === form.user_role)?.name || roles.find(r => r.role === form.user_role)?.role_name || "Sales Executive"
         };
         setUsers(prev => [...prev, newUser]);
         alert('User created successfully!');
@@ -235,7 +236,7 @@ const Users = () => {
         response = await axiosInstance.put(`/auth/User/${form.id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        const updatedRoleName = roles.find(r => r.id.toString() === form.user_role)?.role_name || "Sales Executive";
+        const updatedRoleName = roles.find(r => r.role === form.user_role)?.name || roles.find(r => r.role === form.user_role)?.role_name || "Sales Executive";
         setUsers(prev =>
           prev.map(u =>
             u.id === form.id
@@ -612,21 +613,21 @@ const Users = () => {
                 value={form.user_role}
                 onChange={(e) => {
                   const selectedId = e.target.value;
-                  const selectedRole = roles.find(r => r.id.toString() === selectedId);
+                  const selectedRole = roles.find(r => r.role === selectedId);
                   setForm({
                     ...form,
                     user_role: selectedId,
-                    role: selectedRole ? selectedRole.role_name : ""
+                    role: selectedRole ? (selectedRole.name || selectedRole.role_name) : ""
                   });
                 }}
                 required
               >
-                   <option > 
+                   <option >
                     Select Role
                   </option>
                 {roles.map(role => (
-                  <option key={role.id} value={role.id.toString()}>
-                    {role.role_name}
+                  <option key={role.role} value={role.role}>
+                    {role.name || role.role_name}
                   </option>
                 ))}
                  

@@ -191,17 +191,19 @@ const AllAccounts = () => {
     try {
       const response = await axiosInstance.get(`/accounts`);
       console.log("API Response:", response.data);
-      
-      // Check if response has the expected structure
-      if (response.data && response.data.success) {
-        // Transform API data to match the component's expected format
-        const transformedData = transformAccountData(response.data.data);
-        setAccountData(transformedData);
-      } else {
-        // Handle different response structure
-        const transformedData = transformAccountData(response.data);
-        setAccountData(transformedData);
+
+      // FIX: API returns {success: true, data: [...]}
+      // Extract the data array properly
+      let accountsArray = [];
+      if (response.data && response.data.success && Array.isArray(response.data.data)) {
+        accountsArray = response.data.data;
+      } else if (Array.isArray(response.data)) {
+        accountsArray = response.data;
       }
+
+      // Transform API data to match the component's expected format
+      const transformedData = transformAccountData(accountsArray);
+      setAccountData(transformedData);
     } catch (err) {
       console.error("Error fetching account data:", err);
       setError("No Account Found");

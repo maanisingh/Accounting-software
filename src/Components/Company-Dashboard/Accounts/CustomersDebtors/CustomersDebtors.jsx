@@ -163,9 +163,11 @@ const CustomersDebtors = () => {
       );
 
       if (response?.status) {
-        
+
         // Transform API response to match our component structure
-        const transformedCustomers = response.data.data.map((apiCustomer) => {
+        // FIX: API returns {data: {customers: [...]}} not {data: {data: [...]}}
+        const customersArray = response.data.customers || response.data.data || [];
+        const transformedCustomers = customersArray.map((apiCustomer) => {
           // Map API fields to component fields
           return {
             id: apiCustomer.id,

@@ -19,6 +19,7 @@ import serviceRoutes from './v1/serviceRoutes.js';
 import userRoleRoutes from './v1/userRoleRoutes.js';
 import voucherRoutes from './v1/voucherRoutes.js';
 import invoiceRoutes from './v1/invoiceRoutes.js';
+import legacyRoutes from './v1/legacyRoutes.js';
 
 const router = express.Router();
 
@@ -56,6 +57,7 @@ router.use('/v1/income-vouchers', voucherRoutes);
 router.use('/v1/contra-vouchers', voucherRoutes);
 router.use('/v1/pos-invoices', voucherRoutes);
 router.use('/v1', invoiceRoutes);
+router.use('/v1', legacyRoutes); // Legacy/backward compatibility routes
 
 /**
  * API info endpoint
