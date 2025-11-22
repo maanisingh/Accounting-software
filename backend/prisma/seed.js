@@ -14,6 +14,9 @@ const seed = async () => {
   console.log('╚════════════════════════════════════════════════════════════╝\n');
 
   try {
+    let company;
+    let user;
+
     // Check if admin already exists
     const existingUser = await prisma.user.findFirst({
       where: { email: 'admin@zirakbook.com' }
@@ -21,17 +24,15 @@ const seed = async () => {
 
     if (existingUser) {
       console.log('⚠️  Admin user already exists!');
-      console.log('\n✅ Login Credentials:');
-      console.log('   Email: admin@zirakbook.com');
-      console.log('   Password: Admin123!');
-      console.log('');
-      await prisma.$disconnect();
-      return;
-    }
+      user = existingUser;
+      company = await prisma.company.findUnique({
+        where: { id: existingUser.companyId }
+      });
+    } else {
 
-    // Create company
-    console.log('📦 Creating company...');
-    const company = await prisma.company.create({
+      // Create company
+      console.log('📦 Creating company...');
+      company = await prisma.company.create({
       data: {
         name: 'ZirakBook Company',
         email: 'admin@zirakbook.com',
@@ -49,14 +50,14 @@ const seed = async () => {
       }
     });
 
-    console.log('✅ Company created:', company.name);
+      console.log('✅ Company created:', company.name);
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash('Admin123!', 10);
+      // Hash password
+      const hashedPassword = await bcrypt.hash('Admin123!', 10);
 
-    // Create admin user
-    console.log('\n👤 Creating admin user...');
-    const user = await prisma.user.create({
+      // Create admin user
+      console.log('\n👤 Creating admin user...');
+      user = await prisma.user.create({
       data: {
         companyId: company.id,
         name: 'Admin User',
@@ -68,30 +69,39 @@ const seed = async () => {
       }
     });
 
-    console.log('✅ Admin user created!');
-    console.log(`   Name: ${user.name}`);
-    console.log(`   Email: ${user.email}`);
-    console.log(`   Role: ${user.role}`);
+      console.log('✅ Admin user created!');
+      console.log(`   Name: ${user.name}`);
+      console.log(`   Email: ${user.email}`);
+      console.log(`   Role: ${user.role}`);
+    }
 
-    // Create default chart of accounts
+    // Create default chart of accounts (check if already exist)
     console.log('\n📊 Creating chart of accounts...');
-    const accounts = [
-      { accountNumber: '1000', accountName: 'Cash', accountType: 'ASSET', description: 'Cash on hand', companyId: company.id },
-      { accountNumber: '1010', accountName: 'Bank Account', accountType: 'ASSET', description: 'Bank account balance', companyId: company.id },
-      { accountNumber: '1200', accountName: 'Accounts Receivable', accountType: 'ASSET', description: 'Money owed by customers', companyId: company.id },
-      { accountNumber: '1500', accountName: 'Inventory', accountType: 'ASSET', description: 'Products in stock', companyId: company.id },
-      { accountNumber: '2000', accountName: 'Accounts Payable', accountType: 'LIABILITY', description: 'Money owed to suppliers', companyId: company.id },
-      { accountNumber: '3000', accountName: 'Owner Equity', accountType: 'EQUITY', description: 'Owner investment', companyId: company.id },
-      { accountNumber: '4000', accountName: 'Sales Revenue', accountType: 'REVENUE', description: 'Revenue from sales', companyId: company.id },
-      { accountNumber: '5000', accountName: 'Cost of Goods Sold', accountType: 'EXPENSE', description: 'Direct costs of products sold', companyId: company.id },
-      { accountNumber: '6000', accountName: 'Operating Expenses', accountType: 'EXPENSE', description: 'Business operating costs', companyId: company.id },
-    ];
-
-    await prisma.account.createMany({
-      data: accounts
+    const existingAccounts = await prisma.account.count({
+      where: { companyId: company.id }
     });
 
-    console.log(`✅ Created ${accounts.length} default accounts`);
+    if (existingAccounts > 0) {
+      console.log(`⚠️  Chart of accounts already exists (${existingAccounts} accounts)`);
+    } else {
+      const accounts = [
+        { accountNumber: '1000', accountName: 'Cash', accountType: 'ASSET', description: 'Cash on hand', companyId: company.id },
+        { accountNumber: '1010', accountName: 'Bank Account', accountType: 'ASSET', description: 'Bank account balance', companyId: company.id },
+        { accountNumber: '1200', accountName: 'Accounts Receivable', accountType: 'ASSET', description: 'Money owed by customers', companyId: company.id },
+        { accountNumber: '1500', accountName: 'Inventory', accountType: 'ASSET', description: 'Products in stock', companyId: company.id },
+        { accountNumber: '2000', accountName: 'Accounts Payable', accountType: 'LIABILITY', description: 'Money owed to suppliers', companyId: company.id },
+        { accountNumber: '3000', accountName: 'Owner Equity', accountType: 'EQUITY', description: 'Owner investment', companyId: company.id },
+        { accountNumber: '4000', accountName: 'Sales Revenue', accountType: 'REVENUE', description: 'Revenue from sales', companyId: company.id },
+        { accountNumber: '5000', accountName: 'Cost of Goods Sold', accountType: 'EXPENSE', description: 'Direct costs of products sold', companyId: company.id },
+        { accountNumber: '6000', accountName: 'Operating Expenses', accountType: 'EXPENSE', description: 'Business operating costs', companyId: company.id },
+      ];
+
+      await prisma.account.createMany({
+        data: accounts
+      });
+
+      console.log(`✅ Created ${accounts.length} default accounts`);
+    }
 
     console.log('\n╔════════════════════════════════════════════════════════════╗');
     console.log('║  ✅ Database Seeding Completed Successfully!               ║');
