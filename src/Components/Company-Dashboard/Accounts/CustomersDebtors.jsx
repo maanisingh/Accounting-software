@@ -1,6 +1,6 @@
 import React, { useState, useRef, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../../../Api/axiosInstance";
 import {
   Table,
   Button,
@@ -148,13 +148,7 @@ const CustomersDebtors = () => {
           return;
         }
 
-        const API_URL = import.meta.env.VITE_API_URL || 'https://accounting-software-production.up.railway.app/api/v1';
-        const response = await axios.get(`${API_URL}/customers`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+        const response = await axiosInstance.get(`/customers`);
 
         if (response.data && response.data.success) {
           // Map backend fields to frontend fields
