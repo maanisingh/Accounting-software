@@ -1,5 +1,6 @@
-import React, { useState, useRef,useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   Table,
   Button,
@@ -81,205 +82,9 @@ const getCustomerColumns = () => [
 
 const CustomersDebtors = () => {
   const navigate = useNavigate();
-  const [customersList, setCustomersList] = useState([
-    // Existing customer
-    {
-      id: "cust-001",
-      name: "Lalit Singh",
-      nameArabic: "لاليت سينغ", // Lalit Singh in Arabic
-      contact: "09752100980",
-      email: "lalit@example.com",
-      taxNumber: "GSTIN123",
-      altMobile: "0987654321",
-      balance: "5000",
-      taxEnabled: true,
-      accountType: "Sundry Debtors",
-      accountName: "Accounts Receivable",
-      billing: {
-        name: "Lalit Singh",
-        phone: "09752100980",
-        address: "34 Mahal Kachhari Road",
-        city: "Indore",
-        state: "Madhya Pradesh",
-        country: "India",
-        zip: "452001",
-      },
-      shipping: {
-        name: "Lalit Singh",
-        phone: "09752100980",
-        address: "34 Mahal Kachhari Road",
-        city: "Indore",
-        state: "Madhya Pradesh",
-        country: "India",
-        zip: "452001",
-      },
-    },
-
-    // New Customer 1
-    {
-      id: "cust-002",
-      name: "Priya Mehta",
-      nameArabic: "بريا مهتا", // Priya Mehta in Arabic
-      contact: "09876543210",
-      email: "priya.mehta@fashionhub.com",
-      taxNumber: "GSTIN456789",
-      altMobile: "0987654321",
-      balance: "12500",
-      taxEnabled: true,
-      accountType: "Sundry Debtors",
-      accountName: "Accounts Receivable",
-      billing: {
-        name: "Priya Mehta",
-        phone: "09876543210",
-        address: "Shop No 5, Link Road",
-        city: "Mumbai",
-        state: "Maharashtra",
-        country: "India",
-        zip: "400001",
-      },
-      shipping: {
-        name: "Delivery Manager",
-        phone: "09876543210",
-        address: "Attn: Delivery, Shop No 5, Link Road",
-        city: "Mumbai",
-        state: "Maharashtra",
-        country: "India",
-        zip: "400001",
-      },
-    },
-
-    // New Customer 2
-    {
-      id: "cust-003",
-      name: "Rajesh Kumar",
-      nameArabic: "راجيش كومار", // Rajesh Kumar in Arabic
-      contact: "09412345678",
-      email: "rajesh.electro@business.in",
-      taxNumber: "GSTIN789012",
-      altMobile: "",
-      balance: "7800",
-      taxEnabled: true,
-      accountType: "Sundry Debtors",
-      accountName: "Accounts Receivable",
-      billing: {
-        name: "Rajesh Kumar",
-        phone: "09412345678",
-        address: "Plot 12, Industrial Area",
-        city: "Chandigarh",
-        state: "Punjab",
-        country: "India",
-        zip: "160001",
-      },
-      shipping: {
-        name: "Rajesh Kumar",
-        phone: "09412345678",
-        address: "Plot 12, Industrial Area",
-        city: "Chandigarh",
-        state: "Punjab",
-        country: "India",
-        zip: "160001",
-      },
-    },
-
-    // New Customer 3
-    {
-      id: "cust-004",
-      name: "Anita Desai",
-      nameArabic: "अनिता देसाई", // Anita Desai in Arabic
-      contact: "09012345678",
-      email: "anita.desai@edu.org",
-      taxNumber: "GSTIN345678",
-      altMobile: "0901234567",
-      balance: "3200",
-      taxEnabled: false,
-      accountType: "Sundry Debtors",
-      accountName: "Accounts Receivable",
-      billing: {
-        name: "Anita Desai",
-        phone: "09012345678",
-        address: "15, Teacher's Colony",
-        city: "Bengaluru",
-        state: "Karnataka",
-        country: "India",
-        zip: "560001",
-      },
-      shipping: {
-        name: "Procurement Dept",
-        phone: "09012345678",
-        address: "15, Teacher's Colony, Near School Gate",
-        city: "Bengaluru",
-        state: "Karnataka",
-        country: "India",
-        zip: "560001",
-      },
-    },
-
-    // New Customer 4
-    {
-      id: "cust-005",
-      name: "Global Traders Ltd",
-      nameArabic: "جلوبال تريدرز لميتد", // Global Traders Ltd in Arabic
-      contact: "01123456789",
-      email: "info@globaltraders.co.in",
-      taxNumber: "GSTIN999000",
-      altMobile: "0112345678",
-      balance: "25000",
-      taxEnabled: true,
-      accountType: "Sundry Debtors",
-      accountName: "Accounts Receivable",
-      billing: {
-        name: "Global Traders Ltd",
-        phone: "01123456789",
-        address: "Corporate Office, Tower B, Sector 62",
-        city: "Noida",
-        state: "Uttar Pradesh",
-        country: "India",
-        zip: "201301",
-      },
-      shipping: {
-        name: "Logistics Head",
-        phone: "01123456789",
-        address: "Warehouse 3, Plot 7, Sector 44",
-        city: "Noida",
-        state: "Uttar Pradesh",
-        country: "India",
-        zip: "201307",
-      },
-    },
-
-    // New Customer 5
-    {
-      id: "cust-006",
-      name: "Sandeep Verma",
-      nameArabic: "संदीप वर्मा", // Sandeep Verma in Arabic
-      contact: "09876000987",
-      email: "sandeep.auto@workshop.in",
-      taxNumber: "GSTIN112233",
-      altMobile: "",
-      balance: "4500",
-      taxEnabled: true,
-      accountType: "Sundry Debtors",
-      accountName: "Accounts Receivable",
-      billing: {
-        name: "Sandeep Verma",
-        phone: "09876000987",
-        address: "Verma Auto Care, Main GT Road",
-        city: "Ludhiana",
-        state: "Punjab",
-        country: "India",
-        zip: "141001",
-      },
-      shipping: {
-        name: "Sandeep Verma",
-        phone: "09876000987",
-        address: "Verma Auto Care, Main GT Road",
-        city: "Ludhiana",
-        state: "Punjab",
-        country: "India",
-        zip: "141001",
-      },
-    },
-  ]);
+  const [customersList, setCustomersList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -328,6 +133,78 @@ const CustomersDebtors = () => {
 
   // ✅ Allowed account names for customers
   const allAccountNames = ["Cash in Hand", "Bank Account", "Accounts Receivable"];
+
+  // 🔥 Fetch customers from API on component mount
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setError('Authentication required. Please log in.');
+          setLoading(false);
+          return;
+        }
+
+        const API_URL = import.meta.env.VITE_API_URL || 'https://accounting-software-production.up.railway.app/api/v1';
+        const response = await axios.get(`${API_URL}/customers`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.data && response.data.success) {
+          // Map backend fields to frontend fields
+          const mappedCustomers = (response.data.data.customers || []).map(customer => ({
+            id: customer.id,
+            name: customer.name || '',
+            nameArabic: customer.nameArabic || '',
+            contact: customer.phone || '',
+            email: customer.email || '',
+            taxNumber: customer.taxNumber || '',
+            altMobile: '',
+            balance: customer.currentBalance || customer.openingBalance || '0',
+            taxEnabled: !!customer.taxNumber,
+            accountType: "Sundry Debtors",
+            accountName: "Accounts Receivable",
+            billing: {
+              name: customer.name || '',
+              phone: customer.phone || '',
+              address: customer.address || '',
+              city: customer.city || '',
+              state: customer.state || '',
+              country: customer.country || '',
+              zip: customer.postalCode || '',
+            },
+            shipping: {
+              name: customer.name || '',
+              phone: customer.phone || '',
+              address: customer.address || '',
+              city: customer.city || '',
+              state: customer.state || '',
+              country: customer.country || '',
+              zip: customer.postalCode || '',
+            },
+          }));
+
+          setCustomersList(mappedCustomers);
+        }
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching customers:', err);
+        setError(err.response?.data?.message || 'Failed to load customers. Using sample data.');
+        setLoading(false);
+
+        // If fetch fails, show empty array instead of hardcoded data
+        setCustomersList([]);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
 
   const handleSaveCustomer = () => {
     const updatedCustomer = {
@@ -708,7 +585,24 @@ const CustomersDebtors = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredCustomers.length > 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan="8" className="text-center py-5">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  <p className="mt-2 text-muted">Loading customers...</p>
+                </td>
+              </tr>
+            ) : error ? (
+              <tr>
+                <td colSpan="8" className="text-center py-4">
+                  <div className="alert alert-warning mb-0">
+                    <strong>⚠️ {error}</strong>
+                  </div>
+                </td>
+              </tr>
+            ) : filteredCustomers.length > 0 ? (
               filteredCustomers.map((cust, idx) => (
                 <tr key={cust.id || idx}>
                   <td>{idx + 1}</td>
