@@ -311,9 +311,9 @@ export const getWarehouseStock = async (warehouseId, companyId, filters = {}) =>
           sku: true,
           name: true,
           unit: true,
-          sellingPrice: true,
+          mrp: true,
           purchasePrice: true,
-          reorderLevel: true,
+          minStockLevel: true,
           category: {
             select: {
               id: true,

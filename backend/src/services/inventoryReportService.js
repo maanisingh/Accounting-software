@@ -93,15 +93,17 @@ export const getInventorySummary = async (companyId, filters = {}) => {
             sku: true,
             name: true,
             purchasePrice: true,
-            sellingPrice: true,
-            reorderLevel: true
+            mrp: true,
+            minStockLevel: true
           }
         },
         warehouse: {
           select: {
             id: true,
             name: true,
-            location: true
+            address: true,
+            city: true,
+            state: true
           }
         }
       }
@@ -110,10 +112,10 @@ export const getInventorySummary = async (companyId, filters = {}) => {
     const summary = stock.map(item => {
       const quantity = parseFloat(item.quantity) || 0;
       const purchasePrice = parseFloat(item.product.purchasePrice) || 0;
-      const sellingPrice = parseFloat(item.product.sellingPrice) || 0;
+      const mrp = parseFloat(item.product.mrp) || 0;
       const value = quantity * purchasePrice;
-      const potentialValue = quantity * sellingPrice;
-      const reorderLevel = parseFloat(item.product.reorderLevel) || 0;
+      const potentialValue = quantity * mrp;
+      const minStockLevel = parseFloat(item.product.minStockLevel) || 0;
 
       return {
         product: {
@@ -122,15 +124,15 @@ export const getInventorySummary = async (companyId, filters = {}) => {
         },
         warehouse: {
           name: item.warehouse?.name || 'Unknown',
-          location: item.warehouse?.location || 'Unknown'
+          location: `${item.warehouse?.address || ''}, ${item.warehouse?.city || ''}, ${item.warehouse?.state || ''}`.trim()
         },
         quantity,
         purchasePrice,
-        sellingPrice,
+        mrp,
         value,
         potentialValue,
-        reorderLevel,
-        belowReorderLevel: quantity < reorderLevel
+        minStockLevel,
+        belowReorderLevel: quantity < minStockLevel
       };
     });
 
@@ -448,8 +450,8 @@ export const getLowStock = async (companyId, filters = {}) => {
             sku: true,
             name: true,
             purchasePrice: true,
-            sellingPrice: true,
-            reorderLevel: true,
+            mrp: true,
+            minStockLevel: true,
             reorderQuantity: true,
             category: {
               select: { name: true }
@@ -462,7 +464,9 @@ export const getLowStock = async (companyId, filters = {}) => {
         warehouse: {
           select: {
             name: true,
-            location: true
+            address: true,
+            city: true,
+            state: true
           }
         }
       }
@@ -470,12 +474,12 @@ export const getLowStock = async (companyId, filters = {}) => {
 
     // Filter items below reorder level
     const lowStockItems = stock
-      .filter(item => parseFloat(item.quantity) < parseFloat(item.product.reorderLevel))
+      .filter(item => parseFloat(item.quantity) < parseFloat(item.product.minStockLevel))
       .map(item => {
         const currentQty = parseFloat(item.quantity);
-        const reorderLevel = parseFloat(item.product.reorderLevel);
+        const minStockLevel = parseFloat(item.product.minStockLevel);
         const reorderQty = parseFloat(item.product.reorderQuantity);
-        const shortage = reorderLevel - currentQty;
+        const shortage = minStockLevel - currentQty;
 
         return {
           product: {
@@ -486,10 +490,10 @@ export const getLowStock = async (companyId, filters = {}) => {
           },
           warehouse: {
             name: item.warehouse.name,
-            location: item.warehouse.location
+            location: `${item.warehouse.address || ''}, ${item.warehouse.city || ''}, ${item.warehouse.state || ''}`.trim()
           },
           currentQuantity: currentQty,
-          reorderLevel,
+          minStockLevel,
           shortage,
           recommendedOrderQty: Math.max(reorderQty, shortage),
           purchasePrice: parseFloat(item.product.purchasePrice),
@@ -534,7 +538,7 @@ export const getReorderReport = async (companyId, filters = {}) => {
         sku: true,
         name: true,
         purchasePrice: true,
-        reorderLevel: true,
+        minStockLevel: true,
         reorderQuantity: true,
         category: {
           select: { name: true }
@@ -559,11 +563,11 @@ export const getReorderReport = async (companyId, filters = {}) => {
     products.forEach(product => {
       product.stock.forEach(stockItem => {
         const currentQty = parseFloat(stockItem.quantity);
-        const reorderLevel = parseFloat(product.reorderLevel);
+        const minStockLevel = parseFloat(product.minStockLevel);
 
-        if (currentQty <= reorderLevel) {
+        if (currentQty <= minStockLevel) {
           const reorderQty = parseFloat(product.reorderQuantity);
-          const shortage = Math.max(0, reorderLevel - currentQty);
+          const shortage = Math.max(0, minStockLevel - currentQty);
 
           reorderReport.push({
             sku: product.sku,
@@ -572,13 +576,13 @@ export const getReorderReport = async (companyId, filters = {}) => {
             brand: product.brand?.name,
             warehouse: stockItem.warehouse.name,
             currentQuantity: currentQty,
-            reorderLevel,
+            minStockLevel,
             reorderQuantity: reorderQty,
             shortage,
             recommendedOrder: Math.max(reorderQty, shortage),
             purchasePrice: parseFloat(product.purchasePrice),
             orderValue: Math.max(reorderQty, shortage) * parseFloat(product.purchasePrice),
-            priority: currentQty === 0 ? 'URGENT' : currentQty < (reorderLevel * 0.5) ? 'HIGH' : 'MEDIUM'
+            priority: currentQty === 0 ? 'URGENT' : currentQty < (minStockLevel * 0.5) ? 'HIGH' : 'MEDIUM'
           });
         }
       });
@@ -622,14 +626,16 @@ export const getStockByWarehouse = async (companyId, filters = {}) => {
             sku: true,
             name: true,
             purchasePrice: true,
-            sellingPrice: true
+            mrp: true
           }
         },
         warehouse: {
           select: {
             id: true,
             name: true,
-            location: true,
+            address: true,
+            city: true,
+            state: true,
             capacity: true
           }
         }

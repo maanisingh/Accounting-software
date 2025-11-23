@@ -542,17 +542,20 @@ export const getAccountLedger = async (companyId, accountId, filters = {}) => {
         }
       },
       select: {
-        debit: true,
-        credit: true
+        transactionType: true,
+        amount: true
       }
     });
 
     let openingBalance = new Decimal(account.openingBalance || 0);
     openingLines.forEach(line => {
+      const debit = line.transactionType === 'DEBIT' ? new Decimal(line.amount) : new Decimal(0);
+      const credit = line.transactionType === 'CREDIT' ? new Decimal(line.amount) : new Decimal(0);
+
       if (account.accountType === 'ASSET' || account.accountType === 'EXPENSE') {
-        openingBalance = openingBalance.add(new Decimal(line.debit)).minus(new Decimal(line.credit));
+        openingBalance = openingBalance.add(debit).minus(credit);
       } else {
-        openingBalance = openingBalance.add(new Decimal(line.credit)).minus(new Decimal(line.debit));
+        openingBalance = openingBalance.add(credit).minus(debit);
       }
     });
 
@@ -586,8 +589,8 @@ export const getAccountLedger = async (companyId, accountId, filters = {}) => {
     // Calculate running balance
     let runningBalance = openingBalance;
     const ledger = transactions.map(line => {
-      const debit = new Decimal(line.debit);
-      const credit = new Decimal(line.credit);
+      const debit = line.transactionType === 'DEBIT' ? new Decimal(line.amount) : new Decimal(0);
+      const credit = line.transactionType === 'CREDIT' ? new Decimal(line.amount) : new Decimal(0);
 
       if (account.accountType === 'ASSET' || account.accountType === 'EXPENSE') {
         runningBalance = runningBalance.add(debit).minus(credit);
@@ -596,11 +599,11 @@ export const getAccountLedger = async (companyId, accountId, filters = {}) => {
       }
 
       return {
-        date: line.journalEntry.entryDate,
-        entryNumber: line.journalEntry.entryNumber,
-        description: line.journalEntry.description,
-        referenceType: line.journalEntry.referenceType,
-        referenceNumber: line.journalEntry.referenceNumber,
+        date: line.entry.entryDate,
+        entryNumber: line.entry.entryNumber,
+        description: line.entry.description,
+        referenceType: line.entry.referenceType,
+        referenceNumber: line.entry.referenceNumber,
         debit: debit.toNumber(),
         credit: credit.toNumber(),
         balance: runningBalance.toNumber()

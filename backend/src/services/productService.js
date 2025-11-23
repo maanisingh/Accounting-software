@@ -17,6 +17,10 @@ import logger from '../config/logger.js';
 export const createProduct = async (productData, userId) => {
   const { companyId, sku, name, description, type, categoryId, brandId, barcode, unit, purchasePrice, sellingPrice, mrp, taxRate, hsnCode, sacCode, reorderLevel, minStockLevel, maxStockLevel } = productData;
 
+  // Support both old and new field names for backward compatibility
+  const actualMrp = mrp || sellingPrice || 0;
+  const actualMinStockLevel = minStockLevel || reorderLevel || 0;
+
   // Check if SKU already exists for this company
   const existingSku = await prisma.product.findUnique({
     where: {
@@ -64,13 +68,11 @@ export const createProduct = async (productData, userId) => {
       barcode: barcode || null,
       unit: unit || 'PCS',
       purchasePrice: purchasePrice || 0,
-      sellingPrice: sellingPrice || 0,
-      mrp: mrp || 0,
+      mrp: actualMrp,
       taxRate: taxRate || 0,
       hsnCode: hsnCode || null,
       sacCode: sacCode || null,
-      reorderLevel: reorderLevel || 0,
-      minStockLevel: minStockLevel || 0,
+      minStockLevel: actualMinStockLevel,
       maxStockLevel: maxStockLevel || 0,
       createdBy: userId
     },

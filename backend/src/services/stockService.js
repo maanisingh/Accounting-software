@@ -71,9 +71,9 @@ export const getAllStock = async (companyId, filters = {}) => {
           sku: true,
           name: true,
           unit: true,
-          sellingPrice: true,
+          mrp: true,
           purchasePrice: true,
-          reorderLevel: true
+          minStockLevel: true
         }
       },
       warehouse: {
@@ -424,7 +424,7 @@ export const getLowStockProducts = async (companyId) => {
       companyId,
       isActive: true,
       trackInventory: true,
-      reorderLevel: { gt: 0 }
+      minStockLevel: { gt: 0 }
     },
     include: {
       stock: {
@@ -448,7 +448,7 @@ export const getLowStockProducts = async (companyId) => {
     }
   });
 
-  // Filter products where total stock is below reorder level
+  // Filter products where total stock is below min stock level
   const lowStockProducts = products
     .map(product => {
       const totalStock = product.stock.reduce((sum, s) => sum + s.quantity, 0);
@@ -458,10 +458,10 @@ export const getLowStockProducts = async (companyId) => {
         ...product,
         totalStock,
         totalAvailable,
-        shortfall: product.reorderLevel - totalStock
+        shortfall: product.minStockLevel - totalStock
       };
     })
-    .filter(product => product.totalStock < product.reorderLevel)
+    .filter(product => product.totalStock < product.minStockLevel)
     .sort((a, b) => b.shortfall - a.shortfall);
 
   return lowStockProducts;
@@ -549,7 +549,7 @@ export const getStockValuation = async (companyId, filters = {}) => {
           name: true,
           unit: true,
           purchasePrice: true,
-          sellingPrice: true,
+          mrp: true,
           category: {
             select: {
               id: true,
@@ -571,7 +571,7 @@ export const getStockValuation = async (companyId, filters = {}) => {
   let totalSellingValue = 0;
   const items = stockItems.map(item => {
     const costValue = item.quantity * item.product.purchasePrice;
-    const sellingValue = item.quantity * item.product.sellingPrice;
+    const sellingValue = item.quantity * item.product.mrp;
     totalCostValue += parseFloat(costValue);
     totalSellingValue += parseFloat(sellingValue);
 
