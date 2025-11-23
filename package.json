@@ -1,6 +1,6 @@
 {
   "name": "zirakbook",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
   "homepage": "https://github.com/ritika-pirag/BookKeeper#readme",
@@ -17,7 +17,7 @@
   "main": "eslint.config.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "rm -rf dist node_modules/.vite && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "node server.js"
