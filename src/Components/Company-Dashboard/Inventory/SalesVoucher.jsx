@@ -50,13 +50,10 @@ setItem({ ...item, [e.target.name]: e.target.value });
 
 const addItem = () => {
 const qty = parseFloat(item.qty || 0);
-constamount = parseFloat(item.rate || 0);
+const amount = parseFloat(item.rate || 0);
 const discount = parseFloat(item.discount || 0);
 
-php
-Copy
-Edit
-const itemTotal = qty *amount * (1 - discount / 100);
+const itemTotal = qty * amount * (1 - discount / 100);
 
 const newItem = {
   ...item,

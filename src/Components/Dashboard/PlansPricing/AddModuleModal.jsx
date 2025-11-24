@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { Modal, Form, Button } from "react-bootstrap";
 import Swal from "sweetalert2";
-import axios from "axios";
 import BaseUrl from "../../../Api/BaseUrl";
 import axiosInstance from "../../../Api/axiosInstance";
 

@@ -29,12 +29,12 @@ const SuperAdminPasswordRequests = () => {
   const [showEmailSentAlert, setShowEmailSentAlert] = useState(false);
 
   const handleAction = (status) => {
-    const updatedRequests = prev.map((req) =>
+    const updatedRequests = requests.map((req) =>
       req.id === selectedRequest.id
         ? { ...req, status: status, emailSent: status === "Approved" }
         : req
     );
-    
+
     setRequests(updatedRequests);
     
     if (status === "Approved") {

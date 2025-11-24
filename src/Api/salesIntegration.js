@@ -7,7 +7,6 @@ import { toast } from 'react-toastify';
 import {
   createSalesOrder,
   createDeliveryChallan,
-  createSalesReturn,
   formatSalesDataForAPI
 } from './salesApi';
 import axiosInstance from './axiosInstance';

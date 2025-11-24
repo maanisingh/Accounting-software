@@ -242,7 +242,7 @@ const ReceivedCustomer = () => {
           setFilteredReceivedInto([]);
         });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [companyId]);
 
   // Fetch Customers
@@ -263,7 +263,7 @@ const ReceivedCustomer = () => {
           setFilteredReceivedFrom([]);
         });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [companyId]);
 
   // Filter logic

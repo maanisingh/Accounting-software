@@ -152,7 +152,7 @@ const Ledgervendor = () => {
   const showVendorDetails = activeTab === "all" || activeTab === "customerDetails";
   const showNarration = activeTab === "all" || activeTab === "narration";
   const showCountTable = activeTab === "all" || activeTab === "countTable";
-  const vendor = passedVendor || defaultVendor;
+  const vendor = passedVendor || vendorData;
   // Check if any transaction has items
   const hasItems = transactions.some(transaction => transaction.items && transaction.items.length > 0);
 

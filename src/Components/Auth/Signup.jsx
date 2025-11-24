@@ -10,7 +10,7 @@ import BaseUrl from "../../Api/BaseUrl";
 const Signup = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
+  const [username] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);

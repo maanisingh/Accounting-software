@@ -203,13 +203,13 @@ const CustomersDebtors = () => {
   const handleSaveCustomer = () => {
     const updatedCustomer = {
       ...customerFormData,
-      id: editMode ? selectedCustomer.id : `cust-${Date.now()}`,
+      id: editMode ? currentCustomer.id : `cust-${Date.now()}`,
     };
 
     if (editMode) {
-      setCustomers(customers.map(c => c.id === selectedCustomer.id ? updatedCustomer : c));
+      setCustomersList(customersList.map(c => c.id === currentCustomer.id ? updatedCustomer : c));
     } else {
-      setCustomers([...customers, updatedCustomer]);
+      setCustomersList([...customersList, updatedCustomer]);
     }
 
     setShowAddEditModal(false);

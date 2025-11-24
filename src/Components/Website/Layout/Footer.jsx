@@ -7,8 +7,6 @@ import {
   FaLinkedinIn,
   FaInstagram
 } from "react-icons/fa";
-import { motion } from "framer-motion";
-import logoziratech from "../../../assets/logoziratech.png";
 import "./Footer.css";
 
 /* ===== Motion Variants ===== */

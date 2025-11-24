@@ -5,6 +5,7 @@ import { Button } from "react-bootstrap";
 import { FaCog } from "react-icons/fa";
 import './Sidebar.css';
 import SettingModal from "../Components/SettingModal";
+import * as bootstrap from "bootstrap";
 
 const WithoutHeader = () => {
   const [screenSize, setScreenSize] = useState(getScreenCategory());

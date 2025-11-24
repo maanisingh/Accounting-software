@@ -69,7 +69,7 @@ const AddVendorModal = ({ show, onHide, isStandalone = false }) => {
   // Only pass Modal-specific props if not standalone
   const wrapperProps = isStandalone
     ? {}
-    : { show, onHide, size: "xl", centered, backdrop: "static" };
+    : { show, onHide, size: "xl", centered: true, backdrop: "static" };
 
   return (
     <Wrapper {...wrapperProps}>

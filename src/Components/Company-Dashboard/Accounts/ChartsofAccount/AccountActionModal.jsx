@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Form, Button, Alert } from "react-bootstrap";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
-import axios from "axios";
 import BaseUrl from "../../../../Api/BaseUrl";
 import axiosInstance from "../../../../Api/axiosInstance";
 

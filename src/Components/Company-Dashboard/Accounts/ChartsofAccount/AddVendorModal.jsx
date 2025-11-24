@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Modal, Form, Button, Row, Col } from "react-bootstrap";
-import axios from "axios";
 import BaseUrl from "../../../../Api/BaseUrl";
 import axiosInstance from "../../../../Api/axiosInstance";
 import GetCompanyId from "../../../../Api/GetCompanyId";

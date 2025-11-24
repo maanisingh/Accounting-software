@@ -53,7 +53,7 @@ const AddProduct = () => {
         setDevices(devRes);
         setProducts(prodRes);
       } catch (err) {
-        showErrorToast("Failed to load data");
+        console.error("Failed to load data:", err);
       }
     };
     fetchAllData();
@@ -132,10 +132,10 @@ const AddProduct = () => {
 
       if (!response.ok) throw new Error(result.message);
 
-      showSuccessToast(result.message || "Product saved successfully");
+      console.log("Success:", result.message || "Product saved successfully");
       navigate("/company/product");
     } catch (error) {
-      showErrorToast(error.message || "Failed to save product");
+      console.error("Error:", error.message || "Failed to save product");
     }
   };
 
