@@ -220,6 +220,7 @@ const Login = () => {
                 </div>
 
                 <button
+                  type="submit"
                   onClick={handleLogin}
                   disabled={loading}
                   className="w-full text-white py-3 rounded-lg flex items-center justify-center text-base font-medium"
