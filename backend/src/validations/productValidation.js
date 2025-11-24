@@ -76,7 +76,8 @@ export const createProductSchema = Joi.object({
   sellingPrice: Joi.number()
     .min(0)
     .precision(2)
-    .required()
+    .optional()
+    .default(0)
     .messages({
       'any.required': 'Selling price is required',
       'number.min': 'Selling price must be positive'
@@ -270,16 +271,31 @@ export const getProductsSchema = Joi.object({
 
 /**
  * Search products validation schema
+ * Accepts both 'q' and 'query' parameter names for flexibility
  */
 export const searchProductsSchema = Joi.object({
   q: Joi.string()
     .trim()
     .min(1)
-    .required()
-    .messages({
-      'string.empty': 'Search query is required',
-      'any.required': 'Search query is required'
-    })
+    .optional(),
+  query: Joi.string()
+    .trim()
+    .min(1)
+    .optional()
+}).custom((value, helpers) => {
+  // At least one of 'q' or 'query' must be provided
+  if (!value.q && !value.query) {
+    return helpers.error('any.required', { label: 'Search query (q or query)' });
+  }
+
+  // If 'query' is provided but not 'q', copy it to 'q'
+  if (value.query && !value.q) {
+    value.q = value.query;
+  }
+
+  return value;
+}).messages({
+  'any.required': 'Search query is required'
 });
 
 /**

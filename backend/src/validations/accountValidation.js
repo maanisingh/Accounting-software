@@ -10,16 +10,32 @@ import { ACCOUNT_TYPES, TRANSACTION_TYPES } from '../config/constants.js';
  * Create account validation
  */
 export const createAccountSchema = Joi.object({
+  // Accept both 'name' and 'accountName' for flexibility
+  name: Joi.string()
+    .trim()
+    .min(3)
+    .max(200)
+    .messages({
+      'string.min': 'Account name must be at least 3 characters',
+      'string.max': 'Account name cannot exceed 200 characters'
+    }),
+
   accountName: Joi.string()
     .trim()
     .min(3)
     .max(200)
-    .required()
     .messages({
       'string.min': 'Account name must be at least 3 characters',
       'string.max': 'Account name cannot exceed 200 characters',
       'any.required': 'Account name is required'
     }),
+
+  // Accept both 'code' and 'accountNumber'
+  code: Joi.string()
+    .trim()
+    .max(50)
+    .optional()
+    .allow('', null),
 
   accountNumber: Joi.string()
     .trim()
@@ -30,9 +46,15 @@ export const createAccountSchema = Joi.object({
       'string.pattern.base': 'Account number must contain only digits'
     }),
 
+  // Accept both 'type' and 'accountType'
+  type: Joi.string()
+    .valid(...Object.values(ACCOUNT_TYPES))
+    .messages({
+      'any.only': 'Invalid account type'
+    }),
+
   accountType: Joi.string()
     .valid(...Object.values(ACCOUNT_TYPES))
-    .required()
     .messages({
       'any.only': 'Invalid account type',
       'any.required': 'Account type is required'
@@ -71,11 +93,32 @@ export const createAccountSchema = Joi.object({
 
   openingBalanceType: Joi.string()
     .valid(TRANSACTION_TYPES.DEBIT, TRANSACTION_TYPES.CREDIT)
-    .required()
+    .optional()
+    .default(TRANSACTION_TYPES.DEBIT)
     .messages({
-      'any.only': 'Opening balance type must be DEBIT or CREDIT',
-      'any.required': 'Opening balance type is required'
+      'any.only': 'Opening balance type must be DEBIT or CREDIT'
     })
+}).custom((value, helpers) => {
+  // If user provides 'name' but not 'accountName', copy it
+  if (value.name && !value.accountName) {
+    value.accountName = value.name;
+  }
+  // If user provides 'type' but not 'accountType', copy it
+  if (value.type && !value.accountType) {
+    value.accountType = value.type;
+  }
+  // If user provides 'code' but not 'accountNumber', copy it
+  if (value.code && !value.accountNumber) {
+    value.accountNumber = value.code;
+  }
+  // Ensure at least name/accountName and type/accountType are provided
+  if (!value.accountName) {
+    return helpers.error('any.required', { label: 'accountName' });
+  }
+  if (!value.accountType) {
+    return helpers.error('any.required', { label: 'accountType' });
+  }
+  return value;
 });
 
 /**

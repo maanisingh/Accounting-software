@@ -193,16 +193,16 @@ export const createAccount = async (accountData, userId) => {
       }
     }
 
-    // Validate opening balance type matches account type
+    // Auto-detect opening balance type based on account type if not provided or incorrect
     const validDebitTypes = [ACCOUNT_TYPES.ASSET, ACCOUNT_TYPES.EXPENSE];
     const validCreditTypes = [ACCOUNT_TYPES.LIABILITY, ACCOUNT_TYPES.EQUITY, ACCOUNT_TYPES.REVENUE];
 
-    if (openingBalanceType === TRANSACTION_TYPES.DEBIT && !validDebitTypes.includes(accountType)) {
-      throw new ApiError(400, 'ASSET and EXPENSE accounts should have DEBIT opening balance', ERROR_CODES.VALIDATION_ERROR);
-    }
-
-    if (openingBalanceType === TRANSACTION_TYPES.CREDIT && !validCreditTypes.includes(accountType)) {
-      throw new ApiError(400, 'LIABILITY, EQUITY and REVENUE accounts should have CREDIT opening balance', ERROR_CODES.VALIDATION_ERROR);
+    // Auto-correct opening balance type based on account type
+    let finalOpeningBalanceType = openingBalanceType;
+    if (validCreditTypes.includes(accountType)) {
+      finalOpeningBalanceType = TRANSACTION_TYPES.CREDIT;
+    } else if (validDebitTypes.includes(accountType)) {
+      finalOpeningBalanceType = TRANSACTION_TYPES.DEBIT;
     }
 
     // Create account

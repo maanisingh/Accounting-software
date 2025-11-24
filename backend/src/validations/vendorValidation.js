@@ -66,10 +66,18 @@ export const createVendorSchema = Joi.object({
     .optional()
     .allow('', null),
 
-  paymentTerms: Joi.number()
-    .integer()
-    .min(0)
-    .max(365)
+  // Accept 'gst' as alias for taxNumber
+  gst: Joi.string()
+    .trim()
+    .max(50)
+    .optional()
+    .allow('', null),
+
+  paymentTerms: Joi.alternatives()
+    .try(
+      Joi.number().integer().min(0).max(365),
+      Joi.string().trim().max(100)
+    )
     .optional()
     .default(30),
 

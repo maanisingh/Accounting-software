@@ -49,6 +49,7 @@ router.use('/setup', setupRoutes);
 router.use('/v1/auth', authRoutes);
 router.use('/v1/users', userRoutes);
 router.use('/v1/vendors', vendorRoutes);
+router.use('/v1/suppliers', vendorRoutes); // Alias for vendors
 router.use('/v1/customers', customerRoutes);
 router.use('/v1', inventoryRoutes);
 router.use('/v1', purchaseRoutes);

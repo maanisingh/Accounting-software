@@ -14,6 +14,19 @@ import ApiResponse from '../utils/ApiResponse.js';
  */
 export const createVendor = asyncHandler(async (req, res) => {
   const vendorData = { ...req.body, companyId: req.user.companyId };
+
+  // Map 'gst' to 'taxNumber' if provided
+  if (vendorData.gst && !vendorData.taxNumber) {
+    vendorData.taxNumber = vendorData.gst;
+    delete vendorData.gst;
+  }
+
+  // Convert string paymentTerms to number (e.g., "Net 30" → 30, "Net 15" → 15)
+  if (vendorData.paymentTerms && typeof vendorData.paymentTerms === 'string') {
+    const match = vendorData.paymentTerms.match(/\d+/);
+    vendorData.paymentTerms = match ? parseInt(match[0], 10) : 30;
+  }
+
   const vendor = await vendorService.createVendor(vendorData, req.user.id);
 
   ApiResponse.created(vendor, 'Vendor created successfully').send(res);

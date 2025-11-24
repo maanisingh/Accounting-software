@@ -27,7 +27,7 @@ export const createBrand = asyncHandler(async (req, res) => {
 export const getBrands = asyncHandler(async (req, res) => {
   const brands = await brandService.getBrands(req.user.companyId, req.query);
 
-  ApiResponse.success(brands, 'Brands retrieved successfully').send(res);
+  ApiResponse.success({ brands }, 'Brands retrieved successfully').send(res);
 });
 
 /**

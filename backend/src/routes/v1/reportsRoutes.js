@@ -355,4 +355,17 @@ router.get('/tax-output', taxReportController.getOutputTaxLiability);
  */
 router.get('/tax-filing', taxReportController.getTaxFilingData);
 
+// ==================== ALIAS ROUTES (for backward compatibility) ====================
+
+/**
+ * Alias routes for commonly expected endpoint names
+ */
+router.get('/account-ledger', financialReportController.getGeneralLedger); // Alias for general ledger
+router.get('/low-stock', inventoryReportController.getLowStock); // Alias for inventory-low-stock
+router.get('/stock-by-warehouse', inventoryReportController.getStockByWarehouse); // Alias for inventory-warehouse
+router.get('/purchases', purchaseReportController.getPurchasesSummary); // Alias for purchases-summary
+router.get('/sales', salesReportController.getSalesSummary); // Alias for sales-summary
+router.get('/customer-aging', financialReportController.getAgingReceivables); // Alias for aging-receivables
+router.get('/supplier-aging', financialReportController.getAgingPayables); // Alias for aging-payables
+
 export default router;

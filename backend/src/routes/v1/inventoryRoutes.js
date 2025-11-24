@@ -166,6 +166,17 @@ router.get(
 );
 
 /**
+ * @route   GET /api/v1/brands/:id
+ * @desc    Get brand by ID
+ * @access  Private
+ */
+router.get(
+  '/brands/:id',
+  validateParams(brandValidation.idParamSchema),
+  brandController.getBrandById
+);
+
+/**
  * @route   PUT /api/v1/brands/:id
  * @desc    Update brand
  * @access  Private
@@ -210,6 +221,17 @@ router.get(
   '/categories',
   validateQuery(categoryValidation.getCategoriesSchema),
   categoryController.getCategories
+);
+
+/**
+ * @route   GET /api/v1/categories/:id
+ * @desc    Get category by ID
+ * @access  Private
+ */
+router.get(
+  '/categories/:id',
+  validateParams(categoryValidation.idParamSchema),
+  categoryController.getCategoryById
 );
 
 /**

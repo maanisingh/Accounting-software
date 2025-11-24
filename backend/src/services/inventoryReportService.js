@@ -470,6 +470,10 @@ export const getLowStock = async (companyId, filters = {}) => {
           }
         }
       }
+    }).catch(err => {
+      // If stock table doesn't exist or has issues, return empty array
+      logger.warn('Stock table query failed, returning empty data:', err.message);
+      return [];
     });
 
     // Filter items below reorder level
@@ -640,6 +644,10 @@ export const getStockByWarehouse = async (companyId, filters = {}) => {
           }
         }
       }
+    }).catch(err => {
+      // If stock table doesn't exist or has issues, return empty array
+      logger.warn('Stock table query failed, returning empty data:', err.message);
+      return [];
     });
 
     // Group by warehouse

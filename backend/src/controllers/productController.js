@@ -28,8 +28,9 @@ export const getProducts = asyncHandler(async (req, res) => {
   const filters = { ...req.query, companyId: req.user.companyId };
   const result = await productService.getProducts(filters);
 
+  // Wrap products array in object for consistent structure
   ApiResponse.paginated(
-    result.products,
+    { products: result.products },
     result.pagination.page,
     result.pagination.limit,
     result.pagination.total,

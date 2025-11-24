@@ -27,7 +27,7 @@ export const createCategory = asyncHandler(async (req, res) => {
 export const getCategories = asyncHandler(async (req, res) => {
   const categories = await categoryService.getCategories(req.user.companyId, req.query);
 
-  ApiResponse.success(categories, 'Categories retrieved successfully').send(res);
+  ApiResponse.success({ categories }, 'Categories retrieved successfully').send(res);
 });
 
 /**

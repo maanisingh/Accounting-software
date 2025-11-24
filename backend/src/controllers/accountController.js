@@ -39,7 +39,7 @@ export const getAccounts = asyncHandler(async (req, res) => {
   const accounts = await accountService.getAccounts(req.user.companyId, filters);
 
   ApiResponse.success(
-    accounts,
+    { accounts },
     `Retrieved ${accounts.length} accounts`
   ).send(res);
 });
@@ -51,6 +51,13 @@ export const getAccounts = asyncHandler(async (req, res) => {
  */
 export const getAccountById = asyncHandler(async (req, res) => {
   const account = await accountService.getAccountById(req.params.id, req.user.companyId);
+
+  // Add field aliases for compatibility
+  if (account) {
+    account.type = account.accountType;
+    account.name = account.accountName;
+    account.code = account.accountNumber;
+  }
 
   ApiResponse.success(account, 'Account retrieved successfully').send(res);
 });
