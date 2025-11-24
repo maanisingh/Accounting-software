@@ -71,8 +71,8 @@ export const getBalanceSheet = async (companyId, filters = {}) => {
             }
           },
           select: {
-            transactionType: true,
-            amount: true
+            debit: true,
+            credit: true
           }
         }
       }
@@ -85,12 +85,10 @@ export const getBalanceSheet = async (companyId, filters = {}) => {
 
     accounts.forEach(account => {
       const debitTotal = account.journalLines
-        .filter(line => line.transactionType === 'DEBIT')
-        .reduce((sum, line) => sum.add(new Decimal(line.amount)), new Decimal(0));
+        .reduce((sum, line) => sum.add(new Decimal(line.debit || 0)), new Decimal(0));
 
       const creditTotal = account.journalLines
-        .filter(line => line.transactionType === 'CREDIT')
-        .reduce((sum, line) => sum.add(new Decimal(line.amount)), new Decimal(0));
+        .reduce((sum, line) => sum.add(new Decimal(line.credit || 0)), new Decimal(0));
 
       let balance;
       if (account.accountType === 'ASSET' || account.accountType === 'EXPENSE') {
@@ -193,13 +191,13 @@ const calculatePLBalance = async (companyId, endDate) => {
     include: {
       journalLines: {
         where: {
-          entry: {
+          journalEntry: {
             entryDate: { lte: endDate }
           }
         },
         select: {
-          transactionType: true,
-          amount: true
+          debit: true,
+          credit: true
         }
       }
     }
@@ -209,13 +207,14 @@ const calculatePLBalance = async (companyId, endDate) => {
   let totalExpense = new Decimal(0);
 
   accounts.forEach(account => {
-    const debitTotal = account.journalLines
-      .filter(line => line.transactionType === 'DEBIT')
-      .reduce((sum, line) => sum.add(new Decimal(line.amount)), new Decimal(0));
-
-    const creditTotal = account.journalLines
-      .filter(line => line.transactionType === 'CREDIT')
-      .reduce((sum, line) => sum.add(new Decimal(line.amount)), new Decimal(0));
+    const debitTotal = account.journalLines.reduce(
+      (sum, line) => sum.add(new Decimal(line.debit)),
+      new Decimal(0)
+    );
+    const creditTotal = account.journalLines.reduce(
+      (sum, line) => sum.add(new Decimal(line.credit)),
+      new Decimal(0)
+    );
 
     if (account.accountType === 'REVENUE') {
       totalRevenue = totalRevenue.add(creditTotal.minus(debitTotal));
@@ -244,7 +243,7 @@ export const getProfitAndLoss = async (companyId, filters = {}) => {
       include: {
         journalLines: {
           where: {
-            entry: {
+            journalEntry: {
               entryDate: {
                 gte: startDate,
                 lte: endDate
@@ -252,8 +251,8 @@ export const getProfitAndLoss = async (companyId, filters = {}) => {
             }
           },
           select: {
-            transactionType: true,
-            amount: true
+            debit: true,
+            credit: true
           }
         }
       }
@@ -263,12 +262,14 @@ export const getProfitAndLoss = async (companyId, filters = {}) => {
     const expenses = { operating: [], cogs: [], other: [], total: new Decimal(0) };
 
     accounts.forEach(account => {
-      const debitTotal = account.journalLines
-      .filter(line => line.transactionType === 'DEBIT')
-      .reduce((sum, line) => sum.add(new Decimal(line.amount)), new Decimal(0));
-      const creditTotal = account.journalLines
-      .filter(line => line.transactionType === 'CREDIT')
-      .reduce((sum, line) => sum.add(new Decimal(line.amount)), new Decimal(0));
+      const debitTotal = account.journalLines.reduce(
+        (sum, line) => sum.add(new Decimal(line.debit)),
+        new Decimal(0)
+      );
+      const creditTotal = account.journalLines.reduce(
+        (sum, line) => sum.add(new Decimal(line.credit)),
+        new Decimal(0)
+      );
 
       const accountData = {
         id: account.id,
@@ -364,7 +365,7 @@ export const getCashFlowStatement = async (companyId, filters = {}) => {
       include: {
         journalLines: {
           where: {
-            entry: {
+            journalEntry: {
               entryDate: {
                 gte: startDate,
                 lte: endDate
@@ -372,7 +373,7 @@ export const getCashFlowStatement = async (companyId, filters = {}) => {
             }
           },
           include: {
-            entry: {
+            journalEntry: {
               select: {
                 entryNumber: true,
                 entryDate: true,
@@ -460,13 +461,13 @@ export const getTrialBalance = async (companyId, filters = {}) => {
       include: {
         journalLines: {
           where: {
-            entry: {
+            journalEntry: {
               entryDate: { lte: endDate }
             }
           },
           select: {
-            transactionType: true,
-            amount: true
+            debit: true,
+            credit: true
           }
         }
       },
@@ -477,12 +478,14 @@ export const getTrialBalance = async (companyId, filters = {}) => {
     let totalCredits = new Decimal(0);
 
     const balances = accounts.map(account => {
-      const debitTotal = account.journalLines
-      .filter(line => line.transactionType === 'DEBIT')
-      .reduce((sum, line) => sum.add(new Decimal(line.amount)), new Decimal(0));
-      const creditTotal = account.journalLines
-      .filter(line => line.transactionType === 'CREDIT')
-      .reduce((sum, line) => sum.add(new Decimal(line.amount)), new Decimal(0));
+      const debitTotal = account.journalLines.reduce(
+        (sum, line) => sum.add(new Decimal(line.debit)),
+        new Decimal(0)
+      );
+      const creditTotal = account.journalLines.reduce(
+        (sum, line) => sum.add(new Decimal(line.credit)),
+        new Decimal(0)
+      );
 
       const netDebit = debitTotal.gt(creditTotal) ? debitTotal.minus(creditTotal) : new Decimal(0);
       const netCredit = creditTotal.gt(debitTotal) ? creditTotal.minus(debitTotal) : new Decimal(0);
@@ -537,25 +540,22 @@ export const getAccountLedger = async (companyId, accountId, filters = {}) => {
     const openingLines = await prisma.journalLine.findMany({
       where: {
         accountId,
-        entry: {
+        journalEntry: {
           entryDate: { lt: startDate }
         }
       },
       select: {
-        transactionType: true,
-        amount: true
+        debit: true,
+        credit: true
       }
     });
 
     let openingBalance = new Decimal(account.openingBalance || 0);
     openingLines.forEach(line => {
-      const debit = line.transactionType === 'DEBIT' ? new Decimal(line.amount) : new Decimal(0);
-      const credit = line.transactionType === 'CREDIT' ? new Decimal(line.amount) : new Decimal(0);
-
       if (account.accountType === 'ASSET' || account.accountType === 'EXPENSE') {
-        openingBalance = openingBalance.add(debit).minus(credit);
+        openingBalance = openingBalance.add(new Decimal(line.debit)).minus(new Decimal(line.credit));
       } else {
-        openingBalance = openingBalance.add(credit).minus(debit);
+        openingBalance = openingBalance.add(new Decimal(line.credit)).minus(new Decimal(line.debit));
       }
     });
 
@@ -563,7 +563,7 @@ export const getAccountLedger = async (companyId, accountId, filters = {}) => {
     const transactions = await prisma.journalLine.findMany({
       where: {
         accountId,
-        entry: {
+        journalEntry: {
           entryDate: {
             gte: startDate,
             lte: endDate
@@ -571,7 +571,7 @@ export const getAccountLedger = async (companyId, accountId, filters = {}) => {
         }
       },
       include: {
-        entry: {
+        journalEntry: {
           select: {
             entryNumber: true,
             entryDate: true,
@@ -582,15 +582,15 @@ export const getAccountLedger = async (companyId, accountId, filters = {}) => {
         }
       },
       orderBy: {
-        entry: { entryDate: 'asc' }
+        journalEntry: { entryDate: 'asc' }
       }
     });
 
     // Calculate running balance
     let runningBalance = openingBalance;
     const ledger = transactions.map(line => {
-      const debit = line.transactionType === 'DEBIT' ? new Decimal(line.amount) : new Decimal(0);
-      const credit = line.transactionType === 'CREDIT' ? new Decimal(line.amount) : new Decimal(0);
+      const debit = new Decimal(line.debit);
+      const credit = new Decimal(line.credit);
 
       if (account.accountType === 'ASSET' || account.accountType === 'EXPENSE') {
         runningBalance = runningBalance.add(debit).minus(credit);
@@ -599,11 +599,11 @@ export const getAccountLedger = async (companyId, accountId, filters = {}) => {
       }
 
       return {
-        date: line.entry.entryDate,
-        entryNumber: line.entry.entryNumber,
-        description: line.entry.description,
-        referenceType: line.entry.referenceType,
-        referenceNumber: line.entry.referenceNumber,
+        date: line.journalEntry.entryDate,
+        entryNumber: line.journalEntry.entryNumber,
+        description: line.journalEntry.description,
+        referenceType: line.journalEntry.referenceType,
+        referenceNumber: line.journalEntry.referenceNumber,
         debit: debit.toNumber(),
         credit: credit.toNumber(),
         balance: runningBalance.toNumber()

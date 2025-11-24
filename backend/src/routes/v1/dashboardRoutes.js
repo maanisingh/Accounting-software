@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import { getAdminDashboard, getCompanyDashboard } from '../../controllers/dashboardController.js';
+import { authenticate } from '../../middleware/auth.js';
+
 const router = express.Router();
-const { getAdminDashboard, getCompanyDashboard } = require('../../controllers/dashboardController');
-const { authenticate } = require('../../middleware/auth.middleware');
 
 /**
  * Dashboard Routes
@@ -16,4 +17,4 @@ router.get('/admin', authenticate, getAdminDashboard);
 // Company dashboard (for company users)
 router.get('/company', authenticate, getCompanyDashboard);
 
-module.exports = router;
+export default router;

@@ -23,6 +23,7 @@ import returnsRoutes from './v1/returnsRoutes.js';
 import invoiceRoutes from './v1/invoiceRoutes.js';
 import legacyRoutes from './v1/legacyRoutes.js';
 import setupRoutes from './setup.routes.js';
+import dashboardRoutes from './v1/dashboardRoutes.js';
 
 const router = express.Router();
 
@@ -69,6 +70,7 @@ router.use('/v1/inventory-adjustments', inventoryAdjustmentRoutes);
 router.use('/v1/get-returns', returnsRoutes);
 router.use('/v1', invoiceRoutes);
 router.use('/v1', legacyRoutes); // Legacy/backward compatibility routes
+router.use('/v1/dashboard', dashboardRoutes); // Dashboard statistics
 
 /**
  * API info endpoint

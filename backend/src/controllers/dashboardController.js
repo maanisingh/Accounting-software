@@ -1,4 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
+import pkg from '@prisma/client';
+const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
 
 /**
@@ -20,29 +21,28 @@ const getAdminDashboard = async (req, res) => {
     // Get total companies count
     const totalCompanies = await prisma.company.count({
       where: {
-        deletedAt: null
+        isActive: true
       }
     });
 
     // Get total users/requests count (all users across all companies)
     const totalRequests = await prisma.user.count({
       where: {
-        deletedAt: null
+        status: 'ACTIVE'
       }
     });
 
     // Get total revenue from invoices across all companies
     const invoiceRevenue = await prisma.invoice.aggregate({
       _sum: {
-        totalAmount: true
+        total: true
       },
       where: {
-        deletedAt: null,
         status: 'COMPLETED'
       }
     });
 
-    const totalRevenue = invoiceRevenue._sum.totalAmount || 0;
+    const totalRevenue = invoiceRevenue._sum.total || 0;
 
     // Get new signups today
     const today = new Date();
@@ -56,7 +56,7 @@ const getAdminDashboard = async (req, res) => {
           gte: today,
           lt: tomorrow
         },
-        deletedAt: null
+        isActive: true
       }
     });
 
@@ -68,7 +68,7 @@ const getAdminDashboard = async (req, res) => {
         COUNT(*)::integer as count
       FROM "Company"
       WHERE EXTRACT(YEAR FROM "createdAt") = ${currentYear}
-        AND "deletedAt" IS NULL
+        AND "isActive" = true
       GROUP BY EXTRACT(MONTH FROM "createdAt")
       ORDER BY month
     `;
@@ -80,10 +80,9 @@ const getAdminDashboard = async (req, res) => {
     const revenueTrends = await prisma.$queryRaw`
       SELECT
         EXTRACT(MONTH FROM "createdAt")::integer as month,
-        SUM("totalAmount")::decimal as revenue
+        SUM("total")::decimal as revenue
       FROM "Invoice"
       WHERE EXTRACT(YEAR FROM "createdAt") = ${currentYear}
-        AND "deletedAt" IS NULL
         AND status = 'COMPLETED'
       GROUP BY EXTRACT(MONTH FROM "createdAt")
       ORDER BY month
@@ -142,11 +141,10 @@ const getCompanyDashboard = async (req, res) => {
     // Get total revenue from invoices
     const invoiceRevenue = await prisma.invoice.aggregate({
       _sum: {
-        totalAmount: true
+        total: true
       },
       where: {
         companyId,
-        deletedAt: null,
         status: 'COMPLETED'
       }
     });
@@ -154,11 +152,10 @@ const getCompanyDashboard = async (req, res) => {
     // Get total expenses from bills
     const billExpenses = await prisma.bill.aggregate({
       _sum: {
-        totalAmount: true
+        total: true
       },
       where: {
         companyId,
-        deletedAt: null,
         status: 'COMPLETED'
       }
     });
@@ -166,24 +163,21 @@ const getCompanyDashboard = async (req, res) => {
     // Get total customers
     const totalCustomers = await prisma.customer.count({
       where: {
-        companyId,
-        deletedAt: null
+        companyId
       }
     });
 
     // Get total vendors
     const totalVendors = await prisma.vendor.count({
       where: {
-        companyId,
-        deletedAt: null
+        companyId
       }
     });
 
     // Get total products
     const totalProducts = await prisma.product.count({
       where: {
-        companyId,
-        deletedAt: null
+        companyId
       }
     });
 
@@ -192,11 +186,10 @@ const getCompanyDashboard = async (req, res) => {
     const revenueTrends = await prisma.$queryRaw`
       SELECT
         EXTRACT(MONTH FROM "createdAt")::integer as month,
-        SUM("totalAmount")::decimal as revenue
+        SUM("total")::decimal as revenue
       FROM "Invoice"
       WHERE EXTRACT(YEAR FROM "createdAt") = ${currentYear}
         AND "companyId" = ${companyId}
-        AND "deletedAt" IS NULL
         AND status = 'COMPLETED'
       GROUP BY EXTRACT(MONTH FROM "createdAt")
       ORDER BY month
@@ -206,20 +199,19 @@ const getCompanyDashboard = async (req, res) => {
     const expenseTrends = await prisma.$queryRaw`
       SELECT
         EXTRACT(MONTH FROM "createdAt")::integer as month,
-        SUM("totalAmount")::decimal as expense
+        SUM("total")::decimal as expense
       FROM "Bill"
       WHERE EXTRACT(YEAR FROM "createdAt") = ${currentYear}
         AND "companyId" = ${companyId}
-        AND "deletedAt" IS NULL
         AND status = 'COMPLETED'
       GROUP BY EXTRACT(MONTH FROM "createdAt")
       ORDER BY month
     `;
 
     const dashboardData = {
-      total_revenue: parseFloat(invoiceRevenue._sum.totalAmount || 0),
-      total_expenses: parseFloat(billExpenses._sum.totalAmount || 0),
-      net_profit: parseFloat(invoiceRevenue._sum.totalAmount || 0) - parseFloat(billExpenses._sum.totalAmount || 0),
+      total_revenue: parseFloat(invoiceRevenue._sum.total || 0),
+      total_expenses: parseFloat(billExpenses._sum.total || 0),
+      net_profit: parseFloat(invoiceRevenue._sum.total || 0) - parseFloat(billExpenses._sum.total || 0),
       total_customers: totalCustomers,
       total_vendors: totalVendors,
       total_products: totalProducts,
@@ -248,7 +240,7 @@ const getCompanyDashboard = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getAdminDashboard,
   getCompanyDashboard
 };

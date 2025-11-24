@@ -264,7 +264,7 @@ export const getInventoryMovement = async (companyId, filters = {}) => {
 
     const whereClause = {
       product: { companyId },
-      date: {
+      movementDate: {
         gte: startDate,
         lte: endDate
       }
@@ -298,7 +298,7 @@ export const getInventoryMovement = async (companyId, filters = {}) => {
             }
           }
         },
-        orderBy: { date: 'desc' },
+        orderBy: { movementDate: 'desc' },
         skip,
         take: limit
       }),
@@ -351,7 +351,7 @@ export const getInventoryAging = async (companyId, filters = {}) => {
           }
         }
       },
-      orderBy: { date: 'asc' }
+      orderBy: { movementDate: 'asc' }
     });
 
     // Group by product and calculate aging
@@ -368,9 +368,9 @@ export const getInventoryAging = async (companyId, filters = {}) => {
         };
       }
 
-      const daysOld = Math.floor((now - new Date(movement.date)) / (1000 * 60 * 60 * 24));
+      const daysOld = Math.floor((now - new Date(movement.movementDate)) / (1000 * 60 * 60 * 24));
       productAging[productId].batches.push({
-        date: movement.date,
+        date: movement.movementDate,
         quantity: parseFloat(movement.quantity),
         daysOld
       });
@@ -542,8 +542,7 @@ export const getReorderReport = async (companyId, filters = {}) => {
         sku: true,
         name: true,
         purchasePrice: true,
-        minStockLevel: true,
-        reorderQuantity: true,
+        reorderLevel: true,
         category: {
           select: { name: true }
         },
@@ -567,11 +566,11 @@ export const getReorderReport = async (companyId, filters = {}) => {
     products.forEach(product => {
       product.stock.forEach(stockItem => {
         const currentQty = parseFloat(stockItem.quantity);
-        const minStockLevel = parseFloat(product.minStockLevel);
+        const reorderLevel = parseFloat(product.reorderLevel || 0);
 
-        if (currentQty <= minStockLevel) {
-          const reorderQty = parseFloat(product.reorderQuantity);
-          const shortage = Math.max(0, minStockLevel - currentQty);
+        if (currentQty <= reorderLevel) {
+          const shortage = Math.max(0, reorderLevel - currentQty);
+          const reorderQty = Math.max(reorderLevel, shortage); // Recommended reorder quantity
 
           reorderReport.push({
             sku: product.sku,
@@ -580,13 +579,13 @@ export const getReorderReport = async (companyId, filters = {}) => {
             brand: product.brand?.name,
             warehouse: stockItem.warehouse.name,
             currentQuantity: currentQty,
-            minStockLevel,
+            reorderLevel,
             reorderQuantity: reorderQty,
             shortage,
-            recommendedOrder: Math.max(reorderQty, shortage),
+            recommendedOrder: reorderQty,
             purchasePrice: parseFloat(product.purchasePrice),
-            orderValue: Math.max(reorderQty, shortage) * parseFloat(product.purchasePrice),
-            priority: currentQty === 0 ? 'URGENT' : currentQty < (minStockLevel * 0.5) ? 'HIGH' : 'MEDIUM'
+            orderValue: reorderQty * parseFloat(product.purchasePrice),
+            priority: currentQty === 0 ? 'URGENT' : currentQty < (reorderLevel * 0.5) ? 'HIGH' : 'MEDIUM'
           });
         }
       });
@@ -747,11 +746,6 @@ export const getDeadStock = async (companyId, filters = {}) => {
       },
       _sum: {
         quantity: true
-      },
-      _max: {
-        invoice: {
-          invoiceDate: true
-        }
       }
     });
 

@@ -1,8 +1,22 @@
 // Voucher Controller
-// Manages inventory vouchers for stock transactions
+// Manages accounting vouchers (Journal Entries categorized by type)
 
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
+
+// Helper function to map voucher types to journal entry types
+const getEntryTypeForVoucher = (voucherType) => {
+  const typeMap = {
+    'INCOME': ['INCOME', 'REVENUE', 'RECEIPT'],
+    'EXPENSE': ['EXPENSE', 'PAYMENT'],
+    'CONTRA': ['CONTRA', 'TRANSFER'],
+    'PAYMENT': ['PAYMENT', 'EXPENSE'],
+    'RECEIPT': ['RECEIPT', 'INCOME'],
+    'JOURNAL': ['JOURNAL', 'MANUAL', 'ADJUSTMENT']
+  };
+
+  return typeMap[voucherType] || [voucherType];
+};
 
 // Get all vouchers (uses companyId from auth token)
 export const getVouchers = async (req, res) => {
@@ -20,16 +34,24 @@ export const getVouchers = async (req, res) => {
 
     const where = { companyId };
 
+    // Filter by voucher type if provided
     if (type) {
-      where.type = type;
+      const entryTypes = getEntryTypeForVoucher(type);
+      where.entryType = {
+        in: entryTypes
+      };
     }
 
-    if (status) {
-      where.status = status;
+    // Filter by posting status
+    if (status === 'POSTED') {
+      where.isPosted = true;
+    } else if (status === 'DRAFT') {
+      where.isPosted = false;
     }
 
+    // Filter by date range
     if (startDate && endDate) {
-      where.createdAt = {
+      where.entryDate = {
         gte: new Date(startDate),
         lte: new Date(endDate)
       };
@@ -38,28 +60,27 @@ export const getVouchers = async (req, res) => {
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     const [vouchers, total] = await Promise.all([
-      prisma.stockMovement.findMany({
+      prisma.journalEntry.findMany({
         where,
         include: {
-          product: {
-            select: {
-              id: true,
-              name: true,
-              sku: true
-            }
-          },
-          warehouse: {
-            select: {
-              id: true,
-              name: true
+          lines: {
+            include: {
+              account: {
+                select: {
+                  id: true,
+                  accountNumber: true,
+                  accountName: true,
+                  accountType: true
+                }
+              }
             }
           }
         },
         skip,
         take: parseInt(limit),
-        orderBy: { createdAt: 'desc' }
+        orderBy: { entryDate: 'desc' }
       }),
-      prisma.stockMovement.count({ where })
+      prisma.journalEntry.count({ where })
     ]);
 
     res.json({
@@ -88,20 +109,23 @@ export const getVouchersByCompany = async (req, res) => {
     const { companyId } = req.params;
     const { type, status, startDate, endDate, page = 1, limit = 50 } = req.query;
 
-    const where = {
-      companyId
-    };
+    const where = { companyId };
 
     if (type) {
-      where.type = type; // PURCHASE, SALE, TRANSFER, ADJUSTMENT
+      const entryTypes = getEntryTypeForVoucher(type);
+      where.entryType = {
+        in: entryTypes
+      };
     }
 
-    if (status) {
-      where.status = status;
+    if (status === 'POSTED') {
+      where.isPosted = true;
+    } else if (status === 'DRAFT') {
+      where.isPosted = false;
     }
 
     if (startDate && endDate) {
-      where.createdAt = {
+      where.entryDate = {
         gte: new Date(startDate),
         lte: new Date(endDate)
       };
@@ -110,28 +134,20 @@ export const getVouchersByCompany = async (req, res) => {
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     const [vouchers, total] = await Promise.all([
-      prisma.stockMovement.findMany({
+      prisma.journalEntry.findMany({
         where,
         include: {
-          product: {
-            select: {
-              id: true,
-              name: true,
-              sku: true
-            }
-          },
-          warehouse: {
-            select: {
-              id: true,
-              name: true
+          lines: {
+            include: {
+              account: true
             }
           }
         },
         skip,
         take: parseInt(limit),
-        orderBy: { createdAt: 'desc' }
+        orderBy: { entryDate: 'desc' }
       }),
-      prisma.stockMovement.count({ where })
+      prisma.journalEntry.count({ where })
     ]);
 
     res.json({
@@ -142,35 +158,33 @@ export const getVouchersByCompany = async (req, res) => {
         limit: parseInt(limit),
         total,
         pages: Math.ceil(total / parseInt(limit))
-      },
-      count: vouchers.length
+      }
     });
   } catch (error) {
-    console.error('Error fetching vouchers:', error);
+    console.error('Error fetching company vouchers:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch vouchers',
+      message: 'Failed to fetch company vouchers',
       error: error.message
     });
   }
 };
 
-// Get voucher by ID
+// Get single voucher by ID
 export const getVoucherById = async (req, res) => {
   try {
     const { id } = req.params;
+    const companyId = req.user?.companyId;
 
-    const voucher = await prisma.stockMovement.findUnique({
-      where: { id },
+    const voucher = await prisma.journalEntry.findFirst({
+      where: {
+        id,
+        companyId
+      },
       include: {
-        product: true,
-        warehouse: true,
-        fromWarehouse: true,
-        toWarehouse: true,
-        company: {
-          select: {
-            id: true,
-            name: true
+        lines: {
+          include: {
+            account: true
           }
         }
       }
@@ -200,65 +214,70 @@ export const getVoucherById = async (req, res) => {
 // Create new voucher
 export const createVoucher = async (req, res) => {
   try {
-    const {
-      companyId,
-      productId,
-      warehouseId,
-      fromWarehouseId,
-      toWarehouseId,
-      type,
-      quantity,
-      unitPrice,
-      notes
-    } = req.body;
+    const companyId = req.user?.companyId;
+    const { entryType, entryDate, description, lines } = req.body;
 
-    const voucher = await prisma.stockMovement.create({
-      data: {
-        companyId,
-        productId,
-        warehouseId: warehouseId || fromWarehouseId,
-        fromWarehouseId,
-        toWarehouseId,
-        type,
-        quantity: parseInt(quantity),
-        unitPrice: parseFloat(unitPrice) || 0,
-        totalValue: parseFloat(quantity) * (parseFloat(unitPrice) || 0),
-        notes,
-        referenceNumber: `VCH-${Date.now()}`,
-        transactionDate: new Date()
-      },
-      include: {
-        product: true,
-        warehouse: true
-      }
-    });
-
-    // Update stock levels
-    if (type === 'PURCHASE' || type === 'ADJUSTMENT') {
-      await prisma.stock.upsert({
-        where: {
-          productId_warehouseId: {
-            productId,
-            warehouseId: warehouseId || fromWarehouseId
-          }
-        },
-        update: {
-          quantity: {
-            increment: parseInt(quantity)
-          }
-        },
-        create: {
-          productId,
-          warehouseId: warehouseId || fromWarehouseId,
-          quantity: parseInt(quantity)
-        }
+    if (!companyId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Company ID is required'
       });
     }
 
+    // Validate double-entry: debits must equal credits
+    const totalDebit = lines.reduce((sum, line) => sum + parseFloat(line.debit || 0), 0);
+    const totalCredit = lines.reduce((sum, line) => sum + parseFloat(line.credit || 0), 0);
+
+    if (Math.abs(totalDebit - totalCredit) > 0.01) {
+      return res.status(400).json({
+        success: false,
+        message: `Double-entry validation failed: Debits ($${totalDebit.toFixed(2)}) must equal Credits ($${totalCredit.toFixed(2)})`
+      });
+    }
+
+    // Generate entry number
+    const lastEntry = await prisma.journalEntry.findFirst({
+      where: { companyId },
+      orderBy: { createdAt: 'desc' },
+      select: { entryNumber: true }
+    });
+
+    const lastNumber = lastEntry ? parseInt(lastEntry.entryNumber.replace(/\D/g, '')) : 0;
+    const entryNumber = `JE${(lastNumber + 1).toString().padStart(6, '0')}`;
+
+    // Create voucher
+    const voucher = await prisma.journalEntry.create({
+      data: {
+        companyId,
+        entryNumber,
+        entryType: entryType || 'MANUAL',
+        entryDate: entryDate ? new Date(entryDate) : new Date(),
+        description,
+        totalDebit,
+        totalCredit,
+        lines: {
+          create: lines.map(line => ({
+            accountId: line.accountId,
+            debit: parseFloat(line.debit || 0),
+            credit: parseFloat(line.credit || 0),
+            description: line.description || description
+          }))
+        },
+        createdBy: req.user?.id
+      },
+      include: {
+        lines: {
+          include: {
+            account: true
+          }
+        }
+      }
+    });
+
     res.status(201).json({
       success: true,
-      data: voucher,
-      message: 'Voucher created successfully'
+      message: 'Voucher created successfully',
+      data: voucher
     });
   } catch (error) {
     console.error('Error creating voucher:', error);
@@ -270,25 +289,77 @@ export const createVoucher = async (req, res) => {
   }
 };
 
-// Update voucher
+// Update voucher (only if not posted)
 export const updateVoucher = async (req, res) => {
   try {
     const { id } = req.params;
-    const updateData = req.body;
+    const companyId = req.user?.companyId;
+    const { entryType, entryDate, description, lines } = req.body;
 
-    const voucher = await prisma.stockMovement.update({
+    // Check if voucher exists and is not posted
+    const existingVoucher = await prisma.journalEntry.findFirst({
+      where: { id, companyId }
+    });
+
+    if (!existingVoucher) {
+      return res.status(404).json({
+        success: false,
+        message: 'Voucher not found'
+      });
+    }
+
+    if (existingVoucher.isPosted) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot update posted voucher'
+      });
+    }
+
+    // Validate double-entry
+    if (lines) {
+      const totalDebit = lines.reduce((sum, line) => sum + parseFloat(line.debit || 0), 0);
+      const totalCredit = lines.reduce((sum, line) => sum + parseFloat(line.credit || 0), 0);
+
+      if (Math.abs(totalDebit - totalCredit) > 0.01) {
+        return res.status(400).json({
+          success: false,
+          message: `Double-entry validation failed: Debits ($${totalDebit.toFixed(2)}) must equal Credits ($${totalCredit.toFixed(2)})`
+        });
+      }
+    }
+
+    // Update voucher
+    const voucher = await prisma.journalEntry.update({
       where: { id },
-      data: updateData,
+      data: {
+        entryType,
+        entryDate: entryDate ? new Date(entryDate) : undefined,
+        description,
+        totalDebit: lines ? lines.reduce((sum, line) => sum + parseFloat(line.debit || 0), 0) : undefined,
+        totalCredit: lines ? lines.reduce((sum, line) => sum + parseFloat(line.credit || 0), 0) : undefined,
+        lines: lines ? {
+          deleteMany: {},
+          create: lines.map(line => ({
+            accountId: line.accountId,
+            debit: parseFloat(line.debit || 0),
+            credit: parseFloat(line.credit || 0),
+            description: line.description || description
+          }))
+        } : undefined
+      },
       include: {
-        product: true,
-        warehouse: true
+        lines: {
+          include: {
+            account: true
+          }
+        }
       }
     });
 
     res.json({
       success: true,
-      data: voucher,
-      message: 'Voucher updated successfully'
+      message: 'Voucher updated successfully',
+      data: voucher
     });
   } catch (error) {
     console.error('Error updating voucher:', error);
@@ -300,12 +371,85 @@ export const updateVoucher = async (req, res) => {
   }
 };
 
-// Delete voucher
+// Post voucher (make it permanent)
+export const postVoucher = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const companyId = req.user?.companyId;
+
+    const voucher = await prisma.journalEntry.findFirst({
+      where: { id, companyId }
+    });
+
+    if (!voucher) {
+      return res.status(404).json({
+        success: false,
+        message: 'Voucher not found'
+      });
+    }
+
+    if (voucher.isPosted) {
+      return res.status(400).json({
+        success: false,
+        message: 'Voucher already posted'
+      });
+    }
+
+    const updatedVoucher = await prisma.journalEntry.update({
+      where: { id },
+      data: {
+        isPosted: true,
+        postedAt: new Date()
+      },
+      include: {
+        lines: {
+          include: {
+            account: true
+          }
+        }
+      }
+    });
+
+    res.json({
+      success: true,
+      message: 'Voucher posted successfully',
+      data: updatedVoucher
+    });
+  } catch (error) {
+    console.error('Error posting voucher:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to post voucher',
+      error: error.message
+    });
+  }
+};
+
+// Delete voucher (only if not posted)
 export const deleteVoucher = async (req, res) => {
   try {
     const { id } = req.params;
+    const companyId = req.user?.companyId;
 
-    await prisma.stockMovement.delete({
+    const voucher = await prisma.journalEntry.findFirst({
+      where: { id, companyId }
+    });
+
+    if (!voucher) {
+      return res.status(404).json({
+        success: false,
+        message: 'Voucher not found'
+      });
+    }
+
+    if (voucher.isPosted) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot delete posted voucher'
+      });
+    }
+
+    await prisma.journalEntry.delete({
       where: { id }
     });
 
