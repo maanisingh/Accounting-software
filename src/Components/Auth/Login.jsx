@@ -17,60 +17,20 @@ const Login = () => {
 
   // All available test users with their credentials
   const allTestUsers = [
-    { email: "superadmin@test.com", password: "Test@123456", name: "Super Admin", role: "SUPERADMIN" },
-    { email: "companyadmin@test.com", password: "Test@123456", name: "Company Admin", role: "COMPANY_ADMIN" },
-    { email: "accountant@testcompany.com", password: "Test@123456", name: "Test Accountant", role: "ACCOUNTANT" },
-    { email: "manager@testcompany.com", password: "Test@123456", name: "Test Manager", role: "MANAGER" },
+    { email: "superadmin@test.com", password: "Test@123456", name: "Super Admin", role: "SUPERADMIN", company: "Platform" },
+    { email: "companyadmin@test.com", password: "Test@123456", name: "Company Admin", role: "COMPANY_ADMIN", company: "TechVision Inc" },
+    { email: "accountant@testcompany.com", password: "Test@123456", name: "Accountant", role: "ACCOUNTANT", company: "TechVision Inc" },
+    { email: "manager@testcompany.com", password: "Test@123456", name: "Manager", role: "MANAGER", company: "TechVision Inc" },
+    { email: "sales@testcompany.com", password: "Test@123456", name: "Sales User", role: "SALES_USER", company: "TechVision Inc" },
+    { email: "admin@globalretail.com", password: "Test@123456", name: "Retail Admin", role: "COMPANY_ADMIN", company: "Global Retail Co" },
+    { email: "accountant@globalretail.com", password: "Test@123456", name: "Retail Accountant", role: "ACCOUNTANT", company: "Global Retail Co" },
+    { email: "admin@mfgsolutions.com", password: "Test@123456", name: "Manufacturing Admin", role: "COMPANY_ADMIN", company: "Manufacturing Solutions" },
+    { email: "accountant@mfgsolutions.com", password: "Test@123456", name: "Manufacturing Accountant", role: "ACCOUNTANT", company: "Manufacturing Solutions" },
   ];
 
-  // Demo credentials
-  const demoCredentials = {
-    superadmin: { email: "superadmin@test.com", password: "Test@123456" },
-    company: { email: "companyadmin@test.com", password: "Test@123456" }
-  };
-
-  const fillDemoCredentials = (type) => {
-    setEmail(demoCredentials[type].email);
-    setPassword(demoCredentials[type].password);
-    toast.info(`Demo ${type} credentials filled!`);
-  };
-
-  const autoLogin = async (user) => {
-    setEmail(user.email);
-    setPassword(user.password);
-    setLoading(true);
-
-    try {
-      const response = await axios.post(`${BaseUrl}/auth/login`, {
-        email: user.email,
-        password: user.password,
-      });
-
-      const { message, data } = response.data;
-      const { user: userData, tokens } = data;
-      const { accessToken } = tokens;
-
-      if (accessToken && userData && userData.id) {
-        localStorage.setItem("authToken", accessToken);
-        localStorage.setItem("CompanyId", userData.id.toString());
-        localStorage.setItem("role", userData.role);
-
-        toast.success(`Logged in as ${user.name}!`);
-
-        if (userData.role === "SUPERADMIN") {
-          navigate("/dashboard");
-        } else {
-          navigate("/company/dashboard");
-        }
-      } else {
-        toast.error("Login failed");
-      }
-    } catch (error) {
-      console.error("Auto-login Error:", error);
-      toast.error(error.response?.data?.message || "Auto-login failed");
-    } finally {
-      setLoading(false);
-    }
+  const copyToClipboard = (text, type) => {
+    navigator.clipboard.writeText(text);
+    toast.success(`${type} copied to clipboard!`);
   };
 
   const handleLogin = async () => {
@@ -142,12 +102,12 @@ const Login = () => {
 
               <div className="border-b border-gray-300 mb-4"></div>
 
-              {/* Quick Login - All Users */}
-              <div className="mb-4 p-3 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-xs font-semibold text-blue-800 flex items-center">
-                    <i className="fas fa-users mr-2"></i>
-                    Quick Login - All Test Users
+              {/* Demo Credentials Display */}
+              <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-sm font-semibold text-blue-900 flex items-center">
+                    <i className="fas fa-key mr-2"></i>
+                    Demo Login Credentials
                   </div>
                   <button
                     onClick={() => setShowAllUsers(!showAllUsers)}
@@ -157,40 +117,67 @@ const Login = () => {
                   </button>
                 </div>
 
+                <div className="mb-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
+                  <i className="fas fa-info-circle mr-1"></i>
+                  All passwords: <strong>Test@123456</strong>
+                </div>
+
                 {showAllUsers ? (
-                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                  <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
                     {allTestUsers.map((user, index) => (
-                      <div key={index} className="flex items-center justify-between text-xs bg-white p-2 rounded border border-gray-200 hover:border-blue-300 transition">
-                        <div className="flex-1">
-                          <div className="font-medium text-gray-800">{user.name}</div>
-                          <div className="text-gray-600 text-[10px]">{user.email}</div>
-                          <div className={`text-[10px] font-semibold ${
-                            user.role === 'SUPERADMIN' ? 'text-purple-600' :
-                            user.role === 'COMPANY_ADMIN' ? 'text-blue-600' :
-                            user.role === 'ACCOUNTANT' ? 'text-green-600' :
-                            'text-orange-600'
-                          }`}>
-                            {user.role.replace('_', ' ')}
+                      <div key={index} className="bg-white p-3 rounded border border-gray-200 hover:border-blue-300 transition">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1">
+                            <div className="font-semibold text-gray-900 text-sm">{user.name}</div>
+                            <div className="text-xs text-gray-500">{user.company}</div>
+                            <div className={`text-xs font-semibold mt-1 ${
+                              user.role === 'SUPERADMIN' ? 'text-purple-600' :
+                              user.role === 'COMPANY_ADMIN' ? 'text-blue-600' :
+                              user.role === 'ACCOUNTANT' ? 'text-green-600' :
+                              user.role === 'MANAGER' ? 'text-orange-600' :
+                              'text-pink-600'
+                            }`}>
+                              {user.role.replace('_', ' ')}
+                            </div>
                           </div>
                         </div>
-                        <button
-                          onClick={() => autoLogin(user)}
-                          disabled={loading}
-                          className={`ml-2 px-3 py-1 rounded text-xs font-medium transition ${
-                            user.role === 'SUPERADMIN' ? 'bg-purple-600 hover:bg-purple-700' :
-                            user.role === 'COMPANY_ADMIN' ? 'bg-blue-600 hover:bg-blue-700' :
-                            user.role === 'ACCOUNTANT' ? 'bg-green-600 hover:bg-green-700' :
-                            'bg-orange-600 hover:bg-orange-700'
-                          } text-white disabled:opacity-50`}
-                        >
-                          {loading ? "..." : "Login"}
-                        </button>
+
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                            <div className="flex-1 min-w-0">
+                              <div className="text-[10px] text-gray-500 font-medium">Email</div>
+                              <div className="text-xs text-gray-800 truncate font-mono">{user.email}</div>
+                            </div>
+                            <button
+                              onClick={() => copyToClipboard(user.email, 'Email')}
+                              className="ml-2 px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-xs transition"
+                              title="Copy email"
+                            >
+                              <i className="fas fa-copy"></i>
+                            </button>
+                          </div>
+
+                          <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                            <div className="flex-1">
+                              <div className="text-[10px] text-gray-500 font-medium">Password</div>
+                              <div className="text-xs text-gray-800 font-mono">{user.password}</div>
+                            </div>
+                            <button
+                              onClick={() => copyToClipboard(user.password, 'Password')}
+                              className="ml-2 px-2 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs transition"
+                              title="Copy password"
+                            >
+                              <i className="fas fa-copy"></i>
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-xs text-gray-600 text-center py-2">
-                    Click "Show All" to see all test users
+                  <div className="text-xs text-gray-600 text-center py-3 bg-white rounded border border-dashed border-gray-300">
+                    <i className="fas fa-arrow-up mr-1"></i>
+                    Click "Show All" to see all {allTestUsers.length} demo users
                   </div>
                 )}
               </div>
