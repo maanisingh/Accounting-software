@@ -57,3 +57,4 @@ app.get('*', (req, res) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`ZirakBook Frontend running on port ${PORT}`);
 });
+// Trigger rebuild Mon Nov 24 11:49:04 AM UTC 2025
