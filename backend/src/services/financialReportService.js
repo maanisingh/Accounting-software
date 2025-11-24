@@ -71,8 +71,8 @@ export const getBalanceSheet = async (companyId, filters = {}) => {
             }
           },
           select: {
-            debit: true,
-            credit: true
+            transactionType: true,
+            amount: true
           }
         }
       }
@@ -85,10 +85,10 @@ export const getBalanceSheet = async (companyId, filters = {}) => {
 
     accounts.forEach(account => {
       const debitTotal = account.journalLines
-        .reduce((sum, line) => sum.add(new Decimal(line.debit || 0)), new Decimal(0));
+        .filter(line => line.transactionType === 'DEBIT').reduce((sum, line) => sum.add(new Decimal(line.amount)), new Decimal(0));
 
       const creditTotal = account.journalLines
-        .reduce((sum, line) => sum.add(new Decimal(line.credit || 0)), new Decimal(0));
+        .filter(line => line.transactionType === 'CREDIT').reduce((sum, line) => sum.add(new Decimal(line.amount)), new Decimal(0));
 
       let balance;
       if (account.accountType === 'ASSET' || account.accountType === 'EXPENSE') {
@@ -196,8 +196,8 @@ const calculatePLBalance = async (companyId, endDate) => {
           }
         },
         select: {
-          debit: true,
-          credit: true
+          transactionType: true,
+          amount: true
         }
       }
     }
@@ -208,11 +208,11 @@ const calculatePLBalance = async (companyId, endDate) => {
 
   accounts.forEach(account => {
     const debitTotal = account.journalLines.reduce(
-      (sum, line) => sum.add(new Decimal(line.debit)),
+      (sum, line) => sum.add(line.transactionType === 'DEBIT' ? new Decimal(line.amount) : new Decimal(0)),
       new Decimal(0)
     );
     const creditTotal = account.journalLines.reduce(
-      (sum, line) => sum.add(new Decimal(line.credit)),
+      (sum, line) => sum.add(line.transactionType === 'CREDIT' ? new Decimal(line.amount) : new Decimal(0)),
       new Decimal(0)
     );
 
@@ -251,8 +251,8 @@ export const getProfitAndLoss = async (companyId, filters = {}) => {
             }
           },
           select: {
-            debit: true,
-            credit: true
+            transactionType: true,
+            amount: true
           }
         }
       }
@@ -263,11 +263,11 @@ export const getProfitAndLoss = async (companyId, filters = {}) => {
 
     accounts.forEach(account => {
       const debitTotal = account.journalLines.reduce(
-        (sum, line) => sum.add(new Decimal(line.debit)),
+        (sum, line) => sum.add(line.transactionType === 'DEBIT' ? new Decimal(line.amount) : new Decimal(0)),
         new Decimal(0)
       );
       const creditTotal = account.journalLines.reduce(
-        (sum, line) => sum.add(new Decimal(line.credit)),
+        (sum, line) => sum.add(line.transactionType === 'CREDIT' ? new Decimal(line.amount) : new Decimal(0)),
         new Decimal(0)
       );
 
@@ -392,7 +392,7 @@ export const getCashFlowStatement = async (companyId, filters = {}) => {
 
     cashAccounts.forEach(account => {
       account.journalLines.forEach(line => {
-        const amount = new Decimal(line.debit).minus(new Decimal(line.credit));
+        const amount = line.transactionType === 'DEBIT' ? new Decimal(line.amount) : new Decimal(0).minus(line.transactionType === 'CREDIT' ? new Decimal(line.amount) : new Decimal(0));
         const transaction = {
           date: line.journalEntry.entryDate,
           description: line.journalEntry.description,
@@ -466,8 +466,8 @@ export const getTrialBalance = async (companyId, filters = {}) => {
             }
           },
           select: {
-            debit: true,
-            credit: true
+            transactionType: true,
+            amount: true
           }
         }
       },
@@ -479,11 +479,11 @@ export const getTrialBalance = async (companyId, filters = {}) => {
 
     const balances = accounts.map(account => {
       const debitTotal = account.journalLines.reduce(
-        (sum, line) => sum.add(new Decimal(line.debit)),
+        (sum, line) => sum.add(line.transactionType === 'DEBIT' ? new Decimal(line.amount) : new Decimal(0)),
         new Decimal(0)
       );
       const creditTotal = account.journalLines.reduce(
-        (sum, line) => sum.add(new Decimal(line.credit)),
+        (sum, line) => sum.add(line.transactionType === 'CREDIT' ? new Decimal(line.amount) : new Decimal(0)),
         new Decimal(0)
       );
 
@@ -545,17 +545,17 @@ export const getAccountLedger = async (companyId, accountId, filters = {}) => {
         }
       },
       select: {
-        debit: true,
-        credit: true
+        transactionType: true,
+        amount: true
       }
     });
 
     let openingBalance = new Decimal(account.openingBalance || 0);
     openingLines.forEach(line => {
       if (account.accountType === 'ASSET' || account.accountType === 'EXPENSE') {
-        openingBalance = openingBalance.add(new Decimal(line.debit)).minus(new Decimal(line.credit));
+        openingBalance = openingBalance.add(line.transactionType === 'DEBIT' ? new Decimal(line.amount) : new Decimal(0)).minus(line.transactionType === 'CREDIT' ? new Decimal(line.amount) : new Decimal(0));
       } else {
-        openingBalance = openingBalance.add(new Decimal(line.credit)).minus(new Decimal(line.debit));
+        openingBalance = openingBalance.add(line.transactionType === 'CREDIT' ? new Decimal(line.amount) : new Decimal(0)).minus(line.transactionType === 'DEBIT' ? new Decimal(line.amount) : new Decimal(0));
       }
     });
 
@@ -589,8 +589,8 @@ export const getAccountLedger = async (companyId, accountId, filters = {}) => {
     // Calculate running balance
     let runningBalance = openingBalance;
     const ledger = transactions.map(line => {
-      const debit = new Decimal(line.debit);
-      const credit = new Decimal(line.credit);
+      const debit = line.transactionType === 'DEBIT' ? new Decimal(line.amount) : new Decimal(0);
+      const credit = line.transactionType === 'CREDIT' ? new Decimal(line.amount) : new Decimal(0);
 
       if (account.accountType === 'ASSET' || account.accountType === 'EXPENSE') {
         runningBalance = runningBalance.add(debit).minus(credit);
@@ -706,8 +706,8 @@ export const getDayBook = async (companyId, filters = {}) => {
       lines: entry.journalLines.map(line => ({
         accountNumber: line.account.accountNumber,
         accountName: line.account.accountName,
-        debit: new Decimal(line.debit).toNumber(),
-        credit: new Decimal(line.credit).toNumber()
+        debit: line.transactionType === 'DEBIT' ? new Decimal(line.amount) : new Decimal(0).toNumber(),
+        credit: line.transactionType === 'CREDIT' ? new Decimal(line.amount) : new Decimal(0).toNumber()
       })),
       totalDebit: entry.journalLines.reduce((sum, l) => sum + parseFloat(l.debit), 0),
       totalCredit: entry.journalLines.reduce((sum, l) => sum + parseFloat(l.credit), 0)
