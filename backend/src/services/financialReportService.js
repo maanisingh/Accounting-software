@@ -191,7 +191,7 @@ const calculatePLBalance = async (companyId, endDate) => {
     include: {
       journalLines: {
         where: {
-          journalEntry: {
+          entry: {
             entryDate: { lte: endDate }
           }
         },
@@ -243,7 +243,7 @@ export const getProfitAndLoss = async (companyId, filters = {}) => {
       include: {
         journalLines: {
           where: {
-            journalEntry: {
+            entry: {
               entryDate: {
                 gte: startDate,
                 lte: endDate
@@ -365,7 +365,7 @@ export const getCashFlowStatement = async (companyId, filters = {}) => {
       include: {
         journalLines: {
           where: {
-            journalEntry: {
+            entry: {
               entryDate: {
                 gte: startDate,
                 lte: endDate
@@ -373,7 +373,7 @@ export const getCashFlowStatement = async (companyId, filters = {}) => {
             }
           },
           include: {
-            journalEntry: {
+            entry: {
               select: {
                 entryNumber: true,
                 entryDate: true,
@@ -461,7 +461,7 @@ export const getTrialBalance = async (companyId, filters = {}) => {
       include: {
         journalLines: {
           where: {
-            journalEntry: {
+            entry: {
               entryDate: { lte: endDate }
             }
           },
@@ -540,7 +540,7 @@ export const getAccountLedger = async (companyId, accountId, filters = {}) => {
     const openingLines = await prisma.journalLine.findMany({
       where: {
         accountId,
-        journalEntry: {
+        entry: {
           entryDate: { lt: startDate }
         }
       },
@@ -563,7 +563,7 @@ export const getAccountLedger = async (companyId, accountId, filters = {}) => {
     const transactions = await prisma.journalLine.findMany({
       where: {
         accountId,
-        journalEntry: {
+        entry: {
           entryDate: {
             gte: startDate,
             lte: endDate
@@ -571,7 +571,7 @@ export const getAccountLedger = async (companyId, accountId, filters = {}) => {
         }
       },
       include: {
-        journalEntry: {
+        entry: {
           select: {
             entryNumber: true,
             entryDate: true,
@@ -582,7 +582,7 @@ export const getAccountLedger = async (companyId, accountId, filters = {}) => {
         }
       },
       orderBy: {
-        journalEntry: { entryDate: 'asc' }
+        entry: { entryDate: 'asc' }
       }
     });
 
