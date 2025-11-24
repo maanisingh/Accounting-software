@@ -187,7 +187,7 @@ const AllAccounts = () => {
   const fetchAccountData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get(`/accounts`);
+      const response = await axiosInstance.get(`/api/v1/accounts`);
       console.log("API Response:", response.data);
 
       // FIX: API returns {success: true, data: [...]}
@@ -252,7 +252,7 @@ const AllAccounts = () => {
     isSavingRef.current = true;
     
     try {
-      const response = await axiosInstance.post(`/account`, {
+      const response = await axiosInstance.post(`/api/v1/account`, {
         subgroup_id: newAccountData.subgroup_id,
         company_id: companyId,
         account_name: newAccountData.name,
@@ -364,7 +364,7 @@ const AllAccounts = () => {
       // Show confirmation dialog
       if (window.confirm(`Are you sure you want to delete the account "${name}"?`)) {
         // Make API call to delete the account
-        await axiosInstance.delete(`/account/${row.id}`);
+        await axiosInstance.delete(`/api/v1/account/${row.id}`);
         
         // Trigger data refresh
         setRefreshData(prev => prev + 1); // Increment counter
@@ -430,9 +430,9 @@ const AllAccounts = () => {
       }
 
       console.log("Edit payload:", payload);
-      
+
       // Make API call to update account
-      const response = await axiosInstance.put(`/account/${selectedAccount.id}`, payload);
+      const response = await axiosInstance.put(`/api/v1/account/${selectedAccount.id}`, payload);
       
       console.log("Account updated:", response.data);
         
@@ -465,7 +465,7 @@ const AllAccounts = () => {
       }
       console.log("Deleting account with ID:", selectedAccount.id);
       // Make API call to delete account
-      const response = await axiosInstance.delete(`/account/${selectedAccount.id}`);
+      const response = await axiosInstance.delete(`/api/v1/account/${selectedAccount.id}`);
       
       console.log("Account deleted:", response.data);
       

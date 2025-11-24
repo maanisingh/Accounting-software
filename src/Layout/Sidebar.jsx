@@ -398,6 +398,273 @@ const Sidebar = ({ isMobile, onLinkClick }) => {
           // { to: "/company/invoicetemplate", icon: "fas fa-cog", label: "Template Setting" },
         ]),
       ],
+
+      ACCOUNTANT: [
+        renderFlatSection("Admin Dashboard", [
+          {
+            to: "/company/dashboard",
+            icon: "fas fa-tachometer-alt",
+            label: "Dashboard",
+          },
+        ]),
+        renderFlatSection("Accounts", [
+          {
+            to: "/company/allacounts",
+            icon: "fas fa-calendar-day",
+            label: "Charts of Accounts",
+          },
+          {
+            to: "/company/customersdebtors",
+            icon: "fas fa-hand-holding-usd",
+            label: "Customers/Debtors",
+          },
+          {
+            to: "/company/vendorscreditors",
+            icon: "fas fa-user-tie",
+            label: "Vendors/Creditors",
+          },
+          {
+            to: "/company/transaction",
+            icon: "fas fa-money-check-alt",
+            label: "All Transaction",
+          },
+        ]),
+        renderFlatSection("VOUCHER", [
+          {
+            to: "/company/createvoucher",
+            icon: "fas fa-file-invoice",
+            label: "Create Voucher",
+          },
+          {
+            to: "/company/expense",
+            icon: "fas fa-money-bill",
+            label: "Expenses",
+          },
+          { to: "/company/income", icon: "fas fa-wallet", label: "Income" },
+          {
+            to: "/company/contravoucher",
+            icon: "fas fa-exchange-alt",
+            label: "Contra Voucher",
+          },
+        ]),
+        renderFlatSection("Reports", [
+          {
+            to: "/company/salesreport",
+            icon: "fas fa-chart-line",
+            label: "Sales Report",
+          },
+          {
+            to: "/company/purchasereport",
+            icon: "fas fa-file-invoice-dollar",
+            label: "Purchase Report",
+          },
+          {
+            to: "/company/posreport",
+            icon: "fas fa-shopping-cart",
+            label: "POS Report",
+          },
+          {
+            to: "/company/taxreport",
+            icon: "fas fa-file-alt",
+            label: "Tax Report",
+          },
+          {
+            to: "/company/inventorysummary",
+            icon: "fas fa-clipboard-list",
+            label: "Inventory Summary",
+          },
+          {
+            to: "/company/balancesheet",
+            icon: "fas fa-balance-scale",
+            label: "Balance Sheet",
+          },
+          { to: "/company/cashflow", icon: "fas fa-coins", label: "Cash Flow" },
+          {
+            to: "/company/profitloss",
+            icon: "fas fa-chart-pie",
+            label: "Profit & Loss",
+          },
+          {
+            to: "/company/vatreport",
+            icon: "fas fa-file-invoice-dollar",
+            label: "Vat Report",
+          },
+          {
+            to: "/company/daybook",
+            icon: "fas fa-calendar-day",
+            label: "DayBook",
+          },
+          {
+            to: "/company/journalentries",
+            icon: "fas fa-book",
+            label: "Journal Entries",
+          },
+          {
+            to: "/company/ledger",
+            icon: "fas fa-layer-group",
+            label: "Ledger",
+          },
+          {
+            to: "/company/trialbalance",
+            icon: "fas fa-layer-group",
+            label: "Trial Balance",
+          },
+        ]),
+      ],
+
+      MANAGER: [
+        renderFlatSection("Admin Dashboard", [
+          {
+            to: "/company/dashboard",
+            icon: "fas fa-tachometer-alt",
+            label: "Dashboard",
+          },
+        ]),
+        renderFlatSection("Accounts", [
+          {
+            to: "/company/allacounts",
+            icon: "fas fa-calendar-day",
+            label: "Charts of Accounts",
+          },
+          {
+            to: "/company/customersdebtors",
+            icon: "fas fa-hand-holding-usd",
+            label: "Customers/Debtors",
+          },
+          {
+            to: "/company/vendorscreditors",
+            icon: "fas fa-user-tie",
+            label: "Vendors/Creditors",
+          },
+          {
+            to: "/company/transaction",
+            icon: "fas fa-money-check-alt",
+            label: "All Transaction",
+          },
+        ]),
+        renderFlatSection("Inventory", [
+          {
+            to: "/company/warehouse",
+            icon: "fas fa-warehouse",
+            label: "Warehouse",
+          },
+          {
+            to: "/company/unitofmeasure",
+            icon: "fas fa-ruler-combined",
+            label: "Unit of measure",
+          },
+          {
+            to: "/company/inventorys",
+            icon: "fas fa-boxes",
+            label: "Product & Inventory",
+          },
+          { to: "/company/service", icon: "fas fa-boxes", label: "Service" },
+          {
+            to: "/company/stocktranfer",
+            icon: "fas fa-exchange-alt",
+            label: "StockTransfer",
+          },
+          {
+            to: "/company/inventory-adjustment",
+            icon: "fas fa-warehouse",
+            label: "Inventory Adjustment",
+          },
+        ]),
+        renderFlatSection("Sales", [
+          {
+            to: "/company/Invoice",
+            icon: "fas fa-file-invoice",
+            label: "Sales Order",
+          },
+          {
+            to: "/company/salesreturn",
+            icon: "fas fa-money-bill",
+            label: "Sales Return",
+          },
+        ]),
+        renderFlatSection("Purchases", [
+          {
+            to: "/company/purchasorderr",
+            icon: "fas fa-shopping-cart",
+            label: "Purchase Orders",
+          },
+          {
+            to: "/company/purchasereturn",
+            icon: "fas fa-undo",
+            label: "Purchase Return",
+          },
+        ]),
+        renderFlatSection("Reports", [
+          {
+            to: "/company/salesreport",
+            icon: "fas fa-chart-line",
+            label: "Sales Report",
+          },
+          {
+            to: "/company/purchasereport",
+            icon: "fas fa-file-invoice-dollar",
+            label: "Purchase Report",
+          },
+          {
+            to: "/company/posreport",
+            icon: "fas fa-shopping-cart",
+            label: "POS Report",
+          },
+          {
+            to: "/company/inventorysummary",
+            icon: "fas fa-clipboard-list",
+            label: "Inventory Summary",
+          },
+        ]),
+      ],
+
+      SALES_USER: [
+        renderFlatSection("Admin Dashboard", [
+          {
+            to: "/company/dashboard",
+            icon: "fas fa-tachometer-alt",
+            label: "Dashboard",
+          },
+        ]),
+        renderFlatSection("Accounts", [
+          {
+            to: "/company/customersdebtors",
+            icon: "fas fa-hand-holding-usd",
+            label: "Customers/Debtors",
+          },
+        ]),
+        renderFlatSection("Sales", [
+          {
+            to: "/company/Invoice",
+            icon: "fas fa-file-invoice",
+            label: "Sales Order",
+          },
+          {
+            to: "/company/salesreturn",
+            icon: "fas fa-money-bill",
+            label: "Sales Return",
+          },
+        ]),
+        renderFlatSection("POS", [
+          {
+            to: "/company/ponitofsale",
+            icon: "fas fa-desktop",
+            label: "POS Screen",
+          },
+        ]),
+        renderFlatSection("Reports", [
+          {
+            to: "/company/salesreport",
+            icon: "fas fa-chart-line",
+            label: "Sales Report",
+          },
+          {
+            to: "/company/posreport",
+            icon: "fas fa-shopping-cart",
+            label: "POS Report",
+          },
+        ]),
+      ],
     };
 
     return menuItems[role] || null;

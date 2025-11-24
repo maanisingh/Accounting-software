@@ -72,7 +72,7 @@ const VendorsCustomers = () => {
     try {
       setLoading(true);
       setError(null); // Clear previous errors
-      const response = await axiosInstance.get(`/vendors` + (vendorType === 'vendor' ? '' : '') + ``);
+      const response = await axiosInstance.get(`/api/v1/vendors` + (vendorType === 'vendor' ? '' : '') + ``);
 
       // Check if response is successful and has data
       if (response.status === 200 && response.data && Array.isArray(response.data.data)) {
@@ -247,11 +247,11 @@ const VendorsCustomers = () => {
 
       let response;
       if (selectedVendor) {
-        response = await axiosInstance.put(`/vendorCustomer/${selectedVendor.id}`, formData, {
+        response = await axiosInstance.put(`/api/v1/vendorCustomer/${selectedVendor.id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
       } else {
-        response = await axiosInstance.post('/vendorCustomer', formData, {
+        response = await axiosInstance.post('/api/v1/vendorCustomer', formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
       }
@@ -321,7 +321,7 @@ const VendorsCustomers = () => {
     setDeleting(true);
     setError(null); // Clear previous errors
     try {
-      const response = await axiosInstance.delete(`/vendorCustomer/${selectedVendor.id}`);
+      const response = await axiosInstance.delete(`/api/v1/vendorCustomer/${selectedVendor.id}`);
 
       // Check if response is successful (status 200-299)
       if (response.status >= 200 && response.status < 300) {
