@@ -11,5 +11,8 @@ export default defineConfig({
   preview: {
     port: 3000,
     host: '0.0.0.0'
+  },
+  define: {
+    'process.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'http://localhost:8020/api/v1')
   }
 })
