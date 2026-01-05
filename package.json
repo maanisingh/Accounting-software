@@ -43,7 +43,7 @@
     "framer-motion": "^12.23.26",
     "html2pdf.js": "^0.10.3",
     "jspdf": "^3.0.4",
-    "jspdf-autotable": "^5.0.2",
+    "jspdf-autotable": "^5.0.7",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.3",
     "react-barcode": "^1.6.1",
