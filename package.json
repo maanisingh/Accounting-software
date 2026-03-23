@@ -31,7 +31,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.6",
     "@mui/material": "^7.3.9",
-    "@mui/x-data-grid": "^8.27.5",
+    "@mui/x-data-grid": "^8.28.0",
     "@reduxjs/toolkit": "^2.11.2",
     "aos": "^2.3.4",
     "axios": "^1.13.6",
@@ -40,7 +40,7 @@
     "echarts": "^5.6.0",
     "express": "^4.22.1",
     "file-saver": "^2.0.5",
-    "framer-motion": "^12.36.0",
+    "framer-motion": "^12.38.0",
     "html2pdf.js": "^0.10.3",
     "jspdf": "^3.0.4",
     "jspdf-autotable": "^5.0.7",
@@ -63,7 +63,7 @@
     "recharts": "^3.8.0",
     "redux": "^5.0.1",
     "serve": "^14.2.6",
-    "sweetalert2": "^11.26.23",
+    "sweetalert2": "^11.26.24",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
@@ -78,7 +78,7 @@
     "eslint-plugin-react-refresh": "^0.4.26",
     "globals": "^16.5.0",
     "postcss": "^8.5.8",
-    "tailwindcss": "^4.2.1",
+    "tailwindcss": "^4.2.2",
     "vite": "^6.4.1"
   }
 }
