@@ -36,7 +36,7 @@
     "aos": "^2.3.4",
     "axios": "^1.20.0",
     "bootstrap": "^5.3.8",
-    "bootstrap-icons": "^1.13.1",
+    "bootstrap-icons": "^1.13.2",
     "echarts": "^5.6.0",
     "express": "^4.22.3",
     "file-saver": "^2.0.5",
@@ -68,7 +68,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
-    "@playwright/test": "^1.63.0",
+    "@playwright/test": "^1.64.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^4.7.0",
@@ -79,6 +79,6 @@
     "globals": "^16.5.0",
     "postcss": "^8.5.29",
     "tailwindcss": "^4.3.3",
-    "vite": "^6.4.3"
+    "vite": "^6.4.4"
   }
 }
