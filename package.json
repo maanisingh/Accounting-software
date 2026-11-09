@@ -32,9 +32,9 @@
     "@fortawesome/react-fontawesome": "^0.2.6",
     "@mui/material": "^7.3.11",
     "@mui/x-data-grid": "^8.29.5",
-    "@reduxjs/toolkit": "^2.13.0",
+    "@reduxjs/toolkit": "^2.14.0",
     "aos": "^2.3.4",
-    "axios": "^1.21.0",
+    "axios": "^1.21.1",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.2",
     "echarts": "^5.6.0",
@@ -48,7 +48,7 @@
     "react": "^19.3.1",
     "react-barcode": "^1.6.1",
     "react-bootstrap": "^2.10.10",
-    "react-bootstrap-typeahead": "^6.4.1",
+    "react-bootstrap-typeahead": "^6.4.2",
     "react-chartjs-2": "^5.3.1",
     "react-datepicker": "^8.10.0",
     "react-dom": "^19.3.1",
@@ -62,13 +62,13 @@
     "react-toastify": "^11.2.0",
     "recharts": "^3.10.1",
     "redux": "^5.0.1",
-    "serve": "^14.2.6",
+    "serve": "^14.2.7",
     "sweetalert2": "^11.26.25",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
-    "@playwright/test": "^1.64.1",
+    "@playwright/test": "^1.65.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^4.7.0",
@@ -78,7 +78,7 @@
     "eslint-plugin-react-refresh": "^0.4.26",
     "globals": "^16.5.0",
     "postcss": "^8.5.32",
-    "tailwindcss": "^4.3.3",
-    "vite": "^6.4.5"
+    "tailwindcss": "^4.3.5",
+    "vite": "^6.4.6"
   }
 }
